@@ -1,0 +1,24 @@
+
+    
+Our Acknowldegments
+-------------------
+    
+Development and distribution of this set of functions
+is funded by the Office of Naval Research (ONR), under contract
+NOOO 14-95-I-0314.
+
+Additional funding has been provided by the DoD PET program.
+   
+We also used some of the quadrature rules from the 
+"Encyclopedia of Cubature Formulas,"  online at
+    http://www.cs.kuleuven.ac.be/~nines/research/ecf/ecf.html
+   
+Acknowledging Us
+----------------
+   
+If you use these functions in your work, please give us
+a reference or acknowlegment as:
+   
+The DPLAB Polycrystal Library at Cornell, 
+http://anisotropy.mae.cornell.edu
+Paul Dawson, Donald Boyce et al.

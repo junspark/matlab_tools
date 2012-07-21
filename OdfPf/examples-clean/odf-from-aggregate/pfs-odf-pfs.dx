@@ -1,0 +1,43 @@
+object "nodal points" class array type float rank 1 shape 3 items 1297 ascii
+data file pfs-odf-pfs-positions.dat
+ 
+object "connectivity" class array type int rank 1 shape 3 items 2520 ascii
+data file pfs-odf-pfs-connections.dat
+attribute "element type" string "triangles"
+attribute "ref" string "positions"
+ 
+object "raw-110" class array type float rank 0  items 1297 ascii
+data file pfs-odf-pfs-raw-110.dat
+attribute "dep" string "positions"
+ 
+object "raw-100" class array type float rank 0  items 1297 ascii
+data file pfs-odf-pfs-raw-100.dat
+attribute "dep" string "positions"
+ 
+object "best-110" class array type float rank 0  items 1297 ascii
+data file pfs-odf-pfs-best-110.dat
+attribute "dep" string "positions"
+ 
+object "best-100" class array type float rank 0  items 1297 ascii
+data file pfs-odf-pfs-best-100.dat
+attribute "dep" string "positions"
+ 
+object "final-110" class array type float rank 0  items 1297 ascii
+data file pfs-odf-pfs-final-110.dat
+attribute "dep" string "positions"
+ 
+object "final-100" class array type float rank 0  items 1297 ascii
+data file pfs-odf-pfs-final-100.dat
+attribute "dep" string "positions"
+ 
+object "pfs-odf-pfs" class field
+   component "positions" "nodal points"
+   component "connections" "connectivity"
+   component "raw-110"  "raw-110"
+   component "raw-100"  "raw-100"
+   component "best-110"  "best-110"
+   component "best-100"  "best-100"
+   component "final-110"  "final-110"
+   component "final-100"  "final-100"
+end
+

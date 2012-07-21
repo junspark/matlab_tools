@@ -1,0 +1,23 @@
+object "nodal points" class array type float rank 1 shape 3 items 399 ascii
+data file pfs-odf-positions.dat
+ 
+object "connectivity" class array type int rank 1 shape 4 items 1512 ascii
+data file pfs-odf-connections.dat
+attribute "element type" string "tetrahedra"
+attribute "ref" string "positions"
+ 
+object "odf1" class array type float rank 0  items 399 ascii
+data file pfs-odf-odf1.dat
+attribute "dep" string "positions"
+ 
+object "odf" class array type float rank 0  items 399 ascii
+data file pfs-odf-odf.dat
+attribute "dep" string "positions"
+ 
+object "pfs-odf" class field
+   component "positions" "nodal points"
+   component "connections" "connectivity"
+   component "odf1"  "odf1"
+   component "odf"  "odf"
+end
+
