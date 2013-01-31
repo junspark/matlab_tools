@@ -1,0 +1,10 @@
+% demonstrates how ExportDM function works
+clear all
+close all
+clc
+
+load('../SHAnalysis/StandardMesh/cub3x.frmesh.SH.mat')
+pos 
+ExportDM(fname, pos, con, data)
+
+% load('../SHAnalysis/StandardMesh/hex3x.frmesh.SH.mat')

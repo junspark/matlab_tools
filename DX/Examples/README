@@ -1,0 +1,26 @@
+% demonstrates how ExportDM functions works
+clear all
+close all
+clc
+
+%%%
+% ExportDM_MeshData
+%%%
+load('../SHAnalysis/StandardMesh/cub3x.frmesh.SH.mat')
+fname   = 'cub3x.frmesh.SH';
+%%%
+
+%%%
+load('../SHAnalysis/StandardMesh/hex3x.frmesh.SH.mat')
+fname   = 'hex3x.frmesh.SH';
+%%%
+
+V   = ToAllNodes(V', frmesh.eqv);
+pos = frmesh.crd;
+con = frmesh.con - 1;   % DX visualization counts from 0
+
+ExportDX_MeshData(fname, pos, V, con)
+
+%%%
+% ExportDX_PointData
+%%%% same as above but without connectivity information
