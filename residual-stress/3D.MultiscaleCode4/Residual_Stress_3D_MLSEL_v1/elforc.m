@@ -1,0 +1,1 @@
+function fe = elforc(iele,nnpe,nqptv,wtq,bigN,detj,gamvec)% computes elemental force matrix for body forcesiend=3*nnpe;fe= zeros(iend,1);feqp= zeros(iend,1);bigNqp = zeros(3,iend);  for j=1:1:nqptv  	  xkfac=wtq(j)*detj(j);  bigNqp(:,:) = bigN(:,:,j);  feqp = xkfac*(bigNqp'*gamvec');  fe = fe + feqp;end

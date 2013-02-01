@@ -1,0 +1,1 @@
+%  program mesh_gen_3d%  driver program for 3-d mesh generation programoption = 2[numel,numnp,meltyp,numeq,nnpe,nnps,np,x,y,z] = mesh_data(option);numelnumnpmeltyp

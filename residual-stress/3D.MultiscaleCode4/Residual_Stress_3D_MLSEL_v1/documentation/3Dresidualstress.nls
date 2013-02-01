@@ -1,0 +1,125 @@
+\begin{thenomenclature} 
+
+ \nomgroup{A}
+
+  \item [{$\alpha$}]\begingroup penalty factor for the symmetry-surface constraint\nomeqref {0}
+		\nompageref{1}
+  \item [{$\beta$}]\begingroup penalty factor for the traction-free constraint\nomeqref {0}
+		\nompageref{1}
+  \item [{$\delta$}]\begingroup Kronecker delta\nomeqref {0}
+		\nompageref{1}
+  \item [{$\kappa$}]\begingroup scaling constant for the ellipsoids\nomeqref {0}
+		\nompageref{1}
+  \item [{$\lambda$}]\begingroup penalty factor for the equilibrium constraint\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{\epsilon}$}]\begingroup lattice strains obtain by diffraction measurements\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{\overline{0}}$}]\begingroup zero vector\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{\overline{N}^s}$}]\begingroup vectorized form of surface shape functions for an element\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{\overline{N}}$}]\begingroup vectorized form of shape functions for an element\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{\Sigma(x)}$}]\begingroup stress at position $\mathbf{x}$\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{\sigma_c(x)}$}]\begingroup interpolated value of measured stress at any position $\mathbf{x}$\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{\sigma_c(x)}$}]\begingroup meaured stress at position $\mathbf{x_c}$\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{a(x)}$}]\begingroup coefficients of monomial used in MLS method\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{A}$}]\begingroup mapping between lattice strains and harmonic coefficients\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{B}$}]\begingroup a special matrix formed by the derivative of shape functions\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{C^{el}}$ }]\begingroup elemental equilibrium constraint matrix\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{C}_I$}]\begingroup global equilibrium constraint matrix\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{D^{el}}$}]\begingroup elemental symmetry surface constraint matrix\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{D}_I$}]\begingroup global symmetry surface constraint matrix\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{F^{el}}$}]\begingroup elemental measured stress vector\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{F}_I$}]\begingroup global measured stress vector\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{G}$}]\begingroup mapping to get in-plane surface tractions from surface tractions\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{I}$}]\begingroup identity matrix\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{J}$}]\begingroup mapping that gives in-plane tractions from the stress components\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{K}$}]\begingroup finite element constraints\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{L}$}]\begingroup mapping between harmonic coefficients and orientation averaged stress\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{M^{el}}$}]\begingroup elemental premultiplier of nodal stresses\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{M}_I$}]\begingroup global (assembled) premultiplier of nodal stresses\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{N^s}$}]\begingroup matrix formed by the shape functions for the surface nodes of an element $\forall$ dof\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{N}$}]\begingroup matrix formed by the shape functions for the nodes of an element $\forall$ dof\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{P}$}]\begingroup mapping to get tractions from the stress components\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{p}$}]\begingroup monomial with a linear basis\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{Q}$}]\begingroup mapping between orientation averaged stress and nodal stress vector\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{R}$}]\begingroup residual\nomeqref {0}\nompageref{1}
+  \item [{$\mathbf{r}$}]\begingroup surface normal\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{s^s}$}]\begingroup stress vector containing all the nodes of the surface of an element\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{s}$}]\begingroup stress vector containing all the nodes of an element\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{S}_I$}]\begingroup global stress vector at the global node I in the mesh\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{s}_I$}]\begingroup elemental stress vector at the global node I in the mesh\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{t(x)}$}]\begingroup surface traction vector\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{T^{el}}$ }]\begingroup elemental traction-free surface constraint matrix\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{T}_I$}]\begingroup global traction-free surface constraint matrix\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{Y}$}]\begingroup a mapping used to construct interpolation function used in MLS method\nomeqref {0}
+		\nompageref{1}
+  \item [{$\mathbf{Z}$}]\begingroup another mapping used to construct interpolation function used in MLS method\nomeqref {0}
+		\nompageref{1}
+  \item [{$\Pi$}]\begingroup volume of the complete domain\nomeqref {0}
+		\nompageref{1}
+  \item [{$\Psi$}]\begingroup weight of the residual\nomeqref {0}
+		\nompageref{1}
+  \item [{$\rho$}]\begingroup constant radius of spheres used in MLS method\nomeqref {0}
+		\nompageref{1}
+  \item [{$\xi, \eta, \zeta$}]\begingroup natural (mapped) coordinates of elements\nomeqref {0}
+		\nompageref{1}
+  \item [{$A$}]\begingroup area of an element\nomeqref {0}
+		\nompageref{1}
+  \item [{$J$}]\begingroup square norm of the residual used in MLS method\nomeqref {0}
+		\nompageref{1}
+  \item [{$n$}]\begingroup number of nodes per element\nomeqref {0}
+		\nompageref{1}
+  \item [{$N^s_I$}]\begingroup surface shape functions of node I\nomeqref {0}
+		\nompageref{1}
+  \item [{$N_I$}]\begingroup shape functions of node I\nomeqref {0}
+		\nompageref{1}
+  \item [{$ndv$}]\begingroup number of diffraction measurement locations\nomeqref {0}
+		\nompageref{1}
+  \item [{$ns$}]\begingroup number of surface nodes per element\nomeqref {0}
+		\nompageref{1}
+  \item [{$q$}]\begingroup distance from the position of measurement used in MLS method\nomeqref {0}
+		\nompageref{1}
+  \item [{$s^{ij}_I$}]\begingroup ij component of stress at the node I\nomeqref {0}
+		\nompageref{1}
+  \item [{$V$}]\begingroup volume of an element\nomeqref {0}
+		\nompageref{1}
+  \item [{$w$}]\begingroup weight used in MLS method\nomeqref {0}
+		\nompageref{1}
+  \item [{$x, y, z$}]\begingroup coordinate positions\nomeqref {0}
+		\nompageref{1}
+
+\end{thenomenclature}
