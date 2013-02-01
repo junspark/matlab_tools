@@ -1,1 +1,0 @@
-function f = assmsurf(ieles,nnps,nps,fes,f)%  assemble arrays with surface datafor   i=1:1:nnps	        i3=3*nps(ieles,i);	  i2=i3-1;      i1=i3-2;            ii3 =3*i;      ii2 = ii3-1;      ii1 = ii3-2;	        f(i1)=f(i1)+fes(ii1);      f(i2)=f(i2)+fes(ii2);      f(i3)=f(i3)+fes(ii3);  end

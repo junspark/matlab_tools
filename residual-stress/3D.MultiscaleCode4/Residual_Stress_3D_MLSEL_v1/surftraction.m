@@ -1,1 +1,0 @@
-function surtrac =surftraction(isurfnum,nqpts,surtracvec)%  loads surface traction vector for each surface into elemental arraysurtrac = zeros(3,nqpts);for i=1:1:nqpts      surtrac(:,i) = surtracvec(isurfnum,:);end

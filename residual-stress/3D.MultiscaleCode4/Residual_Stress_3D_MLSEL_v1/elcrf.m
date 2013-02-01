@@ -1,1 +1,0 @@
-function fes = elcrf(iele,nnpe,nqptv,wtq,detj,sfac,a_e_qp)% computes elemental force matrix for body forcesfes = zeros(nnpe);  for j=1:1:nqptv  	xkfac=wtq(j)*detj(j);  for  i=1:1:nnpe	        fes(i)=fes(i)+xkfac*sfac(i,j)*a_e_qp(iele,j);	    endend

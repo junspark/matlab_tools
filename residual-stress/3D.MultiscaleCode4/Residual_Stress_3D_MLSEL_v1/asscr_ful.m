@@ -1,1 +1,0 @@
-function [skx,fx] = asscr_ful(iele,nnpe,np,ses,fes,skx,fx)% assembles elemental force and stiffness matrices into global counterpartsfor  i=1:1:nnpe	      i1=np(iele,i);	        fx(i1)=fx(i1)+fes(i);	     for j=1:1:nnpe	         j1=np(iele,j);	        skx(i1,j1)  =  skx(i1,j1)  +  ses(i,j);	    endend
