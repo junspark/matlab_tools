@@ -1,4 +1,4 @@
-function Akeep = BuildSodfSpfMatrix(hkl, mesh, sym, pts, div, odf, w, S)
+function Akeep = BuildSodfSpfMatrix(hkl, mesh, sym, pts, div, odf, w, S, deta, dome)
 % BuildSodfSpfMatrix - Build ODF/PF matrix in pieces.
 %   
 %   USAGE:
@@ -19,26 +19,11 @@ function Akeep = BuildSodfSpfMatrix(hkl, mesh, sym, pts, div, odf, w, S)
 %   *  See WeightedOdfPfMatrix for further documentation.
 %
 
-% clear all
-% close all
-% clc
-% load('BuildSodfSpfMatrix.mat')
-% save('BuildSodfSpfMatrix.mat')
-
 %%%
-[TH,PHI,R]  = cart2sph(pts(1,1),pts(2,1),pts(3,1));
-V1          = deg2rad(2.5);
-V2          = deg2rad(2.5)*cosd(45);
-THpts       = [TH+V1; TH+V2; TH; TH-V2; TH-V1; TH-V2; TH; TH+V2];
-PHIpts      = [PHI; PHI+V2; PHI+V1; PHI+V2; PHI; PHI-V2; PHI-V1; PHI-V2];
-Rpts        = ones(size(THpts));
+pts     = FiberTube(pts, deta, dome);
+npts    = size(pts, 2);
 
-[x, y, z]   = sph2cart(THpts,PHIpts,Rpts);
-
-pts = [pts [x y z]'];
-pts = UnitVector(pts);
-
-npts    = size(pts, 2); 
+%
 nnode   = mesh.numind;
 
 Akeep   = zeros(npts, nnode*6);

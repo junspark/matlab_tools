@@ -1,4 +1,4 @@
-function Akeep = BuildLsdfSpfMatrix(hkl, mesh, sym, pts, div, odf, w)
+function Akeep = BuildLsdfSpfMatrix(hkl, mesh, sym, pts, div, odf, w, deta, dome)
 % BuildLsdfSpfMatrix - Build ODF/PF matrix in pieces.
 %   
 %   USAGE:
@@ -20,22 +20,10 @@ function Akeep = BuildLsdfSpfMatrix(hkl, mesh, sym, pts, div, odf, w)
 %
 
 %%%
-[TH,PHI,~] = cart2sph(pts(1,1),pts(2,1),pts(3,1));
-
-V1  = deg2rad(2.5);
-V2  = deg2rad(2.5)*cosd(45);
-
-THpts   = [TH+V1; TH+V2; TH; TH-V2; TH-V1; TH-V2; TH; TH+V2];
-PHIpts  = [PHI; PHI+V2; PHI+V1; PHI+V2; PHI; PHI-V2; PHI-V1; PHI-V2];
-Rpts    = ones(size(THpts));
-
-[x, y, z]   = sph2cart(THpts,PHIpts,Rpts);
-
-pts = [pts [x y z]'];
-pts = UnitVector(pts);
+pts     = FiberTube(pts, deta, dome);
+npts    = size(pts, 2); 
 
 %
-npts    = size(pts, 2); 
 nnode   = mesh.numind;
 
 Akeep   = zeros(npts, nnode*6);
