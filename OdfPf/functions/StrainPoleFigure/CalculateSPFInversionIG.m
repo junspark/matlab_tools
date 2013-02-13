@@ -22,7 +22,7 @@ iguess  = iguess(:);
 nout    = max(nargout,1);
 if nout > 1
     thresh1 = 0.5;
-    thresh2 = 0.05*max(abs(iguess));
+    thresh2 = 0.01*max(abs(iguess));
     
     ub  = iguess + abs(iguess)*thresh1;
     lb  = iguess - abs(iguess)*thresh1;
