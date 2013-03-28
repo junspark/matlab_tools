@@ -18,13 +18,6 @@ import glob
 import sys
 import argparse
 
-# USER MUST DEFINE PATH TO BAD PIXEL INFORMATION
-# Typically 'C:\DetectorData\1339.6\Full\1339.6Full_BadPixel_d.txt.img'
-# Hard-coding this location in is inadvisable, as it makes the code less portable.
-# Either a relative or an absolute path can be used.  It's probably safer to use an absolute path.
-# (NB: the r prior to the string indicates a raw string, and must be included)
-badPixFile = r'C:\DetectorData\1339.6\Full\1339.6Full_BadPixel_d.txt.img'
-
 # Command-line parser arguments - make everything more user friendly
 parser = argparse.ArgumentParser(
   description='Dark correction and summing of GE2 files.',
@@ -32,10 +25,10 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--lo', type=int, nargs=1, default=[-1], help='Lower bound of run numbers.')
 parser.add_argument('--hi', type=int, nargs=1, default=[-1], help='Upper bound of run numbers.')
 parser.add_argument('--all','-a', action='store_true', default=True, help='Flag to perform dark correction on all GE2 files in present directory.')
-parser.add_argument('--ndel', action='store_true', default=False, help='Print out .cor files.  Will produce a dark corrected output file for each frame in each GE2 file, as well as the sum files.  (WARNING: May use a LOT of space.)')
-parser.add_argument('--drk', type=str, nargs=1, default='dark', help='Dark stub.  Some string that is unique to dark files.  Need not be the ENTIRE stub.  Default = "dark"')
-### parser.add_argument('--inpath', type=str, nargs=1, default='.', help='Path where the image files live. Default = ".". NOT YET IMPLEMENTED')
-parser.add_argument('--outpath', type=str, nargs=1, default='.', help='Path where the image files live. Default = ".". NOT YET IMPLEMENTED')
+parser.add_argument('--ndel', action='store_true', default=False, help='Save dark corrected output file for each frame in each GE2 file, as well as the sum files.  (WARNING: May use a LOT of space.)')
+parser.add_argument('--drk', type=str, nargs=1, default=['dark'], help='Dark stub.  Some string that is unique to dark files.  Need not be the ENTIRE stub.  Default = "dark"')
+parser.add_argument('--inpath', type=str, nargs=1, default=['.'], help='Path where the image files live. Default = ".".')
+parser.add_argument('--outpath', type=str, nargs=1, default=['.'], help='Path where the corrected image files are saved. Default = ".".')
 parser.add_argument('--genum', type=int, nargs=1, default=[2], help='GE number. Default = 2. NOT YET IMPLEMENTED')
 clargs = parser.parse_args()
 
@@ -48,13 +41,13 @@ hi = int(clargs.hi[0])
 genum = int(clargs.genum[0])
 
 drk = clargs.drk[0]
-### inpath = clargs.inpath[0]
+inpath = clargs.inpath[0]
 outpath = clargs.outpath[0]
 
 if (lo != -1) or (hi != -1):
   clargs.all = False 
 
-allfiles = glob.glob('*[0-9].ge' + str(genum))
+allfiles = glob.glob(inpath + os.sep + '*[0-9].ge' + str(genum))
 
 #Recast the file reading function, which reduces runtime
 fread = numpy.fromfile
@@ -67,6 +60,12 @@ darkvalues= numpy.array(num_X*num_Y,numpy.float32)
 badPixels = numpy.array(num_X*num_Y,numpy.float32)
 
 #Read in bad pixel data
+# USER MUST DEFINE PATH TO BAD PIXEL INFORMATION
+# Typically 'C:\DetectorData\1339.6\Full\1339.6Full_BadPixel_d.txt.img'
+# Hard-coding this location in is inadvisable, as it makes the code less portable.
+# Either a relative or an absolute path can be used.  It's probably safer to use an absolute path.
+# (NB: the r prior to the string indicates a raw string, and must be included)
+badPixFile = r'C:\DetectorData\1339.6\Full\1339.6Full_BadPixel_d.txt.img'
 try:
   with open(badPixFile, mode='rb') as badPxobj:
     badPxobj.seek(8192)

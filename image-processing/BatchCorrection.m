@@ -36,7 +36,8 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 %   features.  Options are:
 %
 %   CorrectAllImages    corrects all images in the path_image {false}. note
-%                       that this option overrides any lo or hi image number inputs
+%                       that this option overrides any lo or hi image
+%                       number inputs and root_image.
 %
 %   lo                  lowest number in the image series
 %
@@ -74,8 +75,9 @@ opts    = OptArgs(optcell, varargin);
 %%% SETUP APPROPRIATE EXTENSION
 ext_bkg     = ['ge', num2str(genum)];
 ext_image   = ext_bkg;
+
 %%% BAD PIXEL CORRECTION    %%% NOT YET IMPLEMENTED
-%%% GE2 == 'DetectorData\1339.6\Full\1339.6Full_BadPixel_d.txt.img'
+BadPixelData    = LoadBadPixelData(genum);
 
 tic
 %%% CONSTRUCT BACKGROUND IMAGE
@@ -116,24 +118,36 @@ if opts.CorrectAllImages
         for j = 1:1:num_frame
             disp('background subtraction in progress ...')
             frame_data  = NreadGE(pfname, j);
-            frame_data  = frame_data - im_bkg;
+            if opts.OutAllFrames
+                frame_data  = frame_data - im_bkg;
+                frame_data  = CorrectBadPixels(frame_data, BadPixelData);
+                
+                WriteCorrectedFile(frame_data, path_output, flist(i).name, ['frame.', num2str(j), '.cor']);
+            end
             sum_data    = sum_data + frame_data;
             
             if opts.DisplayFrames
                 PlotImage(frame_data, max(frame_data(:)), min(frame_data(:)))
             end
-            
-            if opts.OutAllFrames
-                WriteCorrectedFile(frame_data, path_output, flist(i).name, ['frame.', num2str(j), '.cor']);
-            end
+        end
+        if opts.DisplayFrames
+            close all
         end
         
         %%% WRITE OUT SUM FILE
+        if ~opts.OutAllFrames
+            sum_data    = sum_data - num_frame.*im_bkg;
+            sum_data    = CorrectBadPixels(sum_data, BadPixelData);
+        end
         WriteCorrectedFile(sum_data, path_output, flist(i).name, 'sum');
+        PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
+        title('Sum over all corrected frames')
         
         %%% WRITE OUT AVE FILE
         ave_data    = sum_data./num_frame;
         WriteCorrectedFile(ave_data, path_output, flist(i).name, 'ave');
+        PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
+        title('Average over all corrected frames')
     end
 else
     image_num   = opts.lo:1:opts.hi;
@@ -149,24 +163,37 @@ else
         for j = 1:1:num_frame
             disp('background subtraction in progress ...')
             frame_data  = NreadGE(pfname, j);
-            frame_data  = frame_data - im_bkg;
+            if opts.OutAllFrames
+                frame_data  = frame_data - im_bkg;
+                frame_data  = CorrectBadPixels(frame_data, BadPixelData);
+                
+                WriteCorrectedFile(frame_data, path_output, flist.name, ['frame.', num2str(j), '.cor']);
+            end
             sum_data    = sum_data + frame_data;
             
             if opts.DisplayFrames
                 PlotImage(frame_data, max(frame_data(:)), min(frame_data(:)))
             end
-            
-            if opts.OutAllFrames
-                WriteCorrectedFile(frame_data, path_output, flist.name, ['frame.', num2str(j), '.cor']);
-            end
+        end
+        if opts.DisplayFrames
+            close all
         end
         
         %%% WRITE OUT SUM FILE
+        if ~opts.OutAllFrames
+            sum_data    = sum_data - num_frame.*im_bkg;
+            sum_data    = CorrectBadPixels(sum_data, BadPixelData);
+        end
         WriteCorrectedFile(sum_data, path_output, flist.name, 'sum');
+        
+        PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
+        title('Sum over all corrected frames')
         
         %%% WRITE OUT AVE FILE
         ave_data    = sum_data./num_frame;
         WriteCorrectedFile(ave_data, path_output, flist.name, 'ave');
+        PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
+        title('Average over all corrected frames')
     end
 end
 toc
@@ -191,3 +218,61 @@ pfname_out  = fullfile(pname_out, fname_out);
 fid     = fopen(pfname_out, 'w');
 fwrite(fid, data, 'uint16');
 fclose(fid);
+return
+
+function BadPixelData = LoadBadPixelData(genum)
+if genum == 1
+    warning('SERIAL NUMBER CHECK')
+    % fname   = 'EF44064-6Full_BadPixel.img';
+    % BadPixelData    = NreadGE(fname, 1);
+    BadPixelData    = zeros(2048,2048);
+elseif genum == 2
+    fname   = 'EF44064-6Full_BadPixel.img';
+    BadPixelData    = NreadGE(fname, 1);
+elseif genum == 3
+    warning('SERIAL NUMBER CHECK')
+    % fname   = 'EF44064-6Full_BadPixel.img';
+    % BadPixelData    = NreadGE(fname, 1);
+    BadPixelData    = zeros(2048,2048);
+elseif genum == 4
+    warning('SERIAL NUMBER CHECK')
+    % fname   = 'EF44064-6Full_BadPixel.img';
+    % BadPixelData    = NreadGE(fname, 1);
+    BadPixelData    = zeros(2048,2048);
+else
+    error('bad pixel data does not exist. check ge number ...')
+end
+BadPixelData    = find(BadPixelData ~= 0);
+return
+
+function CorrectedImageData = CorrectBadPixels(ImageData, BadPixelData)
+CorrectedImageData  = ImageData;
+nbr1    = BadPixelData - 2048 - 1;
+nbr2	= BadPixelData - 2048 + 1;
+nbr3    = BadPixelData + 2048 - 1;
+nbr4    = BadPixelData + 2048 + 1;
+
+n   = length(BadPixelData);
+for i = 1:1:n
+    ct  = 0; p1  = 0; p2  = 0; p3  = 0; p4  = 0;
+    if nbr1(i) <= 2048*2048 && nbr1(i) >= 1
+        p1  = ImageData(nbr1(i));
+        ct  = ct + 1;
+    end
+    if nbr2(i) <= 2048*2048 && nbr2(i) >= 1
+        p2  = ImageData(nbr2(i));
+        ct  = ct + 1;
+    end
+    if nbr3(i) <= 2048*2048 && nbr3(i) >= 1
+        p3  = ImageData(nbr3(i));
+        ct  = ct + 1;
+    end
+    if nbr4(i) <= 2048*2048 && nbr4(i) >= 1
+        p4  = ImageData(nbr4(i));
+        ct  = ct + 1;
+    end
+    p   = (p1 + p2 + p3 + p4)/ct;
+    
+    CorrectedImageData(BadPixelData(i)) = p;
+end
+return
