@@ -122,7 +122,9 @@ if opts.CorrectAllImages
                 frame_data  = frame_data - im_bkg;
                 frame_data  = CorrectBadPixels(frame_data, BadPixelData);
                 
-                WriteCorrectedFile(frame_data, path_output, flist(i).name, ['frame.', num2str(j), '.cor']);
+                fname_out   = [flist(i).name, '.frame.', num2str(j), '.cor'];
+                pfname_out  = fullfile(path_output, fname_out);
+                NwriteGE(pfname_out, frame_data);
             end
             sum_data    = sum_data + frame_data;
             
@@ -138,14 +140,18 @@ if opts.CorrectAllImages
         if ~opts.OutAllFrames
             sum_data    = sum_data - num_frame.*im_bkg;
             sum_data    = CorrectBadPixels(sum_data, BadPixelData);
-        end
-        WriteCorrectedFile(sum_data, path_output, flist(i).name, 'sum');
+        end        
+        fname_out   = [flist(i).name, '.sum'];
+        pfname_out  = fullfile(path_output, fname_out);
+        NwriteGE(pfname_out, sum_data);
         PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
         title('Sum over all corrected frames')
         
         %%% WRITE OUT AVE FILE
         ave_data    = sum_data./num_frame;
-        WriteCorrectedFile(ave_data, path_output, flist(i).name, 'ave');
+        fname_out   = [flist(i).name, '.ave'];
+        pfname_out  = fullfile(path_output, fname_out);
+        NwriteGE(pfname_out, ave_data);
         PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
         title('Average over all corrected frames')
     end
@@ -167,7 +173,9 @@ else
                 frame_data  = frame_data - im_bkg;
                 frame_data  = CorrectBadPixels(frame_data, BadPixelData);
                 
-                WriteCorrectedFile(frame_data, path_output, flist.name, ['frame.', num2str(j), '.cor']);
+                fname_out   = [flist.name, '.frame.', num2str(j), '.cor'];
+                pfname_out  = fullfile(path_output, fname_out);
+                NwriteGE(pfname_out, frame_data);
             end
             sum_data    = sum_data + frame_data;
             
@@ -184,14 +192,17 @@ else
             sum_data    = sum_data - num_frame.*im_bkg;
             sum_data    = CorrectBadPixels(sum_data, BadPixelData);
         end
-        WriteCorrectedFile(sum_data, path_output, flist.name, 'sum');
-        
+        fname_out   = [flist.name, '.sum'];
+        pfname_out  = fullfile(path_output, fname_out);
+        NwriteGE(pfname_out, sum_data);
         PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
         title('Sum over all corrected frames')
         
         %%% WRITE OUT AVE FILE
         ave_data    = sum_data./num_frame;
-        WriteCorrectedFile(ave_data, path_output, flist.name, 'ave');
+        fname_out   = [flist.name, '.ave'];
+        pfname_out  = fullfile(path_output, fname_out);
+        NwriteGE(pfname_out, ave_data);
         PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
         title('Average over all corrected frames')
     end
@@ -208,16 +219,6 @@ axis square tight
 
 function num_frame = CalcNumFrames(bytes, buffer_size, frame_size)
 num_frame   = (bytes - buffer_size)/frame_size;
-return
-
-function WriteCorrectedFile(data, pname_out, fname, extension)
-fname_out   = fname(1:end-3);
-fname_out   = [fname_out, extension];
-pfname_out  = fullfile(pname_out, fname_out);
-
-fid     = fopen(pfname_out, 'w');
-fwrite(fid, data, 'uint16');
-fclose(fid);
 return
 
 function BadPixelData = LoadBadPixelData(genum)

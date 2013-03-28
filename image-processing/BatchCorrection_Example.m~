@@ -12,10 +12,31 @@ root_image  = 'Narwhale_3_';
 
 path_output = 'C:\Users\s1iduser\Documents\parkjs\batchcorr_example\corrected';
 
+
+
+%%%
+fname   = 'ceria_00055.ge3';
+pfname  = fullfile(path_image, fname);
+data    = NreadGE(pfname, 1);
+imagesc(log(data))
+axis equal tight
+
+extension   = 'cor';
+fname_out   = fname(1:end-3);
+fname_out   = [fname_out, extension];
+pfname_out  = fullfile(path_output, fname_out);
+
+fid     = fopen(pfname_out, 'w');
+fwrite(fid, data, 'uint16', );
+fclose(fid);
+return
+
+
+
 BatchCorrection(path_bkg, bkg_num, root_bkg, ...
     path_image, root_image, ...
     genum, path_output, ...
     'CorrectAllImages', false, ...
-    'lo', 1966, 'hi', 1967, ...
+    'lo', 1967, 'hi', 1967, ...
     'OutAllFrames', false, ...
     'DisplayFrames', false)
