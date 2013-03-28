@@ -99,7 +99,6 @@ print "Using", darkfile
 # Read in dark file
 # Average over all the exposures in the file 
 # This reduces the number of 'over reduced' pixels.
-darkfile = darks[0]
 with open(darkfile, mode='rb') as darkobj:
   statinfo = os.stat(darkfile)
   nFrames = (statinfo.st_size - 8192) / (2 * num_X * num_Y)
@@ -143,6 +142,7 @@ for f in files:
   print "\nReading:",f, "\nFile contains", nFrames," frames.  Summing and dark correcting."
 
   # Sum all values in this file
+  (d, fout) = os.path.split(f)
   with open(f, mode='rb') as fileobj:
     fileobj.seek(8192)
     for i in range(nFrames):
@@ -164,20 +164,20 @@ for f in files:
 
       ### DUMP IF WANT INDIVIDUAL FRAMES
       if clargs.ndel:
-        frameName = outpath + os.sep + f[:-3] + 'frame.' + str(i) + '.cor'
+        frameName = outpath + os.sep + fout + '.frame.' + str(i+1) + '.cor'
         print 'saving frame number ' + str(i) + ' to ' + frameName
         with open(frameName, mode='wb') as outFile:
           binvalues.tofile(outFile)
           
   ### DUMP SUM OF FRAMES
-  sumName = outpath + os.sep + f[:-3] + 'sum'
+  sumName = outpath + os.sep + fout + '.sum'
   print "saving sum to " + sumName
   with open(sumName, mode='wb') as outFile:
     sumvalues.tofile(outFile)
     
   ### DUMP IF WE WANT AVE OF FRAMES
   sumvalues = sumvalues/nFrames
-  aveName = outpath + os.sep + f[:-3] + 'ave'
+  aveName = outpath + os.sep + fout + '.ave'
   print "saving ave to " + aveName
   with open(aveName, mode='wb') as outFile:
     sumvalues.tofile(outFile)
