@@ -222,24 +222,19 @@ num_frame   = (bytes - buffer_size)/frame_size;
 return
 
 function BadPixelData = LoadBadPixelData(genum)
+%%% *.IMG FILES ARE DIFFERENT FOR EACH GE
 if genum == 1
-    warning('SERIAL NUMBER CHECK')
-    % fname   = 'EF44064-6Full_BadPixel.img';
-    % BadPixelData    = NreadGE(fname, 1);
-    BadPixelData    = zeros(2048,2048);
+    fname   = 'EF44064-3Full_BadPixel.img';
+    BadPixelData    = NreadGE(fname, 1);
 elseif genum == 2
     fname   = 'EF44064-6Full_BadPixel.img';
     BadPixelData    = NreadGE(fname, 1);
 elseif genum == 3
-    warning('SERIAL NUMBER CHECK')
-    % fname   = 'EF44064-6Full_BadPixel.img';
-    % BadPixelData    = NreadGE(fname, 1);
-    BadPixelData    = zeros(2048,2048);
+    fname   = 'EF44064-5Full_BadPixel.img';
+    BadPixelData    = NreadGE(fname, 1);
 elseif genum == 4
-    warning('SERIAL NUMBER CHECK')
-    % fname   = 'EF44064-6Full_BadPixel.img';
-    % BadPixelData    = NreadGE(fname, 1);
-    BadPixelData    = zeros(2048,2048);
+    fname   = 'EF44064-7Full_BadPixel.img';
+    BadPixelData    = NreadGE(fname, 1);
 else
     error('bad pixel data does not exist. check ge number ...')
 end
