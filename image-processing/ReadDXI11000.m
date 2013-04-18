@@ -26,14 +26,8 @@ optcell = {...
 % update option
 opts    = OptArgs(optcell, varargin);
 
+imdata  = imread(pfname);
 
-fp      = fopen(pfname,'r','n');
-if strcmpi(opts.Mode, '3fps')
-    imdata  = fread(fp, [4024 2680],'uint16');
-elseif strcmpi(opts.Mode, '6fps')
-    imdata  = fread(fp, [2012 1340],'uint16');
-else
-    error('improper dxi-11000 image mode ...')
-end
-
-fclose(fp);
+%%% IN THIS CONFIGURATION INCREASING RADIUS IS INCREASING COL NUMBER 
+%%% INCREASING ETA IS INCREASING ROW NUMBER 
+imdata  = rot90(imdata, 2); 
