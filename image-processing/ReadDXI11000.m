@@ -30,4 +30,4 @@ imdata  = imread(pfname);
 
 %%% IN THIS CONFIGURATION INCREASING RADIUS IS INCREASING COL NUMBER 
 %%% INCREASING ETA IS INCREASING ROW NUMBER 
-imdata  = rot90(imdata, 2); 
+imdata  = double(rot90(imdata, 2)); 
