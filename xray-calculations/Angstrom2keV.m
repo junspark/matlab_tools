@@ -16,4 +16,4 @@ function keV = Angstrom2keV(Angstrom)
 %       x-ray energy in keV
 
 hc  = 12.39842; % PER X-RAY BOOKLET 2009
-keV = hc/Angstrom;
+keV = hc./Angstrom;
