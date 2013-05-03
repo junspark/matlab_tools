@@ -17,10 +17,6 @@ function apf_data = ReadAPF(fname)
 %			x-ray diffraction spectrum after MAUD analysis	
 %
 
-% clear all
-% close all
-% clc
-% fname   = '/home/jspark/Documents/work/prjTitanium/DataReduction/MA-Ti/texture/Ti_hcp_dv0.apf';
 fid     = fopen(fname, 'r');
 
 linedata	= fgetl(fid);
