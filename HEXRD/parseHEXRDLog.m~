@@ -1,4 +1,4 @@
-function log = parseHEXRDLog(pfname)
+% function log = parseHEXRDLog(pfname)
 % parseHEXRDLog Parse a Grainspotter log-like HEXRD log file.
 %
 %   log = parseGrainSpotterLog(fileName) reads the Grainspotter log file
@@ -20,6 +20,14 @@ function log = parseHEXRDLog(pfname)
 %
 %   Example:
 %     log = parseGrainSpotterLog('simul.log');
+
+clear all
+close all
+clc
+
+pname   = 'C:\Users\s1iduser\Documents\GitHub\matlab_tools\HEXRD';
+fname   = 'grainlist_44,45.log';
+pfname  = fullfile(pname, fname);
 
 fid = fopen(pfname, 'r');
 if(fid == -1)
@@ -44,7 +52,7 @@ log(nGrains) = struct(...
     'lattprms',[], 'COM', [], 'ReflectionTable', [], 'Completeness', []);
 
 while ~feof(fid)
-    line = fgetl(fid);
+    line = fgetl(fid);    
     if strfind(line, '#### grain') == 1
         grnum   = str2double(line(11:end)) + 1;
         
@@ -184,8 +192,49 @@ while ~feof(fid)
         
         %%% LINE SKIP
         line    = fgetl(fid);
-        idx     = strfind(line, ':');
-        log(grnum).Completeness = str2double(line(idx+1:end-1));
+        idx     = strfind(line, '(') + 1;
+        Completeness
+        return
     end
+end
+fclose(fid);
+return
+for i = 1:1:nGrains
+    fgetl(fid);  % Grain nnn, nPairs (Skip)
+    
+    
+    line    = fgetl(fid);
+    parms   = sscanf(line, '%d %d %d %d');
+    
+    log(i).nExpGvec     = parms(1);
+    log(i).nMeasGvec    = parms(2);
+    log(i).nMeasOnce    = parms(3);
+    log(i).nMeasMore    = parms(4);
+    
+    line    = fgetl(fid);
+    parms   = sscanf(line, '%f');  % May be more items with 0.5 and above
+    
+    log(i).meanIA = parms(1);
+    
+    C           = textscan(fid, '%f', 9);
+    log(i).U    = reshape(C{1}(1:9), 3, 3)';
+    
+    % Skip 3 lines
+    textscan(fid, '%*[^\n]', 3);
+    C   = textscan(fid, '%f', 3);
+    log(i).Rod  = reshape(C{1}(1:3),3,1);
+    
+    % Skip 1 line
+    % textscan(fid, '%*[^\n]', 1)
+    C               = textscan(fid, '%f', 3);
+    log(i).Bunge    = reshape(C{1}(1:3),3,1);
+    
+    C           = textscan(fid, '%f', 4);
+    log(i).Quat = reshape(C{1}(1:4),4,1);
+    
+    % gvec is the whole 22 x nMeasGvec array of columns
+    C           = textscan(fid, '%f', 22*log(i).nMeasGvec);
+    log(i).refl = reshape(C{1},22,log(i).nMeasGvec)';
+    textscan(fid, '%*[^\n]', 1); % Skip 1 lines
 end
 fclose(fid);
