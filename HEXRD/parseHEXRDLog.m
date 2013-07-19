@@ -1,5 +1,5 @@
-function log = parseGrainSpotterLog(fileName)
-% PARSEGRAININFOLOG Parse a Grainspotter log file.
+function log = parseHEXRDLog(fileName)
+% parseHEXRDLog Parse a Grainspotter log-like HEXRD log file.
 %
 %   log = parseGrainSpotterLog(fileName) reads the Grainspotter log file
 %   with the name fileName and returns the information in an array of
