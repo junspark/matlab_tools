@@ -26,6 +26,6 @@ offset  = buffer + (frameno-1)*2048*2048*2;
 
 fseek(fp,offset,'bof');
 
-img     = fread(fp,[2048 2048],'uint16');
+img     = fread(fp,[2048 2048],'*uint16');
 
 fclose(fp);

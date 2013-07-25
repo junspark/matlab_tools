@@ -11,8 +11,8 @@ function status = NwriteGE(pfname, data)
 %
 %   OUTPUT:
 %
-%   img
-%       image data in a [2048 x 2048] matrix
+%   status
+%       status of the file write
 %
 %   NOTE:
 %   1. only writes 1 frame for now
