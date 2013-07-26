@@ -50,9 +50,9 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 %   (possibly) many files
 %
 %   NOTE:
-%       1. Need to implement bad pixel correction
-%       2. Need to implement flipping
-%       3. This function is same as "batchcorrNP.py"
+%       1. Need to implement flipping (if needed)
+%       2. This function is same as "BatchCorrection.py" (bad pixel
+%       correction is slightly different)
 %
 
 %%% DEFAULT PARAMETERS
@@ -79,7 +79,6 @@ ext_image   = ext_bkg;
 %%% BAD PIXEL CORRECTION    %%% NOT YET IMPLEMENTED
 BadPixelData    = LoadBadPixelData(genum);
 
-tic
 %%% CONSTRUCT BACKGROUND IMAGE
 im_bkg  = zeros(2048,2048);
 ct  = 0;
@@ -207,7 +206,6 @@ else
         title('Average over all corrected frames')
     end
 end
-toc
 
 function PlotImage(image_data, max_range, min_range)
 figure,
@@ -225,19 +223,16 @@ function BadPixelData = LoadBadPixelData(genum)
 %%% *.IMG FILES ARE DIFFERENT FOR EACH GE
 if genum == 1
     fname   = 'EF44064-3Full_BadPixel.img';
-    BadPixelData    = NreadGE(fname, 1);
 elseif genum == 2
     fname   = 'EF44064-6Full_BadPixel.img';
-    BadPixelData    = NreadGE(fname, 1);
 elseif genum == 3
     fname   = 'EF44064-5Full_BadPixel.img';
-    BadPixelData    = NreadGE(fname, 1);
 elseif genum == 4
     fname   = 'EF44064-7Full_BadPixel.img';
-    BadPixelData    = NreadGE(fname, 1);
 else
     error('bad pixel data does not exist. check ge number ...')
 end
+BadPixelData    = NreadGE(fname, 1);
 BadPixelData    = find(BadPixelData ~= 0);
 return
 

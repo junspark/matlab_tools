@@ -18,7 +18,6 @@ MinRange    = min(Completeness);
 dData       = MaxRange - MinRange;
 DataColor   = round((ncmap-1)*(Completeness - MinRange)./dData) + 1;
 
-
 figure,
 hold on
 for i = 1:1:length(log)
