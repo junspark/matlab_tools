@@ -90,4 +90,4 @@ plot(x, profile0, 'rs-')
 hold on
 plot(x, profile, 'bo-')
 xlabel('y (mm)')
-ylabel('summed intensity (arb units)')
+ylabel('edge (mm)')

@@ -31,46 +31,47 @@ clc
 
 %%% MSU %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % pname   = '/net/s1dserv/export/s1-idb/park_jul2013/DIC4Jun/DIC';
-pname   = 'W:/park_jul2013/DIC4Jun/DIC';
-froot   = 'DIC_';
-fext    = 'tif';
-ndigits = 5;
-fini    = 45;
-ffin    = 421;
-finc    = 4;
-fnum    = fini:finc:ffin;
-fnum    = [fnum 437:4:501];
-flist   = cell(length(fnum),1);
-padding = '0';
-pix2mm  = 0.002;    %%% mm / pixel
-samY    = [45 57 69 81 97 109 121 133 145 155 168 180 192 204 217 228 241 253 265 277 289 301 313 325 337 348 361 373 385 397 409 421 437 449 461 477 489 501; ...
-    0 0.002 0.010 0.017 0.076 0.108 0.114 0.120 0.126 0.132 0.138 0.140 0.144 0.146 0.150 0.154 0.156 0.162 0.166 0.170 0.176 0.182 0.186 0.190 0.196 0.202 0.202 0.212 0.216 0.222 0.226 0.224 0.218 0.208 0.198 0.174 0.138 0.076; ...
-    19 46 46 94 195 295 316 339 359 379 390 399 408 416 421 428 432 436 440 442 442 449 449 453 456 460 457 464 470 474 474 450 400 350 300 201 102 16];
-
-%%% CU %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% pname   = 'W:\Miller_June13\DIC';
-% froot   = 'Ti64_State4_';
+% pname   = 'W:/park_jul2013/DIC4Jun/DIC';
+% froot   = 'DIC_';
 % fext    = 'tif';
 % ndigits = 5;
-% fnum    = [1142 1147 1148 1149 1150 1151 1153 1154 1155 1156 1157 1158 1159 1160 1161 1162 1163];
+% fini    = 45;
+% ffin    = 421;
+% finc    = 4;
+% fnum    = fini:finc:ffin;
+% fnum    = [fnum 437:4:501];
 % flist   = cell(length(fnum),1);
 % padding = '0';
 % pix2mm  = 0.002;    %%% mm / pixel
-% stress  = [0 100 200 300 400 500 600 650 675 700 725 750 775 800 825 850 875];
+% samY    = [45 57 69 81 97 109 121 133 145 155 168 180 192 204 217 228 241 253 265 277 289 301 313 325 337 348 361 373 385 397 409 421 437 449 461 477 489 501; ...
+%     0 0.002 0.010 0.017 0.076 0.108 0.114 0.120 0.126 0.132 0.138 0.140 0.144 0.146 0.150 0.154 0.156 0.162 0.166 0.170 0.176 0.182 0.186 0.190 0.196 0.202 0.202 0.212 0.216 0.222 0.226 0.224 0.218 0.208 0.198 0.174 0.138 0.076; ...
+%     19 46 46 94 195 295 316 339 359 379 390 399 408 416 421 428 432 436 440 442 442 449 449 453 456 460 457 464 470 474 474 450 400 350 300 201 102 16];
+
+%%% CU %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+pname   = 'W:\Miller_June13\DIC';
+froot   = 'Ti64_State4_';
+fext    = 'tif';
+ndigits = 5;
+fnum    = [1142 1147 1148 1149 1150 1151 1153 1154 1155 1156 1157 1158 1159 1160 1161 1162 1163];
+flist   = cell(length(fnum),1);
+padding = '0';
+pix2mm  = 0.002;    %%% mm / pixel
+gauge_length	= 0.354*25.4;
+stress  = [0 100 200 300 400 500 600 650 675 700 725 750 775 800 825 850 875];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 for i = 1:1:length(fnum)
     if fnum(i) < 0
         error('file number must be larger than or equal to 0')
     else
-        flist{i,1}  = [froot, ...
-            sprintf(['%0', num2str(ndigits), 'd'], fnum(i)), ...
-            '.', fext];
-        
 %         flist{i,1}  = [froot, ...
-%             num2str(stress(i)), 'MPa_', ...
 %             sprintf(['%0', num2str(ndigits), 'd'], fnum(i)), ...
 %             '.', fext];
+        
+        flist{i,1}  = [froot, ...
+            num2str(stress(i)), 'MPa_', ...
+            sprintf(['%0', num2str(ndigits), 'd'], fnum(i)), ...
+            '.', fext];
     end
 end
 
@@ -112,33 +113,33 @@ imdata0 = imread(pfname0);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% MSU %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% ROI
-delta_h = 7;        % Spacing between control points
-delta_v = 7;        % Spacing between control points
-% Hctr    = 1462;     % Center point in horizontal direction
-% Vctr    = 699;      % Center point in vertical direction
-% Hctr    = 1470;     % Center point in horizontal direction
-% Vctr    = 808;      % Center point in vertical direction
-Hctr    = 1436;     % Center point in horizontal direction
-Vctr    = 820;      % Center point in vertical direction
-ws_h    = 10;       % The control points go from (-ws,-ws) to (ws,ws)
-ws_v    = 20;       % The control points go from (-ws,-ws) to (ws,ws)
+% delta_h = 7;        % Spacing between control points
+% delta_v = 7;        % Spacing between control points
+% % Hctr    = 1462;     % Center point in horizontal direction
+% % Vctr    = 699;      % Center point in vertical direction
+% % Hctr    = 1470;     % Center point in horizontal direction
+% % Vctr    = 808;      % Center point in vertical direction
+% Hctr    = 1436;     % Center point in horizontal direction
+% Vctr    = 820;      % Center point in vertical direction
+% ws_h    = 10;       % The control points go from (-ws,-ws) to (ws,ws)
+% ws_v    = 20;       % The control points go from (-ws,-ws) to (ws,ws)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% CU %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% ROI
-% delta_h = 10;        % Spacing between control points
-% delta_v = 20;        % Spacing between control points
-% % Hctr    = 1238;     % Center point in horizontal direction
-% % Vctr    = 1163;     % Center point in vertical direction
-% % Hctr    = 1249;     % Center point in horizontal direction
-% % Vctr    = 908;      % Center point in vertical direction
-% % Hctr    = 1270;     % Center point in horizontal direction
-% % Vctr    = 1573;      % Center point in vertical direction
+delta_h = 7;        % Spacing between control points
+delta_v = 10;        % Spacing between control points
 % Hctr    = 1238;     % Center point in horizontal direction
-% Vctr    = 1036;      % Center point in vertical direction
-% ws_h    = 11;       % The control points go from (-ws,-ws) to (ws,ws)
-% ws_v    = 41;       % The control points go from (-ws,-ws) to (ws,ws)
+% Vctr    = 1163;     % Center point in vertical direction
+% Hctr    = 1249;     % Center point in horizontal direction
+% Vctr    = 908;      % Center point in vertical direction
+% Hctr    = 1270;     % Center point in horizontal direction
+% Vctr    = 1573;      % Center point in vertical direction
+Hctr    = 1238;     % Center point in horizontal direction
+Vctr    = 1036;      % Center point in vertical direction
+ws_h    = 30;       % The control points go from (-ws,-ws) to (ws,ws)
+ws_v    = 80;       % The control points go from (-ws,-ws) to (ws,ws)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 h_im    = -(ws_h*delta_h):delta_h:(ws_h*delta_h);
@@ -205,6 +206,7 @@ for i = 2:1:length(fnum)
     % So, the y-coordinate is flipped.
     disp_h  = (imdata_curr_pts(:,1) - imdata_prev_pts(:,1));
     disp_v  = (-(imdata_curr_pts(:,2) - imdata_prev_pts(:,2)));
+    
     hc  = imdata_prev_pts(:,1);
     vc  = num_v-imdata_prev_pts(:,2);
     
@@ -262,11 +264,10 @@ for i = 2:1:length(fnum)
     axis equal tight off
     title('Displacement')
     hold off
-    
     %%%%%%%%%%%%%%%%%%%%%%%%
     
     %%%%%%%%%%%%%%%%%%%%%%%%
-    % Plot du/dh, dv/dv, SPHEAR, SPIN
+    % Plot du/dh, dv/dv, SHEAR, SPIN
     figure(200)
     subplot(1,3,1)
     plot(fnum(1:i), dg(1:i,1), 'bo-')
@@ -300,13 +301,13 @@ for i = 2:1:length(fnum)
     hold off
 end
 
-% Plot du/dh, dv/dv, SPHEAR, SPIN
+% Plot du/dh, dv/dv, SHEAR, SPIN
 figure(200)
 subplot(1,3,1)
 plot(fnum, dg(:,1), 'bo-')
 hold on
 plot(fnum, dg(:,2), 'go-')
-plot(samY(1,:), -samY(2,:), 'ko')
+% plot(samY(1,:), -samY(2,:), 'ko')
 legend('ave-u', 'ave-v', 'samY', 'Location', 'NorthWest')
 % legend('ave-u', 'ave-v', 'Location', 'NorthWest')
 xlabel('image sequence number')
@@ -333,7 +334,9 @@ xlabel('image sequence number')
 ylabel('mean %-diff')
 
 figure(300)
-plot(dg(:,6), stress, 'ko-')
+plot(dg(:,2)./gauge_length, stress, 'ko-')
+hold on
+plot(dg(:,6), stress, 'bo-')
 xlabel('axial strain (-)')
 ylabel('axial stress (MPa)')
 hold off
