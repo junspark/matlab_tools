@@ -11,26 +11,8 @@ clc
 % 3. EXAMPLE IMAGES PROVIDED BY PROF. A. BEAUDOIN AT UIUC
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% DIC IMAGE SERIES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% UIUC EXAMPLE %%%%%%%%%%%%%%%%%%%%%
-% pname   = '/net/s1dserv/export/s1-idb/park_jul2013/DIC4Jun/smallTensileYield';
-% pname   = 'W:\park_jul2013\DIC4Jun\smallTensileYield';
-% froot   = 'smallTensYield';
-% fext    = 'tif';
-% ndigits = 4;
-% fini    = 1;
-% ffin    = 229;          % 229 IS MAX
-% finc    = 1;
-% fnum    = fini:finc:ffin;
-% flist   = cell(length(fnum),1);
-% padding = '0';
-% pix2mm  = 0.002;    %%% mm / pixel - THIS IS DUMMY
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %%% MSU %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-pname   = '/net/s1dserv/export/s1-idb/park_jul2013/DIC4Jun/DIC';
+% pname   = '/net/s1dserv/export/s1-idb/park_jul2013/DIC4Jun/DIC';
 pname   = 'W:/park_jul2013/DIC4Jun/DIC';
 froot   = 'DIC_';
 fext    = 'tif';
@@ -54,13 +36,18 @@ for i = 1:1:length(fnum)
         flist{i,1}  = [froot, ...
             sprintf(['%0', num2str(ndigits), 'd'], fnum(i)), ...
             '.', fext];
-        
-%         flist{i,1}  = [froot, ...
-%             num2str(stress(i)), 'MPa_', ...
-%             sprintf(['%0', num2str(ndigits), 'd'], fnum(i)), ...
-%             '.', fext];
     end
 end
+
+% for i = 1:1:size(samY,2)
+%     if fnum(i) < 0
+%         error('file number must be larger than or equal to 0')
+%     else
+%         flist{i,1}  = [froot, ...
+%             sprintf(['%0', num2str(ndigits), 'd'], samY(1,i)), ...
+%             '.', fext];
+%     end
+% end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% DEFINE ROI & CONTROL POINTS
@@ -71,45 +58,26 @@ pfname0 = fullfile(pname, fname0);
 imdata0 = imread(pfname0);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%% UIUC EXAMPLE %%%%%%%%%%%%%%%%%%%%%
-% %%% ROI1
-% delta_h = 5;        % Spacing between control points
-% delta_v = 5;        % Spacing between control points
-% Hctr    = 640;      % Center point in horizontal direction
-% Vctr    = 512;      % Center point in vertical direction
-% ws_h    = 11;       % The control points go from (-ws,-ws) to (ws,ws)
-% ws_v    = 11;       % The control points go from (-ws,-ws) to (ws,ws)
-% 
-% %%% ROI2
-% delta_h = 25;        % Spacing between control points
-% delta_v = 25;        % Spacing between control points
-% Hctr    = 640;      % Center point in horizontal direction
-% Vctr    = 512;      % Center point in vertical direction
-% ws_h    = 11;       % The control points go from (-ws,-ws) to (ws,ws)
-% ws_v    = 11;       % The control points go from (-ws,-ws) to (ws,ws)
-% 
-% %%% ROI3
-% delta_h = 25;        % Spacing between control points
-% delta_v = 25;        % Spacing between control points
-% Hctr    = 512;      % Center point in horizontal direction
-% Vctr    = 512;      % Center point in vertical direction
-% ws_h    = 11;       % The control points go from (-ws,-ws) to (ws,ws)
-% ws_v    = 11;       % The control points go from (-ws,-ws) to (ws,ws)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% MSU %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% ROI
-delta_h = 7;        % Spacing between control points
-delta_v = 7;        % Spacing between control points
-% Hctr    = 1462;     % Center point in horizontal direction
-% Vctr    = 699;      % Center point in vertical direction
-% Hctr    = 1470;     % Center point in horizontal direction
-% Vctr    = 808;      % Center point in vertical direction
+% Hctr    = 1432;     % Center point in horizontal direction
+% Vctr    = 799;      % Center point in vertical direction
+% delta_h = 10;        % Spacing between control points
+% delta_v = 10;        % Spacing between control points
+% ws_h    = 50;       % The control points go from (-ws,-ws) to (ws,ws)
+% ws_v    = 15;       % The control points go from (-ws,-ws) to (ws,ws)
 Hctr    = 1436;     % Center point in horizontal direction
 Vctr    = 820;      % Center point in vertical direction
+delta_h = 5;        % Spacing between control points
+delta_v = 5;        % Spacing between control points
 ws_h    = 10;       % The control points go from (-ws,-ws) to (ws,ws)
 ws_v    = 20;       % The control points go from (-ws,-ws) to (ws,ws)
+% Hctr    = 1470;     % Center point in horizontal direction
+% Vctr    = 808;      % Center point in vertical direction
+% delta_h = 5;        % Spacing between control points
+% delta_v = 5;        % Spacing between control points
+% ws_h    = 10;       % The control points go from (-ws,-ws) to (ws,ws)
+% ws_v    = 20;       % The control points go from (-ws,-ws) to (ws,ws)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 h_im    = -(ws_h*delta_h):delta_h:(ws_h*delta_h);
@@ -160,7 +128,6 @@ for i = 2:1:length(fnum)
     
     % Read in the next image
     pfname      = fullfile(pname, flist{i,1});  %%% LOAD INITIAL STATE DIC IMAGE
-    
     imdata_curr = imread(pfname);
     
     % Use the cpcorr function of MATLAB to compute the displacement of the
@@ -184,8 +151,10 @@ for i = 2:1:length(fnum)
     % Develop the displacement field using least squares
     % EQ 9 in Meas. Sci. Technol. 20 (2009) 062001
     A       = [ones(length(hc), 1), hc, vc];
-    uCoef   = lsqr(A,disp_h);
-    vCoef   = lsqr(A,disp_v);
+    % uCoef   = lsqr(A,disp_h);
+    % vCoef   = lsqr(A,disp_v);
+    uCoef   = A\disp_h;
+    vCoef   = A\disp_v;
     
     % Save the displacement gradient terms, recovered from the least squares fit
     if i == 1
@@ -237,9 +206,8 @@ for i = 2:1:length(fnum)
     plot(fnum(1:i), dg(1:i,1), 'bo-')
     hold on
     plot(fnum(1:i), dg(1:i,2), 'go-')
-    % plot(samY(1,:), -samY(2,:), 'ko')
-    legend('ave-u', 'ave-v', 'Location', 'NorthWest')
-    % legend('ave-u', 'ave-v', 'samY', 'Location', 'NorthWest')
+    plot(samY(1,:), -samY(2,:), 'ko')
+    legend('ave-u', 'ave-v', 'samY', 'Location', 'NorthWest')
     xlabel('image sequence number')
     ylabel('displacement (mm)')
     hold off
@@ -263,6 +231,22 @@ for i = 2:1:length(fnum)
     xlabel('image sequence number')
     ylabel('mean %-diff')
     hold off
+    
+    figure(400)
+    subplot(1,2,1)
+    imagesc(reshape(disp_h', 2*ws_v + 1, 2*ws_h + 1));
+    title('displacement - horizontal')
+    axis equal tight off
+    colorbar vert
+    hold off
+    
+    subplot(1,2,2)
+    imagesc(reshape(disp_v', 2*ws_v + 1, 2*ws_h + 1));
+    title('displacement - vertical')
+    axis equal tight off
+    colorbar vert
+    hold off
+    % pause
 end
 
 % Plot du/dh, dv/dv, SHEAR, SPIN
@@ -271,9 +255,8 @@ subplot(1,3,1)
 plot(fnum, dg(:,1), 'bo-')
 hold on
 plot(fnum, dg(:,2), 'go-')
-% plot(samY(1,:), -samY(2,:), 'ko')
-% legend('ave-u', 'ave-v', 'samY', 'Location', 'NorthWest')
-legend('ave-u', 'ave-v', 'Location', 'NorthWest')
+plot(samY(1,:), -samY(2,:), 'ko')
+legend('ave-u', 'ave-v', 'samY', 'Location', 'NorthWest')
 xlabel('image sequence number')
 ylabel('displacement (mm)')
 hold off
@@ -297,10 +280,19 @@ legend('u-error','v-error','Location','NorthWest')
 xlabel('image sequence number')
 ylabel('mean %-diff')
 
+stress  = samY(3,:)';
+strain  = zeros(size(samY,2),1);
+for i = 1:1:size(samY,2)
+    idx = find(samY(1,i) == fnum);
+    if ~isempty(idx)
+        strain(i)   = dg(idx,3);
+    else
+        strain(i)   = nan;
+    end
+end
+
 figure(300)
-plot(dg(:,2)./gauge_length, stress, 'ko-')
-hold on
-plot(dg(:,6), stress, 'bo-')
+plot(strain, stress, 'ko-')
 xlabel('axial strain (-)')
 ylabel('axial stress (MPa)')
 hold off
