@@ -1,5 +1,5 @@
 function BuildESG(instr, cakeParms, polImgCor)
-% BuildESG - builds ESB file for MAUD input
+% BuildESG - builds ESG file for MAUD input
 %
 %   USAGE:
 %
@@ -12,18 +12,18 @@ function BuildESG(instr, cakeParms, polImgCor)
 %
 %   cakeParms
 %           is the structure array that defines the caking parameters
-% 
+%
 %   polImgCor
 %           is the caked data generated using instr and cakeParms
 %
 %   OUTPUT:  none
 %
-r=polImgCor.radius;
-I=polImgCor.intensity;
-fnameESG=[instr.fileName '.esg'];
+r   = polImgCor.radius;
+I   = polImgCor.intensity;
+fnameESG    = [instr.fileName '.esg'];
 disp(['writing ', fnameESG])
 fid = fopen(fnameESG,'w');
-A={'_pd_block_id noTitle|#0';
+A   = {'_pd_block_id noTitle|#0';
     '';
     '_diffrn_detector Image Plate';
     '_diffrn_detector_type Image Plate';
@@ -47,6 +47,7 @@ A={'_pd_block_id noTitle|#0';
     'loop_';
     '_pd_proc_2theta_corrected';
     '_pd_calc_intensity_total';};
+
 for yyy=1:size(A,1);
     fprintf(fid, '%s', A{yyy});
     fprintf(fid, '\n');
