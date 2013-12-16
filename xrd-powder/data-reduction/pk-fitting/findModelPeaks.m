@@ -61,9 +61,7 @@ for ii=1:length(material.latParm)
     TTH=[TTH; tth];
 end
 
-
-material.tth=TTH;
-
+material.tth    = TTH;
 
 figure(1);
 clf;
@@ -88,7 +86,4 @@ plot(polImg.radius',polImg.intensity','-.');
 ylabel('Intensity','FontSize',14,'FontWeight','Bold');
 xlabel('Radial Distance (pixels)','FontSize',14,'FontWeight','Bold');
 A=gca;
-% get(A);
 set(A,'FontSize',14,'FontWeight','Bold');
-
-

@@ -1,24 +1,19 @@
 function [f, Jac] = pkpseudoVoigt(p, x)
-% pkpseudoVoigt - peak profile function Lorentzian.  Refer to Rietveld
-% Analysis text (Young) for more details.  The function is of the following
-% form.
-%
-%   f = A*(c1^.5/Gamma/pi)./(1 + c1*x^2);
-%   c0    : constant 4
-%   A     : intensity
-%   x     : (tth-tth_peak)/Gamma
-%   Gamma : FWHM
+% pkpseudoVoigt - peak profile function pseudo Voigt.  Refer to Rietveld
+% Analysis text (Young) for more details. This is a mix of Guassian and
+% Lorentzian functions.
 %
 %   USAGE:
 %
-%   [f, Jac] = pkGaussian(p, x)
+%   [f, Jac] = pkpseudoVoigt(p, x)
 %
 %   INPUT:
 %   p
 %       parameters for a peak.
 %       p(1): amplitude
 %       p(2): gamma (~width, FWHM)
-%       P(3): peak position
+%       p(4): mixing parameter between Gaussian and Lorentzian
+%       P(4): peak position
 %
 %   x
 %       x coordinates typically in 2 theta, mm, or pixels
