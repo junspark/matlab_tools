@@ -4,7 +4,7 @@
 %-------------------- User Input
 %
 fr_refine   =    4;  % refinement level on FR
-sp_refine   =    2;  % refinement level on sphere
+sp_refine   =    15;  % refinement level on sphere
 per_fiber   = 1000;  % points per fiber
 nHarm       = 130;   % number of harmonics
 %
@@ -34,10 +34,10 @@ sph.crd = UnitVector(sph.crd);
 %
 wscub = Workspace(cfr, sph, wsopts{:});
 
-% [dh, eVals] = DiscreteHarmonics(wscub.frmesh, nHarm);
-% wscub.frmesh.dh     = dh;
-% wscub.frmesh.eVals  = eVals;
+[dh, eVals] = DiscreteHarmonics(wscub.frmesh, nHarm);
+wscub.frmesh.dh     = dh;
+wscub.frmesh.eVals  = eVals;
 
-% save wscub wscub wsopts
+save wscub wscub wsopts
 
 PlotFR(wscub.frmesh, ones(wscub.frmesh.numind,1), 'ShowMesh', 'on')
