@@ -1,5 +1,6 @@
 function [xdata, ydata] = ReadEDDData(pfname, varargin)
-% PlotSPF - plot point data on sphere
+% ReadEDDData - read in energy dispersive diffraction data from Canberra
+% detector
 %
 %   USAGE:
 %
@@ -27,7 +28,7 @@ function [xdata, ydata] = ReadEDDData(pfname, varargin)
 
 % default options
 optcell = {...
-    'Channel2Energy', [1 1], ...
+    'Channel2Energy', [1 0], ...
     };
 
 % update option
