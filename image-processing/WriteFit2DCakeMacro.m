@@ -71,11 +71,29 @@ for i = 1:1:ni
             'INPUT'
             [ImageNames{i}]
             'BINARY'
+            'X-PIXELS'
+            num2str(2048)
+            'Y-PIXELS'
+            num2str(2048)
+            'DATA TYPE'
+            'INTEGER (2-BYTE)'
+            'SIGNED'
+            'NO'
+            'BYTE SWAP'
+            'NO'
+            'STARTING BYTE'
+            num2str(8193)
             'O.K.'
             'DARK CURRENT'
             'YES'
             'DC FILE'
             DarkName
+            'FLAT-FIELD'
+            'NO'
+            'FF SCALE'
+            'NO'
+            'SPATIAL DIS.'
+            'NO'
             'O.K.'
             'BINARY'
             'CAKE'
