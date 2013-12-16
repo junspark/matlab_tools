@@ -13,13 +13,12 @@ clc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% DIC IMAGE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% pname   = '/net/s1dserv/export/s1-idb/park_jul2013/DIC4Jun/DIC';
-pname   = 'W:\park_jul2013\DIC4Jun\DIC';
-fname0  = 'DIC_00045.tif';          % Reference state
+pname   = 'C:/Users/parkjs/Documents/Projects/Ops/UserSupport/PUP_AFRL_201310/DIC';
+fname0  = 'Ti7_00018.tif';          % Reference state
 pfname0 = fullfile(pname, fname0);
 imdata0 = imread(pfname0);
 
-fname   = 'DIC_00101.tif';          % Current state
+fname   = 'Ti7_04495.tif';          % Current state
 pfname  = fullfile(pname, fname);
 imdata  = imread(pfname);
 
@@ -28,10 +27,10 @@ pix2mm  = 0.002;    %%% mm / pixel
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% ROI
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ri  = 593;
-rf  = 709;
-ci  = 150;
-cf  = 870;
+ri  = 881;
+rf  = 1278;
+ci  = 560;
+cf  = 2320;
 x   = (ci:1:cf) - ci;
 x   = x*pix2mm;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,6 +54,7 @@ hold on
 line(c_box, r_box)
 xlabel('y')
 ylabel('x')
+colorbar vert
 hold off
 
 subplot(1,2,2)
@@ -66,6 +66,7 @@ hold on
 line(c_box, r_box)
 xlabel('y')
 ylabel('x')
+colorbar vert
 hold off
 
 f2  = figure(2);
