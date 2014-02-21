@@ -31,13 +31,15 @@ for jj=1:cakeParms.bins(1)
     Mixkeep=[];
     Gkeep=[];
     
-    ydata=msbackadj(xdata',polImg.intensity(jj,:)','StepSize',StepSize,'WindowSize',WindowSize,'ShowPlot','false','SmoothMethod','rloess');
+    ydata   = polImg.intensity(jj,:)';
+    % ydata   = msbackadj(xdata',polImg.intensity(jj,:)','StepSize',StepSize,'WindowSize',WindowSize,'ShowPlot','false','SmoothMethod','rloess');
     
     for ii=1:size(modelPeakBounds,1)
-        [aa bb]=min(abs(polImg.radius(jj,:)-modelPeakBounds(ii,1)/instr.pixelSize));
-        [cc dd]=min(abs(polImg.radius(jj,:)-modelPeakBounds(ii,2)/instr.pixelSize));
-        [A Aind]=max(ydata(bb:dd));
-        rng=bb:dd;
+        [aa bb] = min(abs(polImg.radius(jj,:)-modelPeakBounds(ii,1)/instr.pixelSize));
+        [cc dd] = min(abs(polImg.radius(jj,:)-modelPeakBounds(ii,2)/instr.pixelSize));
+        
+        [A Aind]    = max(ydata(bb:dd));
+        rng = bb:dd;
         
         opts = optimset(...
             'Display', 'off', ...
@@ -49,17 +51,15 @@ for jj=1:cakeParms.bins(1)
             'Display','off' ...
             );
         
-        x0=[A .4 6 xdata(rng(Aind)) 0 0];
-        lb=[0 0 0 xdata(rng(Aind))-20 -inf -inf];
-        ub=[A*10 1 10 xdata(rng(Aind))+20 inf inf];
-        %         lb=[0 0 0 xdata(rng(1)) -inf -inf];         % changed by Atish
-        %         ub=[A*10 1 10 xdata(rng(end)) inf inf];     % changed by Atish
-        xOut=lsqcurvefit(@peakRefinementP,x0,xdata(rng),ydata(rng)',lb,ub,opts);
+        x0  = [A 6 .4 xdata(rng(Aind)) 0 0];
+        lb  = [0 0 0 xdata(rng(Aind))-20 -inf -inf];
+        ub  = [A*10 10 1 xdata(rng(Aind))+20 inf inf];
+        xOut    = lsqcurvefit(@peakRefinementP, x0, xdata(rng), ydata(rng)', lb, ub, opts);
         
-        Akeep=[Akeep xOut(1)];      % peak intensity or amplitude
-        Mixkeep=[Mixkeep xOut(2)];  % mixing parameter
-        Gkeep=[Gkeep xOut(3)];      % FWHM (in pixels)
-        lockeep=[lockeep xOut(4)];  % location for the refined peak (in pixels)
+        Akeep   = [Akeep xOut(1)];      % peak intensity or amplitude
+        Gkeep   = [Gkeep xOut(2)];      % FWHM (in pixels)
+        Mixkeep = [Mixkeep xOut(3)];    % mixing parameter
+        lockeep = [lockeep xOut(4)];    % location for the refined peak (in pixels)
         
         figure(100)
         clf
@@ -72,15 +72,14 @@ for jj=1:cakeParms.bins(1)
         ylabel('intensity (cts)')
         pause(0.1)
     end
-    peakInfo.amp{jj}=Akeep;
-    peakInfo.mix{jj}=Mixkeep;
-    peakInfo.G{jj}=Gkeep;
-    peakInfo.loc{jj}=lockeep;
+    peakInfo.amp{jj}    = Akeep;
+    peakInfo.mix{jj}    = Mixkeep;
+    peakInfo.G{jj}      = Gkeep;
+    peakInfo.loc{jj}    = lockeep;
 end
 
-
-peakInfo.amp=cell2mat(peakInfo.amp');
-peakInfo.mix=cell2mat(peakInfo.mix');
-peakInfo.G=cell2mat(peakInfo.G');
-peakInfo.loc=cell2mat(peakInfo.loc');
+peakInfo.amp    = cell2mat(peakInfo.amp');
+peakInfo.mix    = cell2mat(peakInfo.mix');
+peakInfo.G      = cell2mat(peakInfo.G');
+peakInfo.loc    = cell2mat(peakInfo.loc');
 
