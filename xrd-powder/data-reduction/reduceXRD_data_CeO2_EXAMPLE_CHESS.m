@@ -3,7 +3,7 @@ close all
 clc
 
 %%% DATA REDUCTION PARAMETERS
-rebinImg        = 0;
+rebinImg        = 1;
 refitPeaks      = 1;
 generateESG     = 1;
 GE              = 1;
@@ -164,6 +164,7 @@ for i = 1:1:fileStps
         if i == 1
             mesh    = buildMeshXRD(imageData);
         end
+        return
         polImg  = reBin(mesh,instr,cakeParms,imageData);
         
         save([file.path b '.polImg.mat'],'polImg');
