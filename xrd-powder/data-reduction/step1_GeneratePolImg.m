@@ -21,33 +21,7 @@ XRDIMAGE.Calib.pname        = '.\example\APS';
 XRDIMAGE.Calib.fbase        = 'LaB6_';
 XRDIMAGE.Calib.fnumber      = [4116; 4117]; % 4116 / 4117
 
-%%% INSTRUMENT PARAMETERS
-XRDIMAGE.Instr.energy       = 61.999;       % keV
-XRDIMAGE.Instr.wavelength   = keV2Angstrom(XRDIMAGE.Instr.energy);  % wavelength (Angstrom)
-XRDIMAGE.Instr.detectorsize = 409.6;        % mm
-XRDIMAGE.Instr.pixelsize    = 0.2;          % mm
-XRDIMAGE.Instr.distance     = 988.676586;   % mm
-XRDIMAGE.Instr.centers      = [-253.341737 , -103.243501]; % center offsets x & y (um)
-XRDIMAGE.Instr.gammaX       = -0.004707;    % rad
-XRDIMAGE.Instr.gammaY       = -0.003608;    % rad
-XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
-
-% RADIAL CORRECTION
-% 0 : no correction
-% 1 : constant radial offset
-% 2 : PROPOSED BY ISSN 0909-0495 LEE
-XRDIMAGE.Instr.dettype  = '2a';
-
-% 0 : []
-% 1 : constant value
-% 2 : [a1 a2 n1 n2 rhod]
-XRDIMAGE.Instr.detpars  = [ ...
-    -2.441183945741672e-04 ...
-    -6.821055078203234e-04 ...
-    2.420725306801212 ...
-    1.907763397879183 ...
-    2.607928521845170e+02 ...
-    1.997318743467190];
+%%% INSTRUMENT PARAMETERS GETS LOADED
 
 %%% CAKE PARAMETERS
 XRDIMAGE.CakePrms.bins(1)   = 72;           % number of azimuthal bins
@@ -87,13 +61,13 @@ XRDIMAGE.Material.tth       = tth;
 XRDIMAGE.Material.d_spacing = d;
 
 %%% DATA REDUCTION FLAGS
-Analysis_Options.make_polimg    = 0;
+Analysis_Options.make_polimg    = 1;
 Analysis_Options.save_polimg    = 1;
 Analysis_Options.fits_spectra   = 0;
-Analysis_Options.save_fits      = 1;
-Analysis_Options.find_instrpars = 1;
-Analysis_Options.save_instrpars = 1;
-Analysis_Options.find_detpars	= 1;
+Analysis_Options.save_fits      = 0;
+Analysis_Options.find_instrpars = 0;
+Analysis_Options.save_instrpars = 0;
+Analysis_Options.find_detpars	= 0;
 
 %%% PK FITTING OPTIONS
 Analysis_Options.PkFitOptions   = optimset(...
@@ -288,84 +262,6 @@ if Analysis_Options.fits_spectra
         else
             disp('###########################')
             disp(sprintf('Not saving peak fits for %s\n', pfname{i,1}))
-        end
-    end
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% APPLY/FIND GEOMETRICAL MODEL
-if Analysis_Options.find_instrpars
-    for i = 1:1:numimg
-        pfname_polimage = [pfname{i,1}, '.polimg.mat'];
-        pfname_pkfit    = [pfname{i,1}, '.pkfit.mat'];
-        pfname_instr    = [pfname{i,1}, '.instr.mat'];
-        
-        disp('###########################')
-        disp(sprintf('Looking at %s to find instrument parameters.', pfname{i,1}))
-        disp('###########################')
-        
-        disp(sprintf('Loading peak fits in %s\n', pfname_pkfit))
-        load(pfname_pkfit)
-        
-        p0  = [...
-            XRDIMAGE.Instr.centers, ...
-            XRDIMAGE.Instr.distance, ...
-            XRDIMAGE.Instr.gammaX, ...
-            XRDIMAGE.Instr.gammaY, ...
-            XRDIMAGE.Instr.detpars];
-        
-        dtth0   = ApplyGeometricModel(p0);
-        tth0    = tth([XRDIMAGE.Material.pkidx{:}])';
-        tth0    = repmat(tth0, 1, size(dtth0, 2));
-        strain0 = sind(tth0)./sind(tth0 - dtth0) - 1;
-        
-        p	= lsqnonlin(@ApplyGeometricModel, p0, [], [], Analysis_Options.InstrPrmFitOptions);
-        
-        disp('Instrument parameter optimization results')
-        disp('Update parameters accordingly')
-        disp(sprintf('XRDIMAGE.Instr.centers  : %f , %f', p(1), p(2)))
-        disp(sprintf('XRDIMAGE.Instr.distance : %f', p(3)))
-        disp(sprintf('XRDIMAGE.Instr.gammaX   : %f', p(4)))
-        disp(sprintf('XRDIMAGE.Instr.gammaY   : %f', p(5)))
-        disp(sprintf('Detector distortion prm : %f\n', p(6:end)))
-        
-        dtth    = ApplyGeometricModel(p);
-        strain  = sind(tth0)./sind(tth0 - dtth) - 1;
-        
-        figure(100)
-        subplot(1,2,1)
-        imagesc(strain0')
-        colorbar vert
-        title('pseudo-strain due to p0')
-        xlabel('hkl id')
-        ylabel('azimuthal bin number')
-        
-        subplot(1,2,2)
-        imagesc(strain')
-        colorbar vert
-        title('pseudo-strain due to p')
-        xlabel('hkl id')
-        ylabel('azimuthal bin number')
-        
-        disp('###########################')
-        disp(sprintf('mean pseudo-strain using p0 : %f', mean(abs(strain0(:)))))
-        disp(sprintf('mean pseudo-strain using p  : %f\n', mean(abs(strain(:)))))
-        
-        %%% ASSIGN NEW INSTRUMENT PARAMETERS USING OPTIMIZATION RESULTS
-        Instr   = XRDIMAGE.Instr;
-        Instr.centers   = p(1:2);
-        Instr.distance  = p(3);
-        Instr.gammaX    = p(4);
-        Instr.gammaY    = p(5);
-        Instr.detpars   = p(6:end);
-        
-        if Analysis_Options.save_instrpars
-            disp('###########################')
-            disp(sprintf('Saving optimized innstrument parameters in %s\n', pfname_instr))
-            save(pfname_instr, 'Instr')
-        else
-            disp('###########################')
-            disp(sprintf('NOT saving optimized innstrument parameters for %s\n', pfname{i,1}))
         end
     end
 end
