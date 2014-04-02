@@ -5,21 +5,22 @@ clc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% USER INPUT
 %%% LOCATION AND NAME OF DARKFILE
-DataReductionPrms.DarkPath  = '.';
+DataReductionPrms.DarkPath  = 'C:\Users\parkjs\Documents\GitHub\matlab_tools\xrd-powder\data-reduction\example\APS';
 DataReductionPrms.DarkName  = { ...
-    'CeO2_00680.ge2'; ...
+    'LaB6_04115.ge2'; ...
     };
 
 %%% LOCATION AND NAME OF STRAIN IMAGES - PROVIDE A LIST OF IMAGE FILE NAMES
-DataReductionPrms.ImagePath     = '.';
+DataReductionPrms.ImagePath     = 'C:\Users\parkjs\Documents\GitHub\matlab_tools\xrd-powder\data-reduction\example\APS';
 DataReductionPrms.ImageNames    = { ...
-    'CeO2_00679.ge2'; ...
+    'LaB6_04116.ge2'; ...
+    'LaB6_04117.ge2'; ...
     };
 
 %%% LOCATION AND NAME OF FIT2D MACRO
 DataReductionPrms.MacroPath = '.';
 DataReductionPrms.MacroName = 'fit2dmacro';
-DataReductionPrms.SPRPath   = '.';
+DataReductionPrms.SPRPath   = 'C:\Users\parkjs\Documents\GitHub\matlab_tools\xrd-powder\data-reduction\example\APS';
 
 %%% LOCATION OF TTH RESULTS
 DataReductionPrms.TTHPath   = '.';
