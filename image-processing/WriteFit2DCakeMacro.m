@@ -1,45 +1,67 @@
 function [pfMacro, pfLog] = WriteFit2DCakeMacro(DataReductionPrms)
-% Creates fit2d macro file
-DarkPath    = DataReductionPrms.DarkPath;
-DarkName    = DataReductionPrms.DarkName;
-DarkName    = fullfile(DarkPath, DarkName{1});
+% WriteFit2DCakeMacro - Creates fit2d macro file
+%
+%   USAGE:
+%
+%   [pfMacro, pfLog] = WriteFit2DCakeMacro(DataReductionPrms)
+%
+%   INPUT:
+%
+%   DataReductionPrms
+%       data reduction parameter structure array
+%
+%   OUTPUT:
+% 
+%   pfMacro
+%       path and file name of the macro
+%       
+%   pfLog
+%       path and file name of the macro log
+%
+%   NOTE:
+%       Use WriteFit2DCakeMacro2 for caking SUM / AVE images
+%
 
-ImagePath   = DataReductionPrms.ImagePath;
-ImageNames  = DataReductionPrms.ImageNames;
+DarkPath = DataReductionPrms.DarkPath;
+DarkName = DataReductionPrms.DarkName;
+DarkName = fullfile(DarkPath, DarkName{1});
 
-MacroPath   = DataReductionPrms.MacroPath;
-MacroName   = DataReductionPrms.MacroName;
+ImagePath = DataReductionPrms.ImagePath;
+ImageNames = DataReductionPrms.ImageNames;
 
-SPRPath     = DataReductionPrms.SPRPath;
+MacroPath = DataReductionPrms.MacroPath;
+MacroName = DataReductionPrms.MacroName;
 
-Dsam        = DataReductionPrms.Dsam;
-Lambda      = DataReductionPrms.Lambda;
-centerX     = DataReductionPrms.x0;
-centerY     = DataReductionPrms.y0;
-TiltPlane   = DataReductionPrms.TiltPlane;
-InPlane     = DataReductionPrms.InPlane;
+SPRPath = DataReductionPrms.SPRPath;
 
-pixSize     = DataReductionPrms.PixSize*1e3;
+Dsam = DataReductionPrms.Dsam;
+Lambda = DataReductionPrms.Lambda;
+centerX = DataReductionPrms.x0;
+centerY = DataReductionPrms.y0;
+TiltPlane = DataReductionPrms.TiltPlane;
+InPlane = DataReductionPrms.InPlane;
 
-etaStart    = DataReductionPrms.ETAStart;
-etaEnd      = DataReductionPrms.ETAEnd;
-rhoStart    = DataReductionPrms.RHOInner;
-rhoEnd      = DataReductionPrms.RHOOuter;
-numBinsA    = DataReductionPrms.ETABins;
-numBinsR    = DataReductionPrms.RHOBins;
+pixSize = DataReductionPrms.PixSize*1e3;
+
+etaStart = DataReductionPrms.ETAStart;
+etaEnd = DataReductionPrms.ETAEnd;
+rhoStart = DataReductionPrms.RHOInner;
+rhoEnd = DataReductionPrms.RHOOuter;
+numBinsA = DataReductionPrms.ETABins;
+numBinsR = DataReductionPrms.RHOBins;
 
 ni	= length(ImageNames);
-SPRNames    = cell(ni,1);
+SPRNames = cell(ni,1);
 for i = 1:1:ni
-    SPRNames{i}     = fullfile(SPRPath, [ImageNames{i}, '.spr']);
-    ImageNames{i}   = fullfile(ImagePath, ImageNames{i});
+    SPRNames{i} = fullfile(SPRPath, [ImageNames{i}, '.spr']);
+    ImageNames{i} = fullfile(ImagePath, ImageNames{i});
 end
 
 % create macro file to write
 pfMacro = fullfile(MacroPath, MacroName);
 pfMacro = [pfMacro, '.mac'];
-pfLog   = fullfile(MacroPath, MacroName);
-pfLog   = [pfLog, '.f2dlog'];
+pfLog = fullfile(MacroPath, MacroName);
+pfLog = [pfLog, '.f2dlog'];
 
 fid = fopen(pfMacro, 'w');
 
@@ -49,14 +71,14 @@ header = {...
     '%!*\'
     '%!*\ This is a comment line'};
 for i = 1:1:ni
-    header{end+1}   = ['%!*\ fit2d macro for ', ImageNames{i}];
+    header{end+1} = ['%!*\ fit2d macro for ', ImageNames{i}];
 end
-header{end+1}   = '%!*\';
-header{end+1}   = 'OPEN LOG FILE';
-header{end+1}   = 'NO';
-header{end+1}   = pfLog;
-header{end+1}   = 'EXIT';
-header{end+1}   = 'POWDER DIFFRACTION (2-D)';
+header{end+1} = '%!*\';
+header{end+1} = 'OPEN LOG FILE';
+header{end+1} = 'NO';
+header{end+1} = pfLog;
+header{end+1} = 'EXIT';
+header{end+1} = 'POWDER DIFFRACTION (2-D)';
 
 % write header of the macro file
 for i = 1:length(header)
@@ -233,3 +255,4 @@ for i = 1:length(trailer)
 end
 
 fclose(fid);
+
