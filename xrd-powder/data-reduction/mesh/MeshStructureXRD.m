@@ -1,7 +1,7 @@
 function mesh = MeshStructureXRD(crd, con, numel, qrule)
 % MESHSTRUCTUREXRD - Create mesh structure from mesh data for XRD image
 %   
-%   mesh = MeshStructure(crd, con, numel, eqv)
+%   mesh = MeshStructureXRD(crd, con, numel, eqv)
 %
 %   crd is e x n, the nodal point array 
 %   con is d x m, the connectivity
