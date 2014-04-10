@@ -87,9 +87,9 @@ XRDIMAGE.Material.tth       = tth;
 XRDIMAGE.Material.d_spacing = d;
 
 %%% DATA REDUCTION FLAGS
-Analysis_Options.make_polimg    = 0;
+Analysis_Options.make_polimg    = 1;
 Analysis_Options.save_polimg    = 1;
-Analysis_Options.fits_spectra   = 0;
+Analysis_Options.fits_spectra   = 1;
 Analysis_Options.save_fits      = 1;
 Analysis_Options.find_instrpars = 1;
 Analysis_Options.save_instrpars = 1;
