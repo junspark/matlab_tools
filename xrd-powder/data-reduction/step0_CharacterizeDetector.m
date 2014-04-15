@@ -87,9 +87,9 @@ XRDIMAGE.Material.tth       = tth;
 XRDIMAGE.Material.d_spacing = d;
 
 %%% DATA REDUCTION FLAGS
-Analysis_Options.make_polimg    = 1;
+Analysis_Options.make_polimg    = 0;
 Analysis_Options.save_polimg    = 1;
-Analysis_Options.fits_spectra   = 1;
+Analysis_Options.fits_spectra   = 0;
 Analysis_Options.save_fits      = 1;
 Analysis_Options.find_instrpars = 1;
 Analysis_Options.save_instrpars = 1;
@@ -304,6 +304,10 @@ if Analysis_Options.find_instrpars
         disp(sprintf('Looking at %s to find instrument parameters.', pfname{i,1}))
         disp('###########################')
         
+        disp(sprintf('Loading peak fits in %s\n', pfname_polimage))
+        polimg  = load(pfname_polimage);
+        polimg  = polimg.polimg;
+        
         disp(sprintf('Loading peak fits in %s\n', pfname_pkfit))
         load(pfname_pkfit)
         
@@ -347,9 +351,55 @@ if Analysis_Options.find_instrpars
         xlabel('hkl id')
         ylabel('azimuthal bin number')
         
+        Data    = cell(1, XRDIMAGE.CakePrms.bins(1));
+        for ii=1:1:XRDIMAGE.CakePrms.bins(1)
+            Data{ii}    = [XRDIMAGE.Instr.pixelsize*polimg.radius(ii,:)' polimg.intensity(ii,:)'];
+        end
+        
+        %%% DEPENDS ON WHICH MODEL
+        if strcmp(XRDIMAGE.Instr.dettype, '0')
+            mapped_tth  = GeometricModelXRD0(...
+                XRDIMAGE.Instr.centers./1000, ...
+                XRDIMAGE.Instr.distance, ...
+                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
+                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
+        elseif strcmp(XRDIMAGE.Instr.dettype, '1')
+            mapped_tth  = GeometricModelXRD1(...
+                XRDIMAGE.Instr.centers./1000, ...
+                XRDIMAGE.Instr.distance, ...
+                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
+                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
+        elseif strcmp(XRDIMAGE.Instr.dettype, '2')
+            mapped_tth  = GeometricModelXRD2(...
+                XRDIMAGE.Instr.centers./1000, ...
+                XRDIMAGE.Instr.distance, ...
+                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
+                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
+        elseif strcmp(XRDIMAGE.Instr.dettype, '2a')
+            mapped_tth  = GeometricModelXRD2a(...
+                XRDIMAGE.Instr.centers./1000, ...
+                XRDIMAGE.Instr.distance, ...
+                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
+                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
+        elseif strcmp(XRDIMAGE.Instr.dettype, '2b')
+            mapped_tth  = GeometricModelXRD2b(...
+                XRDIMAGE.Instr.centers./1000, ...
+                XRDIMAGE.Instr.distance, ...
+                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
+                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
+        end
+        
+        figure(101); hold on
+        for ii = 1:1:XRDIMAGE.CakePrms.bins(1)
+            plot(mapped_tth(ii,:), polimg.intensity(ii,:))
+        end
+        hold off
+        
         disp('###########################')
         disp(sprintf('mean pseudo-strain using p0 : %f', mean(abs(strain0(:)))))
         disp(sprintf('mean pseudo-strain using p  : %f\n', mean(abs(strain(:)))))
+        disp(sprintf('std pseudo-strain using p0 : %f', std(strain0(:))))
+        disp(sprintf('std pseudo-strain using p  : %f\n', std(strain(:))))
         
         %%% ASSIGN NEW INSTRUMENT PARAMETERS USING OPTIMIZATION RESULTS
         Instr   = XRDIMAGE.Instr;

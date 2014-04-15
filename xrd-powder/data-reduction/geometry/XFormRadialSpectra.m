@@ -61,13 +61,9 @@ for i = 1:numSpectra
         rhoHatdPrime  = data{i}(:, 1);
     elseif DistType==1
         rhoHatdPrime  = data{i}(:, 1) + DistPars(1);
-    elseif DistType==2
-        f = DistPars(1)*((data{i}(:, 1)/DistPars(7)).^(DistPars(3)))*cosd(DistPars(5)*azim(i)+DistPars(6))...
-            + DistPars(2)*((data{i}(:, 1)/DistPars(7)).^DistPars(4)) + 1;
-        rhoHatdPrime=f.*data{i}(:, 1);
-    elseif DistType==3
-        f = DistPars(1)*((data{i}(:, 1)/DistPars(7)).^(DistPars(3)))*cosd(DistPars(5)*azim(i)+DistPars(6))...
-            + DistPars(2)*((data{i}(:, 1)/DistPars(7)).^DistPars(4)) + 1;
+    elseif (strcmp(DistType, '2')) || strcmp(DistType, '2a') || strcmp(DistType, '2b')
+        f = DistPars(1)*((data{i}(:,1)/DistPars(5)).^(DistPars(3)))*cosd(DistPars(6)*azim(i)) ...
+            + DistPars(2)*((data{i}(:,1)/DistPars(5)).^DistPars(4)) + 1;
         rhoHatdPrime=f.*data{i}(:, 1);
     end
     

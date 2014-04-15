@@ -104,7 +104,7 @@ for i = 1:1:ni
             'BYTE SWAP'
             'NO'
             'STARTING BYTE'
-            num2str(16785409)
+            num2str(8193)
             'O.K.'
             'DARK CURRENT'
             'YES'

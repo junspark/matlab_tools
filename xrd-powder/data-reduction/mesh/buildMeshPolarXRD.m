@@ -1,5 +1,4 @@
 function Ilist=buildMeshPolarXRD(R,V,delTH,qrule)
-% Rlist=zeros(size(V,2)-1,1);
 Ilist=zeros(size(V,2)-1,1);
 
 for jj=1:size(V,1)-1
@@ -7,7 +6,6 @@ for jj=1:size(V,1)-1
     VR=zeros(size(V,2)-1,1);
     AL=zeros(size(V,2)-1,1);
     AR=zeros(size(V,2)-1,1);
-%     Rval=zeros(size(V,2)-1,1);
     
     for ii=1:size(V,2)-1
         vrwL=zeros(1,size(qrule.pts,2));
@@ -30,11 +28,8 @@ for jj=1:size(V,1)-1
         VL(ii)=sum(vrwL);
         AL(ii)=sum(ArwL);
         VR(ii)=sum(vrwR);
-        AR(ii)=sum(ArwR);
-%         Rval(ii)=mean([R(jj,ii) R(jj+1,ii)]);
-        
+        AR(ii)=sum(ArwR); 
     end
     
     Ilist(jj)=(sum(VL)+sum(VR))/(sum(AL)+sum(AR));
-%     Rlist(jj)=mean(Rval);
 end

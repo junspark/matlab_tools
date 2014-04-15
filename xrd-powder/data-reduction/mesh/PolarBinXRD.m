@@ -33,8 +33,8 @@ for ii=1:cakeParms.bins(1)
     msg = sprintf('Processing sector %d of %d', [ii, cakeParms.bins(1)]);
     fprintf(1, 'INFO: %s\n', msg);
     tic;
-    TH=repmat(polImg.azimuth(ii)-360/cakeParms.bins(1)/2:360/cakeParms.bins(1)/numEta:polImg.azimuth(ii)+360/cakeParms.bins(1)/2,size(R,1),1);
-    [x,y]=pol2cart(deg2rad(TH),R);
+    TH  = repmat(polImg.azimuth(ii)-360/cakeParms.bins(1)/2:360/cakeParms.bins(1)/numEta:polImg.azimuth(ii)+360/cakeParms.bins(1)/2,size(R,1),1);
+    [x, y]  = pol2cart(deg2rad(TH),R);
     X=x0+x;
     Y=y0+y;
   
@@ -42,16 +42,16 @@ for ii=1:cakeParms.bins(1)
     for i=1:size(X,1)
         for j=1:size(X,2)
             XY=[X(i,j);Y(i,j)];
-            V(i,j) = DataCoordinates(XY,L, mesh, Ifunc);
+            V(i,j) = DataCoordinates(XY, L, mesh, Ifunc);
         end
     end
     
-    Ilist=buildMeshPolarXRD(R,V,360/cakeParms.bins(1)/numEta,mesh.qrule);
+    Ilist   = buildMeshPolarXRD(R, V, 360/cakeParms.bins(1)/numEta, mesh.qrule);
     
     polImg.radius(:,ii)    = Rlist';
     polImg.intensity(:,ii) = Ilist';
     time20(ii)=toc;
-    msg2 = sprintf('Processing time for sector %d is %1.4f', [ii, time20(ii)]);
+    disp(sprintf('Processing time for sector %d is %1.4f', [ii, time20(ii)]));
 end
 
 polImg.radius=polImg.radius';

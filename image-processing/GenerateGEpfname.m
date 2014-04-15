@@ -3,40 +3,20 @@ function pfname = GenerateGEpfname(ImagePars)
 %
 %   USAGE:
 %
-%   pfname = PlotSPF(ImagePars)
+%   pfname = GenerateGEpfname(ImagePars)
 %
 %   INPUT:
 %
-%   PFpts
-%       pole figure points on the sphere (scattering vectors) (n x 3)
+%   ImagePars
+%       Structure array that contains information about the file name
+%       patterns. Must contain pname (path name), fbase (file name), fnumber(series of file
+%       number), fext (file extension, i.e ge1)
 %
-%   Data
-%       scalar values corresponding to PFpts (n x 1)
-%
-%   These arguments can be followed by a list of
-%   parameter/value pairs which control certain plotting
-%   features.  Options are:
-%
-%   'Title'            title of the figure (default is 'SPF')
-%   'ViewAngle'        angle to view the pole figure from
-%                      default is [-223 26]
-%   'DataRange'        range of the Data to determine the colors
-%                      default is [-1 1]
-%   'xaxis'            label for the x-axis
-%                      default is 'x'
-%   'yaxis'            label for the y-axis
-%                      default is 'y'
-%   'zaxis'            label for the z-axis
-%                      default is 'z'
-%   'ShowSurf'         on|{off}
-%                      to display the PF surface
-%
-%   OUTPUT:  none
-%
-%   NOTE:
-%           This function is similar to PlotPoints
-%
-
+%   OUTPUT:
+% 
+%   pfname
+%       cell structure with the full file names
+% 
 
 numimages   = length(ImagePars.fnumber);
 for i = 1:1:numimages
