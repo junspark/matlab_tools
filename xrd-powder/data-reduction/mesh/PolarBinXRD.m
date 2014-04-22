@@ -46,7 +46,7 @@ for ii=1:cakeParms.bins(1)
         end
     end
     
-    Ilist   = buildMeshPolarXRD(R, V, 360/cakeParms.bins(1)/numEta, mesh.qrule);
+    Ilist   = BuildMeshPolarXRD(R, V, 360/cakeParms.bins(1)/numEta, mesh.qrule);
     
     polImg.radius(:,ii)    = Rlist';
     polImg.intensity(:,ii) = Ilist';
