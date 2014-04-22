@@ -1,5 +1,6 @@
 function [pfMacro, pfLog] = WriteFit2DCakeMacro2(DataReductionPrms)
-% WriteFit2DCakeMacro - Creates fit2d macro file
+% WriteFit2DCakeMacro - Creates fit2d macro file for integrating sum files
+% (REAL 4-BYTE IEEE format).
 %
 %   USAGE:
 %
