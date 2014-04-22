@@ -1,4 +1,4 @@
-function Ilist=buildMeshPolarXRD(R,V,delTH,qrule)
+function Ilist=BuildMeshPolarXRD(R,V,delTH,qrule)
 Ilist=zeros(size(V,2)-1,1);
 
 for jj=1:size(V,1)-1
