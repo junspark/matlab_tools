@@ -1,27 +1,50 @@
-function mesh = BuildMeshXRD(L)
-% BuildMeshXRD -Build mesh crd and con for an XRD image
+function mesh = BuildMeshDetector(Lx, Ly)
+% BuildMeshDetector2 - Build mesh crd and con for an XRD image
 %   
-%   mesh = MeshStructure(L)
+%   mesh = MeshStructure2(Lx, Ly)
 %
-%   L is the number of pixels in the image in the horizontal direction.
-%   This assumes that the image is square and the pixel size in the
-%   horizontal and vertical directions are equal
+%   Lx is the number of pixels in the image in the horizontal direction.
+%   Ly is the number of pixels in the image in the vertical direction.
 %
 %   mesh is a structure with appropriate fields
 %
-%
-numel   = (L-1)*(L-1)*2;
-con     = zeros(3,numel);
-
-for j=1:L-1
-    con(:,1+(L*2-2)*(j-1):(L*2-2)*j)=[...
-        [L*(j-1)+1 reshape(repmat((L*(j-1)+2):(L*(j-1)+L-1),2,1),1,(L-2)*2)  L*j];...
-        reshape([(L*(j-1)+2):(L*j); (L*j+2):(L*j+L)],1,(L-1)*2);...
-        reshape(repmat((L*j+1):(L*j+L-1),2,1),1,(L-1)*2)];
+if nargin == 1
+    disp('square image')
+    Ly = Lx;
 end
-x=repmat(1:L,1,L);
-y=reshape(repmat(1:L,L,1),1,L^2);
-crd=[x;y];
+
+numel   = (Lx - 1) * (Ly - 1) * 2;
+con     = zeros(3, numel);
+
+for i = 1:1:(Ly - 1)
+    idx1    = 1 + 2*(Lx - 1) * ( i - 1 );
+    idx2    = 2*(Lx - 1) * i;
+    
+    xL  = Lx*(i - 1)+1;
+    xR  = Lx*i;
+    xLR = (xL + 1):1:(xR - 1);
+    xLR = repmat(xLR, 2, 1);
+    
+    con(1, idx1: idx2)  = [xL xLR(:)' xR];
+    
+    xL  = Lx*(i - 1) + 2 : 1 : Lx * i;
+    xR  = Lx*i + 2 : 1 : Lx * (i + 1);
+    xLR = [xL; xR];
+    
+    con(2, idx1: idx2)  = xLR(:)';
+    
+    xL  = Lx * i + 1;
+    xR  = Lx * (i + 1) - 1;
+    xLR = xL:xR;
+    xLR = repmat(xLR, 2, 1);
+    con(3, idx1: idx2)  = xLR(:)';
+    
+end
+x   = repmat(1:Lx, 1, Ly);
+y   = repmat(1:Ly, Lx, 1);
+y   = y(:)';
+
+crd = [x;y];
 
 load('qr_trid03p06.mat');
 mesh = MeshStructureXRD(crd, con, numel, qr_trid03p06);
