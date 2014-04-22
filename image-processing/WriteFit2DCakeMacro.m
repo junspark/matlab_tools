@@ -1,5 +1,6 @@
 function [pfMacro, pfLog] = WriteFit2DCakeMacro(DataReductionPrms)
-% WriteFit2DCakeMacro - Creates fit2d macro file
+% WriteFit2DCakeMacro - Creates fit2d macro file for regular GE files. Need
+% to change LINE 108 for appropriate frame number
 %
 %   USAGE:
 %
