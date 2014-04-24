@@ -166,7 +166,6 @@ if Analysis_Options.make_polimg
             disp(sprintf('Not saving polimg for %s', pfname{i,1}))
         end
         
-        
         figure(2)
         subplot(1,2,1)
         imagesc(log(polimg.intensity)), axis square tight
@@ -389,10 +388,16 @@ if Analysis_Options.find_instrpars
                 Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
         end
         
-        figure(101); hold on
-        for ii = 1:1:XRDIMAGE.CakePrms.bins(1)
-            plot(mapped_tth(ii,:), polimg.intensity(ii,:))
-        end
+        polimg.mapped_tth_for_intensity = mapped_tth;
+        
+        [tth_grid, intensity_in_tth_grid]   = MapIntensityToTThGrid(XRDIMAGE, polimg);
+        polimg.tth_grid                 = tth_grid;
+        polimg.intensity_in_tth_grid    = intensity_in_tth_grid;
+        
+        figure(101)
+        subplot(1,2,1)
+        imagesc(log(abs(polimg.intensity_in_tth_grid))), axis square tight
+        title('Caked image // radial position is corrected')
         hold off
         
         disp('###########################')
