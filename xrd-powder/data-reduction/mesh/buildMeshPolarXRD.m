@@ -1,5 +1,5 @@
 function Ilist=BuildMeshPolarXRD(R,V,delTH,qrule)
-Ilist=zeros(size(V,2)-1,1);
+Ilist=zeros(size(V,1)-1,1);
 
 for jj=1:size(V,1)-1
     VL=zeros(size(V,2)-1,1);
