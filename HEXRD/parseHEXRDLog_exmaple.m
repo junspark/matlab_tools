@@ -2,7 +2,7 @@ clear all
 close all
 clc
 
-pname   = 'C:\Users\s1iduser\Documents\GitHub\matlab_tools\HEXRD\HEXRDLog_examples';
+pname   = '.\HEXRDLog_examples';
 fname   = 'grainlist_44,45.log';
 pfname  = fullfile(pname, fname);
 

@@ -21,7 +21,7 @@ function log = parseHEXRDLog(pfname)
 %   Example:
 %     log = parseGrainSpotterLog('simul.log');
 
-fid = fopen(pfname, 'r');
+[fid, msg]  = fopen(pfname, 'r');
 if(fid == -1)
     beep;
     error('Cannot open file:\n  %s\n', fileName);
