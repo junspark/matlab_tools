@@ -1,28 +1,34 @@
-function BuildESG(instr, cakeParms, polImgCor)
+function BuildESG(pfname, polImg, instr, cakeParms)
 % BuildESG - builds ESG file for MAUD input
 %
 %   USAGE:
 %
-%   BuildESG(instr, cakeParms, polImgCor)
+%   BuildESG(pfname, polImg, instr, cakeParms)
 %
 %   INPUT:
 %
+%   pfname
+%           full file name of the output esg file
+% 
+%   polImg
+%           is the caked data generated using instr and cakeParms
+% 
 %   instr
 %           is the structure array that defines the x-ray instrument
 %
 %   cakeParms
 %           is the structure array that defines the caking parameters
 %
-%   polImgCor
-%           is the caked data generated using instr and cakeParms
+%   OUTPUT:  
+%           
+%           none
 %
-%   OUTPUT:  none
-%
-r   = polImgCor.radius;
-I   = polImgCor.intensity;
-fnameESG    = [instr.fileName '.esg'];
-disp(['writing ', fnameESG])
-fid = fopen(fnameESG,'w');
+
+r   = tand(polImg.tth_grid).*instr.distance;
+I   = polImg.intensity_in_tth_grid;
+
+disp(['writing ', pfname])
+fid = fopen(pfname,'w');
 A   = {'_pd_block_id noTitle|#0';
     '';
     '_diffrn_detector Image Plate';
@@ -53,13 +59,13 @@ for yyy=1:size(A,1);
     fprintf(fid, '\n');
 end
 
-for xxx=1:size(r,1)
-    for yyy=1:size(r,2)
-        fprintf(fid, '%d %d', [r(xxx,size(r,2)-yyy+1) I(xxx,size(r,2)-yyy+1)]);
+for xxx = 1:1:cakeParms.bins(1)
+    for yyy = 1:1:size(r,2)
+        fprintf(fid, '%d %d', [r(1,size(r,2)-yyy+1) I(xxx,size(r,2)-yyy+1)]);
         fprintf(fid, '\n');
     end
     
-    if xxx<size(r,1)
+    if xxx < cakeParms.bins(1)
         A={'';
             ['_pd_block_id noTitle|#' num2str(xxx)];
             '';
@@ -68,7 +74,7 @@ for xxx=1:size(r,1)
             'loop_';
             '_pd_proc_2theta_corrected';
             '_pd_calc_intensity_total';};
-        for yyy=1:size(A,1);
+        for yyy = 1:1:size(A,1);
             fprintf(fid, '%s', A{yyy});
             fprintf(fid, '\n');
         end
