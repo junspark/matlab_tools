@@ -1,19 +1,19 @@
 function pardata = ReadSpecParFile(fname, numchs)
-% ReadPythonParFile - read par file generated from python
+% ReadSpecParFile - read par file generated from python
 %
 %   INPUT:
 %
 %   fname
-%       name of the python generated par file name
+%       name of the spec generated par file name
 %
 %   numchs
-%       number of channels recorded in the python generated par file (excluding the
+%       number of channels recorded in the spec generated par file (excluding the
 %       date / time channel)
 %
 %   OUTPUT:
 %
 %   pardata
-%       strip chart data in struct arrary.
+%       spec par file data in struct arrary.
 
 fmtstring       = '%s %s %s %s %d %s';
 for i = 1:1:numchs
