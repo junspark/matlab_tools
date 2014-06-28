@@ -59,7 +59,7 @@ disp('running fit2d_12_077_i686_WXP')
 disp(['run macro ', MacroName])
 ! C:\Users\parkjs\Applications\fit2d_12_077_i686_WXP.exe
 
-% return
+return
 %%% NOW FIT
 ni  = length(DataReductionPrms.ImageNames);
 for i = 1:1:ni
