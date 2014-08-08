@@ -2,16 +2,16 @@ clear all
 close all
 clc
 
-pfname  = 'O:\Sharma_Oct13\Stebner_Dec13\Ring4\Grains.csv';
-grains  = load(pfname);
-
-idx = (abs(grains(:, 13)) < 180);
-
-figure(1) 
-scatter3(grains(:,11), grains(:,12), grains(:,13), 10, 'filled') %% COMPLETENESS
-figure(2) 
-scatter3(grains(idx,11), grains(idx,12), grains(idx,13), 10, 'filled')
-return
+% pfname  = 'O:\Sharma_Oct13\Stebner_Dec13\Ring4\Grains.csv';
+% grains  = load(pfname);
+% 
+% idx = (abs(grains(:, 13)) < 180);
+% 
+% figure(1) 
+% scatter3(grains(:,11), grains(:,12), grains(:,13), 10, 'filled') %% COMPLETENESS
+% figure(2) 
+% scatter3(grains(idx,11), grains(idx,12), grains(idx,13), 10, 'filled')
+% return
 pname0  = 'O:\stebner_dec13\wedge.tx.map';
 
 wedge   = -1.0:0.5:1.0;
@@ -24,7 +24,7 @@ for i = 3%1:1:length(wedge)
         fname   = 'Grains.csv';
         pfname  = fullfile(pname0, pname1, pname2, fname);
         grains  = load(pfname);
-        idx = (abs(grains(:, 13)) < 180);
+        idx = (abs(grains(:, 13)) < 50);
         
         figure(i*10+j)
         % scatter3(grains(:,11), grains(:,12), grains(:,13), 10, grains(:,24), 'filled') %% COMPLETENESS
