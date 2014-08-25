@@ -3,13 +3,13 @@
 %
 %-------------------- User Input
 %
-wsname = 'wshex2x';
+wsname = 'wshex3x';
 %
 frbase = HexBaseMesh;
 sym    = HexSymmetries;
 %
 fr_refine   = 3;       % refinement level on FR
-sp_refine   = 1;        % refinement level on sphere
+sp_refine   = 20;        % refinement level on sphere
 per_fiber   = 1000;     % points per fiber
 %
 % pf_hkls ={[1 0 0], [0 0 1], [1 0 1]};
@@ -29,14 +29,14 @@ wsopts = {...
 fr  = RefineMesh(frbase, fr_refine, sym);
 fr.symmetries = sym;
 %
-sph0    = SphBaseMesh(2, 'Hemisphere', 'on'); 
+sph0    = SphBaseMesh(2, 'Hemisphere', 'off'); 
 sph     = RefineMesh(sph0, sp_refine);
 sph.crd = UnitVector(sph.crd);
 %
 wshex   = Workspace(fr, sph, wsopts{:});
 
 %%%
-nHarm       = 109;      % number of harmonics
+% nHarm       = 109;      % number of harmonics
 % [dh, eVals] = DiscreteHarmonics(wshex.frmesh, nHarm);
 % wshex.frmesh.dh     = dh;
 % wshex.frmesh.eVals  = eVals;
