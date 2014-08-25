@@ -1,31 +1,24 @@
-clear all
-close all
-clc
+function status = GenerateSyntheticPowder(pname, fstem, imnum, fext, fout)
 
-return
-pname   = 'V:\stebner_dec13\hexrd_analysis\B2.LatticeConstant\corrected';
-fstem   = 'NDC5';
+% pname   = 'V:\stebner_dec13\hexrd_analysis\B2.LatticeConstant\corrected';
+% fstem   = 'NDC5';
+% fext    = '.ge2.sum';
+% fout    = 'NDC5_synthetic_powder.sum';
+% imnum   = 66:1:105;
 
 imsum   = zeros(2048,2048);
-for i = 66:1:105
-    fname   = [fstem, '_', sprintf('%05d', i), '.ge2.sum'];
+for i = 1:1:length(imnum)
+    fname   = [fstem, '_', sprintf('%05d', imnum(i)), fext];
     pfname  = fullfile(pname, fname);
     
-    fid = fopen(pfname, 'r');
-    imdata  = fread(fid,[2048 2048],'*float');
-    fclose(fid);
+    imi = ReadSUM(pfname);
     
-    imagesc(log(abs(imdata)))
+    imagesc(log(abs(imi)))
     axis equal
     pause(1)
     
-    imsum   = imsum + imdata;
+    imsum   = imsum + imi;
 end
 
-pname   = 'V:\stebner_dec13\hexrd_analysis\B2.LatticeConstant\corrected';
-fname   = 'NDC5_synthetic_powder.sum';
-pfname  = fullfile(pname, fname);
-
-fid = fopen(pfname, 'w');
-fwrite(fid, imsum, 'float32');
-fclose(fid);
+pfname  = fullfile(pname, fout);
+status  = WriteSUM(pfname, imsum);
