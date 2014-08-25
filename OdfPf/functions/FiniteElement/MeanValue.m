@@ -18,8 +18,10 @@ function mv = MeanValue(f, l2ip)
 %      the mean value of `f'---the integral of f divided by
 %      the measure of the region
 %
-n     = length(f);
-nones = ones(1, n);
+
+%%% TWO VARIABLES NEVER GET USED
+% n     = length(f);
+% nones = ones(1, n);
 %
 iwts = full(sum(l2ip));
 mv = iwts*f(:)./sum(iwts);
