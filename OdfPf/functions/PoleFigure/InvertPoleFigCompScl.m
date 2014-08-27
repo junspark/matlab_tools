@@ -1,5 +1,5 @@
 function varargout = InvertPoleFigCompScl(odfPfMatrix, pfData, sphL2ipMatrix, FrL2ipMatrix, FrH1sipMatrix, varargin)
-% INVERTPOLEFIGMINL2 - This function inverts pole figure data towhich
+% InvertPoleFigCompScl - This function inverts pole figure data towhich
 % obtain an ODF whose pole figures are the optimal fit of the input
 % data (in the L2-norm sense).
 %
@@ -145,18 +145,3 @@ elseif nargout == 2
     varargout{1} = odf;
     varargout{2} = repfs;
 end
-
-%% OLD
-%     for i = 1:numPfs
-%         sclPfData.hkls(:, i) = pfData.hkls(:, i);
-%         sclPfData.data{i} = alfa(i)*pfData.data{i};
-%     end
-%
-%     [odfSol, repfs] = InvertPoleFigComp(...
-%         odfPfMatrix, sclPfData, [], ...
-%         FrL2ipMatrix, FrH1sipMatrix, ...
-%         'InitODF', ODF, ...
-%         'H1Weight', lambda, ...
-%         'DiscHarm', numHarm, ...
-%         'EigMatrix', V, ...
-%         'Display', 'off');
