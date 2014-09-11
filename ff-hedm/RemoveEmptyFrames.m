@@ -2,8 +2,8 @@ clear all
 close all
 clc
 
-pfname_in   = 'W:\__eval\li_march13\HTUPS_Irr_00201.ge3';
-pfname_out  = 'W:\__eval\li_march13\HTUPS_Irr_NoEmptyFrame00201.ge3';
+pfname_in   = 'W:\__eval\li_march13\HTUPS_00193.ge3';
+pfname_out  = 'W:\__eval\li_march13\HTUPS_NoEmptyFrame_00193.ge3';
 
 nFrames = 182;
 nFrames_Empty   = 2;

@@ -2,12 +2,14 @@ clear all
 close all
 clc
 
+%%% FIRST RUN : startup_mtex.m
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%v
 %%% GENERATE IPF COLORMAP USING MTEX
-%%% FIRST RUN startup_mtex.m
 %%% CHECK IN ebsdColorbar.m
-cs  = symmetry('m-3m');
-ss  = symmetry('-1');
-cc  = get_option('antipodal','colorcoding','ipdfHKL');
+% cs  = symmetry('m-3m');
+% ss  = symmetry('-1');
+% cc  = get_option('antipodal','colorcoding','ipdfHKL');
 
 % [minTheta,maxTheta,minRho,maxRho,v] = getFundamentalRegionPF(cs, 'antipodal');
 % h   = S2Grid('PLOT', 'minTheta', minTheta, 'maxTheta', maxTheta,...
@@ -18,7 +20,9 @@ cc  = get_option('antipodal','colorcoding','ipdfHKL');
 % z   = getz(v); z = z(:);
 % d   = orientation2color(h,cc,cs,'antipodal');
 % save('coloring_scheme.mat', 'x', 'y', 'z', 'd')
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%v
 
+load('.\coloring_scheme.mat');
 % create an EBSD variable containing the data
 % DATA
 % Sp_ID O[0][0] O[0][1] O[0][2] O[1][0] O[1][1] O[1][2] O[2][0] O[2][1] O[2][2] X Y Z a b c alpha beta gamma Err1 Err2 Err3 MeanRadius Confidence 
@@ -37,9 +41,6 @@ ebsd    = EBSD(ori, cs, ss);
 rgb     = orientation2color(ori, 'ipdfHSV');
 
 plot(ebsd, 'colorcoding','ipdfHSV')
-
-quat    = ToFundamentalRegionQ(QuatOfRMat(RMats), qsym);
-rod     = RodOfQuat(quat);
 
 %%% THRESHOLDING BY COMPLETENESS
 Thresh_Completeness = 0.7;
