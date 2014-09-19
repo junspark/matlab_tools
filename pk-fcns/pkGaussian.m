@@ -14,7 +14,7 @@ function [f, Jac] = pkGaussian(p, x)
 %       parameters for a peak.
 %       p(1): amplitude
 %       p(2): gamma (~width, FWHM)
-%       P(3): peak position
+%       p(3): peak position
 %
 %   x
 %       x coordinates typically in 2 theta, mm, or pixels
