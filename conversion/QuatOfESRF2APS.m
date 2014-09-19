@@ -18,7 +18,7 @@ function quat = QuatOfESRF2APS
 %
 %   Note:
 %
-%   ESRF coordinate system
+%   ESRF coordinate system (From HEMANT'S FF-HEDM CODE)
 % 
 %       X - along x-ray beam
 %       Y - OB
