@@ -28,6 +28,18 @@ clc
 grains	= load('.\hedm_HTUPS_unirr_s1_MultiRing\Layer1_ring1_t70_2_t50\Grains.csv'); a0 = 3.597046;    %%%%%%%% PROMISING
 % grains	= load('.\hedm_HTUPS_irr_s1_MultiRing\Layer1\Grains.csv'); a0 = 3.595583;         %%%%%%%% PROMISING
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% THRESHOLDING BY COMPLETENESS
+Thresh_Completeness = 0.7;
+idx_Completeness    = grains(:,24) >= Thresh_Completeness;
+
+%%% THRESHOLDING BY MEAN RADIUS
+Thresh_MeanRadius   = 50;
+idx_MeanRadius      = grains(:,23) >= Thresh_MeanRadius;
+
+grains  = grains(idx_MeanRadius, :);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 RESRF2APS   = RMatOfQuat(QuatOfESRF2APS);
 % RESRF2APS   = eye(3,3);
 
@@ -48,25 +60,18 @@ xyz = xyz';
 % 
 % plot(ebsd, 'colorcoding','ipdfHSV')
 
-%%% THRESHOLDING BY COMPLETENESS
-Thresh_Completeness = 0.7;
-idx_Completeness    = grains(:,24) >= Thresh_Completeness;
-
-%%% THRESHOLDING BY MEAN RADIUS
-Thresh_MeanRadius   = 50;
-idx_MeanRadius      = grains(:,23) >= Thresh_MeanRadius;
 
 %%%% PLOT COM / ONE COLOR
 figure, scatter3(xyz(:,1), xyz(:,2), xyz(:,3), 30, 'filled', 'b')
 grid on
 axis square
-xlabel('x (um)'); ylabel('y (um)'); zlabel('z (um)')
+xlabel('z : +=along beam (um)'); ylabel('x : +=OB (um)'); zlabel('y : +=UP (um)')
 
 %%%% PLOT COM / COMPLETENESS AS COLOR
 figure, scatter3(xyz(:,1), xyz(:,2), xyz(:,3), 30, grains(:,24), 'filled') %% COMPLETENESS
 grid on
 axis square
-xlabel('x (um)'); ylabel('y (um)'); zlabel('z (um)')
+xlabel('z : +=along beam (um)'); ylabel('x : +=OB (um)'); zlabel('y : +=UP (um)')
 
 % %%%% PLOT COM / RGB IN FUNDAMENTAL TRIANGLE AS IPDF
 % figure, scatter3(grains(:,11), grains(:,12), grains(:,13), 50, rgb, 'filled') %% COMPLETENESS
