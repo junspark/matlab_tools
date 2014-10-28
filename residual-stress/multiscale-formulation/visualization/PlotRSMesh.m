@@ -39,6 +39,8 @@ function f = PlotRSMesh(f, np, x, y, z, c, varargin)
 %                      default is [-600 1200]
 %   'ShowMesh'         on|{off}
 %                      to display the mesh
+%   'ShowNode'         on|{off}
+%                      to display the nodal points of the mesh
 %   'Colorbar'         on|{off}
 %                      to display the colorbar
 %
@@ -54,6 +56,7 @@ opts    = {...
     'ViewAngle', [45 30], ...
     'DataRange', [-600 1200], ...
     'ShowMesh', 'off', ...
+    'ShowNode', 'off', ...
     'Colorbar', 'off', ...
     };
 
@@ -87,8 +90,11 @@ for i = 1:1:numel
         line([xx(2) xx(6)],[yy(2) yy(6)],[zz(2) zz(6)],'Color','k');
         line([xx(3) xx(7)],[yy(3) yy(7)],[zz(3) zz(7)],'Color','k');
         line([xx(4) xx(8)],[yy(4) yy(8)],[zz(4) zz(8)],'Color','k');
-        plot3(xx, yy, zz, 'k.')
         hold on
+    end
+    
+    if strcmp(opts.ShowNode, 'on')
+        plot3(xx, yy, zz, 'k.')
     end
     
     % FACE 1
