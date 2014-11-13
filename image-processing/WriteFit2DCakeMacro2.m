@@ -4,7 +4,7 @@ function [pfMacro, pfLog] = WriteFit2DCakeMacro2(DataReductionPrms)
 %
 %   USAGE:
 %
-%   [pfMacro, pfLog] = WriteFit2DCakeMacro(DataReductionPrms)
+%   [pfMacro, pfLog] = WriteFit2DCakeMacro2(DataReductionPrms)
 %
 %   INPUT:
 %
