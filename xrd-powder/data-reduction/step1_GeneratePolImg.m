@@ -20,8 +20,53 @@ XRDIMAGE.Image.fext         = 'ge2';
 XRDIMAGE.Calib.pname        = '.\example\APS';
 XRDIMAGE.Calib.fbase        = 'LaB6_';
 XRDIMAGE.Calib.fnumber      = [4116; 4117]; % 4116 / 4117
+XRDIMAGE.Calib.fext         = 'ge2';
 
 %%% INSTRUMENT PARAMETERS GETS LOADED
+Instr.energy        = 0;
+Instr.wavelength	= 0;
+Instr.detectorsize	= 0;
+Instr.pixelsize     = 0;
+Instr.distance      = 0;
+Instr.centers       = [0, 0];
+Instr.gammaX        = 0;
+Instr.gammaY        = 0;
+Instr.numpixels     = 0;
+Instr.dettype       = '2a';
+Instr.detpars       = [0 0 0 0 0 0];
+pfname  = GenerateGEpfname(XRDIMAGE.Calib);
+
+for i = 1:1:length(XRDIMAGE.Calib.fnumber)
+    pfname_instr    = [pfname{i,1}, '.instr.mat'];
+    Instri  = load(pfname_instr);
+    Instri  = Instri.Instr;
+    
+    Instr.energy        = Instr.energy + Instri.energy;
+    Instr.wavelength    = Instr.wavelength + Instri.wavelength;
+    Instr.detectorsize  = Instr.detectorsize + Instri.detectorsize;
+    Instr.pixelsize     = Instr.pixelsize + Instri.pixelsize;
+    Instr.distance      = Instr.distance + Instri.distance;
+    Instr.centers       = Instr.centers + Instri.centers;
+    Instr.gammaX        = Instr.gammaX + Instri.gammaX;
+    Instr.gammaY        = Instr.gammaY + Instri.gammaY;
+    Instr.numpixels     = Instr.numpixels + Instri.numpixels;
+    Instr.detpars       = Instr.detpars + Instri.detpars;
+end
+Instr.energy        = Instr.energy./length(XRDIMAGE.Calib.fnumber);
+Instr.wavelength    = Instr.wavelength./length(XRDIMAGE.Calib.fnumber);
+Instr.detectorsize  = Instr.detectorsize./length(XRDIMAGE.Calib.fnumber);
+Instr.pixelsize     = Instr.pixelsize./length(XRDIMAGE.Calib.fnumber);
+Instr.distance      = Instr.distance./length(XRDIMAGE.Calib.fnumber);
+Instr.centers       = Instr.centers./length(XRDIMAGE.Calib.fnumber);
+Instr.gammaX        = Instr.gammaX./length(XRDIMAGE.Calib.fnumber);
+Instr.gammaY        = Instr.gammaY./length(XRDIMAGE.Calib.fnumber);
+Instr.numpixels     = Instr.numpixels./length(XRDIMAGE.Calib.fnumber);
+Instr.detpars       = Instr.detpars./length(XRDIMAGE.Calib.fnumber);
+
+Instr.omega = 0;
+Instr.chi   = 0;
+
+XRDIMAGE.Instr  = Instr;
 
 %%% CAKE PARAMETERS
 XRDIMAGE.CakePrms.bins(1)   = 72;           % number of azimuthal bins
@@ -107,7 +152,6 @@ if Analysis_Options.make_polimg
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%% POLAR REBINNING IF NECESSARY
-        
         imgi    = bg.*0;
         for j = 1:1:XRDIMAGE.Image.numframe
             imgj    = NreadGE(pfname{i,1}, j);
@@ -127,12 +171,14 @@ if Analysis_Options.make_polimg
         ylabel('Y_{L}')
         hold off
         
+        return
         %%% POLAR REBINNING
         polimg  = PolarBinXRD(DetectorMesh, ...
             XRDIMAGE.Instr, ...
             XRDIMAGE.CakePrms, ...
             imgi);
         
+        return
         if Analysis_Options.save_polimg
             disp(sprintf('Saving polimg for %s', pfname{i,1}))
             save(pfname_polimage, 'polimg', 'XRDIMAGE')

@@ -15,7 +15,8 @@ XRDIMAGE.Image.fbase        = 'LaB6_';
 XRDIMAGE.Image.fnumber      = [4116; 4117]; % 4116 / 4117
 XRDIMAGE.Image.numframe     = 10;
 XRDIMAGE.Image.numdigs      = 5;
-XRDIMAGE.Image.fext         = 'ge2';
+XRDIMAGE.Image.fext         = 'ge2.sum';
+XRDIMAGE.Image.corrected    = 1;
 
 XRDIMAGE.Calib.pname        = '.\example\APS';
 XRDIMAGE.Calib.fbase        = 'LaB6_';
@@ -51,8 +52,8 @@ XRDIMAGE.Instr.detpars  = [ ...
 
 %%% CAKE PARAMETERS
 XRDIMAGE.CakePrms.bins(1)   = 72;           % number of azimuthal bins
-XRDIMAGE.CakePrms.bins(2)   = 1500;         % number of radial bins
-XRDIMAGE.CakePrms.bins(3)   = 20;           % number of angular bins
+XRDIMAGE.CakePrms.bins(2)   = 2000;         % number of radial bins
+XRDIMAGE.CakePrms.bins(3)   = 1;            % number of angular bins
 XRDIMAGE.CakePrms.origin(1) = 1023.628;         % x center in pixels, fit2d Y 
 XRDIMAGE.CakePrms.origin(2) = 1019.544;         % y center in pixels, fit2d X
 XRDIMAGE.CakePrms.sector(1) = -360/XRDIMAGE.CakePrms.bins(1)/2;     % start azimuth (min edge of bin) in degrees
@@ -60,6 +61,7 @@ XRDIMAGE.CakePrms.sector(2) = 360-360/XRDIMAGE.CakePrms.bins(1)/2;  % stop  azim
 XRDIMAGE.CakePrms.sector(3) = 200;  % start radius (min edge of bin) in pixels
 XRDIMAGE.CakePrms.sector(4) = 950;  % stop  radius (max edge of bin) in pixels
 XRDIMAGE.CakePrms.azim      = 0:360/XRDIMAGE.CakePrms.bins(1):XRDIMAGE.CakePrms.sector(2);
+XRDIMAGE.CakePrms.fastint   = 1;
 
 %%% MATERIAL PARAMETERS
 XRDIMAGE.Material.num       = 1;
@@ -117,8 +119,17 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% LOAD XRD IMAGES
 %%% BACKGROUND
-pfname  = GenerateGEpfname(XRDIMAGE.DarkField);
-bg      = NreadGE(pfname{1,1}, 1);
+if XRDIMAGE.Image.corrected
+    disp('###########################')
+    fprintf('images are already corrected for background.\n');
+    disp('###########################')
+else
+    disp('###########################')
+    fprintf('loading background file for dark.\n');
+    disp('###########################')
+    pfname  = GenerateGEpfname(XRDIMAGE.DarkField);
+    bg      = NreadGE(pfname{1,1}, 1);
+end
 
 %%% LOAD XRD IMAGES & GENERATE POLIMG
 pfname  = GenerateGEpfname(XRDIMAGE.Image);
@@ -133,17 +144,19 @@ if Analysis_Options.make_polimg
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%% POLAR REBINNING IF NECESSARY
-        
-        imgi    = bg.*0;
-        for j = 1:1:XRDIMAGE.Image.numframe
-            imgj    = NreadGE(pfname{i,1}, j);
-            imgi    = imgi + imgj;
+        if XRDIMAGE.Image.corrected
+            imgi    = ReadSUM(pfname{i,1});
+        else
+            imgi    = bg.*0;
+            for j = 1:1:XRDIMAGE.Image.numframe
+                imgj    = NreadGE(pfname{i,1}, j);
+                imgi    = imgi + imgj;
+            end
+            imgi    = imgi - bg.*XRDIMAGE.Image.numframe;
         end
-        imgi    = imgi - bg.*XRDIMAGE.Image.numframe;
-        imgi    = rot90(imgi);
         
         % NOTE ROTATION IS NEED TO ENSURE PROPER REBINNING
-        % img     = fliplr(rot90(img,1));
+        imgi    = rot90(imgi);
         
         figure(1)
         imagesc(imgi)
