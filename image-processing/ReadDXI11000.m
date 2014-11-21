@@ -4,7 +4,7 @@ function imdata = ReadDXI11000(pfname, varargin)
 %   INPUT:
 %
 %   pfname
-%       name of the GE image stack file name
+%       name of the scintx image file
 %
 %   mode
 %       data acquisition mode ('6fps' or '3fps')
