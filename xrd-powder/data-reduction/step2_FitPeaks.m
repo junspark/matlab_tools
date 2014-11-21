@@ -120,13 +120,6 @@ Analysis_Options.InstrPrmFitOptions = optimset(...
         'Display','final');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% GENERATE MESH FOR INTEGRATION 
-%%% IF POLIMG NEEDS TO BE GENERATED
-if Analysis_Options.make_polimg
-    DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels);
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% LOAD XRD IMAGES
 pfname  = GenerateGEpfname(XRDIMAGE.Image);
 numimg  = length(pfname);

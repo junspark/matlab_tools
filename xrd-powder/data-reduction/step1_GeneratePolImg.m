@@ -15,7 +15,8 @@ XRDIMAGE.Image.fbase        = 'LaB6_';
 XRDIMAGE.Image.fnumber      = [4116; 4117]; % 4116 / 4117
 XRDIMAGE.Image.numframe     = 10;
 XRDIMAGE.Image.numdigs      = 5;
-XRDIMAGE.Image.fext         = 'ge2';
+XRDIMAGE.Image.fext         = 'ge2.sum';
+XRDIMAGE.Image.corrected    = 1;
 
 XRDIMAGE.Calib.pname        = '.\example\APS';
 XRDIMAGE.Calib.fbase        = 'LaB6_';
@@ -152,16 +153,19 @@ if Analysis_Options.make_polimg
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%% POLAR REBINNING IF NECESSARY
-        imgi    = bg.*0;
-        for j = 1:1:XRDIMAGE.Image.numframe
-            imgj    = NreadGE(pfname{i,1}, j);
-            imgi    = imgi + imgj;
+        if XRDIMAGE.Image.corrected
+            imgi    = ReadSUM(pfname{i,1});
+        else
+            imgi    = bg.*0;
+            for j = 1:1:XRDIMAGE.Image.numframe
+                imgj    = NreadGE(pfname{i,1}, j);
+                imgi    = imgi + imgj;
+            end
+            imgi    = imgi - bg.*XRDIMAGE.Image.numframe;
         end
-        imgi    = imgi - bg.*XRDIMAGE.Image.numframe;
-        imgi    = rot90(imgi);
         
         % NOTE ROTATION IS NEED TO ENSURE PROPER REBINNING
-        % img     = fliplr(rot90(img,1));
+        imgi    = rot90(imgi);
         
         figure(1)
         imagesc(imgi)
@@ -171,14 +175,56 @@ if Analysis_Options.make_polimg
         ylabel('Y_{L}')
         hold off
         
-        return
         %%% POLAR REBINNING
         polimg  = PolarBinXRD(DetectorMesh, ...
             XRDIMAGE.Instr, ...
             XRDIMAGE.CakePrms, ...
             imgi);
         
-        return
+        Data    = cell(1, XRDIMAGE.CakePrms.bins(1));
+        for ii=1:1:XRDIMAGE.CakePrms.bins(1)
+            Data{ii}    = [XRDIMAGE.Instr.pixelsize*polimg.radius(ii,:)' polimg.intensity(ii,:)'];
+        end
+        
+        %%% DEPENDS ON WHICH MODEL
+        if strcmp(XRDIMAGE.Instr.dettype, '0')
+            mapped_tth  = GeometricModelXRD0(...
+                XRDIMAGE.Instr.centers./1000, ...
+                XRDIMAGE.Instr.distance, ...
+                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
+                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
+        elseif strcmp(XRDIMAGE.Instr.dettype, '1')
+            mapped_tth  = GeometricModelXRD1(...
+                XRDIMAGE.Instr.centers./1000, ...
+                XRDIMAGE.Instr.distance, ...
+                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
+                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
+        elseif strcmp(XRDIMAGE.Instr.dettype, '2')
+            mapped_tth  = GeometricModelXRD2(...
+                XRDIMAGE.Instr.centers./1000, ...
+                XRDIMAGE.Instr.distance, ...
+                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
+                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
+        elseif strcmp(XRDIMAGE.Instr.dettype, '2a')
+            mapped_tth  = GeometricModelXRD2a(...
+                XRDIMAGE.Instr.centers./1000, ...
+                XRDIMAGE.Instr.distance, ...
+                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
+                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
+        elseif strcmp(XRDIMAGE.Instr.dettype, '2b')
+            mapped_tth  = GeometricModelXRD2b(...
+                XRDIMAGE.Instr.centers./1000, ...
+                XRDIMAGE.Instr.distance, ...
+                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
+                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
+        end
+        
+        polimg.mapped_tth_for_intensity = mapped_tth;
+        
+        [tth_grid, intensity_in_tth_grid]   = MapIntensityToTThGrid(XRDIMAGE, polimg);
+        polimg.tth_grid                 = tth_grid;
+        polimg.intensity_in_tth_grid    = intensity_in_tth_grid;
+        
         if Analysis_Options.save_polimg
             disp(sprintf('Saving polimg for %s', pfname{i,1}))
             save(pfname_polimage, 'polimg', 'XRDIMAGE')
@@ -186,6 +232,10 @@ if Analysis_Options.make_polimg
             disp(sprintf('Not saving polimg for %s', pfname{i,1}))
         end
         
+        if Analysis_Options.generateESG
+            disp(sprintf('Saving MAUD compatible ESG file for %s', pfname{i,1}))
+            BuildESG(pfname_esg, polimg, XRDIMAGE.Instr, XRDIMAGE.CakePrms)
+        end
         
         figure(2)
         subplot(1,2,1)
@@ -196,5 +246,10 @@ if Analysis_Options.make_polimg
         plot(polimg.radius, polimg.intensity)
         hold off
         disp(' ')
+        
+        figure(3)
+        imagesc(log(abs(polimg.intensity_in_tth_grid))), axis square tight
+        title('Caked image // radial position is corrected')
+        hold off
     end
 end
