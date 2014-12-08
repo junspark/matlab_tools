@@ -1,8 +1,7 @@
 matlab_tools
 ============
-ODFPF Package is originally written by the Deformation Processes Laboratory at Cornell Univerissiy
-Credit goes to Don Boyce and Paul Dawson
+The ODFPF Package is originally written by the Deformation Processes Laboratory at Cornell University. Credit goes to Don Boyce and Paul Dawson.
 
-The ODFPF Package available here is a variant of the original ODFPF  Package with some additional funciotionalityties. 
+The ODFPF Package available here is a variant of the original ODFPF Package with some additional funciotionalities. 
 
-matlab tools
+PhotonAttenuation2 Package is orginally provided by Jarek Tuszynski. Its original version is available at http://www.mathworks.com/examples/matlab/3154-tutorial-for-photonattenuation2-package.
