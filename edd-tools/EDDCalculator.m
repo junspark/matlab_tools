@@ -1,10 +1,18 @@
 clear all
 close all
 clc
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MaterialName    = 'Al';                         % FCC Al 
+% latticeParms    = 4.050;                        % IN Angstrom
+ 
+% MaterialName    = 'Fe';                         % FCC Fe
+% latticeParms    = 3.515;                        % IN Angstrom
 
-MaterialName    = 'Al';
-latticeParms    = 4.050;                % IN Angstrom
-SampleThickness = 0.25;                 % IN cm
+MaterialName    = 'Ni';                         % FCC Ni
+latticeParms    = 3.520;                        % IN Angstrom
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SampleThickness = 1.0;                          % IN cm
 hkls            = load('fcc.hkls');
 d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
@@ -43,35 +51,41 @@ for j = 1:1:length(TakeOffAngle)
 end
 
 figure,
+set(gcf, 'Position', [1007 33 902 977])
+
 subplot(2,2,1)
-plot(TransEnergy(:,1), '.')
-hold on
-plot(TransEnergy(:,end), 'r.')
-legend('7', '13')
-xlabel('hkl id')
-ylabel('Energy (keV)')
-grid on
-
-subplot(2,2,2)
-semilogy(PhotonTransAtNormalIncidence(:,1), 'b.')
-hold on
-semilogy(PhotonTransAtNormalIncidence(:,end), 'r.')
-legend('7', '13')
-xlabel('hkl id')
-ylabel('Number of photons transmitted')
-grid on
-
-subplot(2,2,3)
 semilogy(BeamLineFlux(:,1), BeamLineFlux(:,2), 'k.')
 xlabel('Energy (keV)')
 ylabel('Number of photons')
+title('BM Flux (photons / s / 0.1% BW)')
+grid on
+
+subplot(2,2,2)
+plot(TransEnergy(:,1), 'b.')
+hold on
+plot(TransEnergy(:,end), 'r.')
+legend(num2str(TakeOffAngle(1)), num2str(TakeOffAngle(end)), 'Location', 'Best')
+xlabel('hkl id')
+ylabel('Energy (keV)')
+title('Diffraction energy - First and the last TOA only')
+grid on
+
+subplot(2,2,3)
+plot(PercentTransmission(:,1)*100, 'b.')
+hold on
+plot(PercentTransmission(:,end)*100, 'r.')
+axis([1 30 0 100])
+legend(num2str(TakeOffAngle(1)), num2str(TakeOffAngle(end)), 'Location', 'Best')
+xlabel('hkl id')
+ylabel('Percent transmission')
 grid on
 
 subplot(2,2,4)
-plot(PercentTransmission(:,1), 'b.')
+semilogy(PhotonTransAtNormalIncidence(:,1), 'b.')
 hold on
-plot(PercentTransmission(:,end), 'r.')
+semilogy(PhotonTransAtNormalIncidence(:,end), 'r.')
+axis([1 30 1e-7 1e14])
 legend('7', '13')
 xlabel('hkl id')
-ylabel('Percent transmission')
+ylabel('Number of photons transmitted')
 grid on
