@@ -5,8 +5,8 @@ clear all
 close all
 clc
 
-pname = 'C:\Users\parkjs\Desktop';
-fname ='dec04_CeO2.000';
+pname = 'C:\Users\parkjs\Documents\GitHub\matlab_tools\edd-tools\calibration-examples';
+fname ='cal_7d_pb_100s';
 pfname = fullfile(pname, fname);
 
 [x,y] = ReadEDDData(pfname);

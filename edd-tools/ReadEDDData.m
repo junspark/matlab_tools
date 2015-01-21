@@ -18,6 +18,8 @@ function [xdata, ydata] = ReadEDDData(pfname, varargin)
 %   'Channel2Energy' line equation to convert channel number to energy
 %   (keV)
 %
+%   'IDLFile' flag 0 for epics pv dump / flag 1 for idl dump
+%
 %   OUTPUT:
 %
 %   xdata
@@ -29,27 +31,34 @@ function [xdata, ydata] = ReadEDDData(pfname, varargin)
 % default options
 optcell = {...
     'Channel2Energy', [1 0], ...
+    'IDLFile', 0, ...
     };
 
 % update option
 opts    = OptArgs(optcell, varargin);
 
-fid = fopen(pfname, 'r');
-while ~feof(fid)
-    lindata = fgetl(fid);
-    if ~isempty(strfind(lindata, 'CHANNELS:'))
-        numdata = str2num(lindata(20:end));
-        ydata   = zeros(numdata,1);
-        xdata   = 1:1:numdata;
-    end
-    
-    if strcmp(lindata, 'DATA: ')
-        for j = 1:1:numdata
-            ydata(j,1)  = str2num(fgetl(fid));
+if opts.IDLFile
+    fid = fopen(pfname, 'r');
+    while ~feof(fid)
+        lindata = fgetl(fid);
+        if ~isempty(strfind(lindata, 'CHANNELS:'))
+            numdata = str2num(lindata(20:end));
+            ydata   = zeros(numdata,1);
+            xdata   = 1:1:numdata;
         end
-        break
+        
+        if strcmp(lindata, 'DATA: ')
+            for j = 1:1:numdata
+                ydata(j,1)  = str2num(fgetl(fid));
+            end
+            break
+        end
     end
+    fclose(fid);
+else ~opts.IDLFile
+    ydata   = load(pfname);
+    numdata = length(ydata);
+    xdata   = 1:1:numdata;
 end
-fclose(fid);
 
 xdata   = opts.Channel2Energy(1)*xdata + opts.Channel2Energy(2);
