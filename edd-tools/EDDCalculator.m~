@@ -29,7 +29,7 @@ TakeOffAngle    = 7:1:30;                    % IN deg
 
 GaugeLengthZUS  = IncSlitSizeRad*cosd(TakeOffAngle./2)./sind(TakeOffAngle);
 GaugeLengthZDS  = OutSlitSizeRad*cosd(TakeOffAngle./2)./sind(TakeOffAngle);
-GaugeLengthZ    = GaugeLengthZUS + GaugeLengthZDS;
+GaugeLengthZ    = GaugeLengthZUS + GaugeLengthZDS
 
 for j = 1:1:length(TakeOffAngle)
     wavelength      = 2*d_hkls.*sind(TakeOffAngle(j)/2);
@@ -105,7 +105,6 @@ grid on
 figure,
 plot(TakeOffAngle, GaugeLengthZ, 'ko')
 axis tight
-title(['IncSlit = ', num2str(IncSlitSizeRad), ' mm & OutSlit = ', num2str(IncSlitSizeRad), ' mm'])
+title(num2str(IncSlitSizeRad), ' m& ', num2str(IncSlitSizeRad))
 xlabel('take off angle (deg)')
 ylabel('gauge length in z (mm)')
-grid on
