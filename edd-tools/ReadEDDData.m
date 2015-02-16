@@ -61,4 +61,4 @@ else ~opts.IDLFile
     xdata   = 1:1:numdata;
 end
 
-xdata   = opts.Channel2Energy(1)*xdata + opts.Channel2Energy(2);
+xdata   = opts.Channel2Energy(1)*xdata' + opts.Channel2Energy(2);
