@@ -13,7 +13,7 @@ MeasurementPlane    = 'h';
 % MATERIAL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BCC Fe
-latticeParms    = 2.868 ;                        % IN Angstrom
+latticeParms    = 2.82 ;                        % IN Angstrom
 hkls            = load('bcc.hkls');
 d_hkl           = PlaneSpacings(latticeParms, 'cubic', hkls');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,30 +56,27 @@ for i = 1:1:numDV
     data_stack(:,i)   = datai;
 end
 
-if strcmpi(MeasurementPlane, 'h')
-    titlestr    = 'data from horizontal detector';
-elseif strcmpi(MeasurementPlane, 'v')
-    titlestr    = 'data from vertical detector';
-end
-
-figure(1)
-subplot(2,1,1)
+figure,
 imagesc(data_stack)
-YLabelTick  = str2num(get(gca, 'YTickLabel'));
-YLabelTick  = round(ChToEnergyConversion(1)*YLabelTick + ChToEnergyConversion(2));
-YLabelTick  = num2str(YLabelTick);
-set(gca, 'YTickLabel', YLabelTick)
-grid on
+yLabelTick  = str2num(get(gca, 'YTickLabel'));
+yLabelTick  = ChToEnergyConversion(1)*yLabelTick
 xlabel('data number')
-ylabel('E (keV)')
-title(titlestr)
-
-subplot(2,1,2)
-plot(E_grid, data, 'k.')
+return
+figure,
+subplot(2,1,1)
+plot(E_grid, data_H, 'k.')
 hold on
-plot(E_hkl, ones(length(E_hkl), 1), 'r^')
+plot(E_hkl, ones(length(E_hkl), 1), 'b^')
 grid on
-axis([min(E_grid) max(E_grid) min(data) max(data)])
 xlabel('Energy (keV)')
 ylabel('counts')
-title(titlestr)
+
+subplot(2,1,2)
+plot(E_grid, data_V, 'k.')
+return
+figure,
+imagesc(log(dataStack))
+set(gca, 'YTickLabel', num2str(round(str2num(get(gca, 'YTickLabel'))*ChToEnergyConversion(1) + ChToEnergyConversion(2))))
+title('horz')
+xlabel('data point number')
+ylabel('Channel Number => Energy')

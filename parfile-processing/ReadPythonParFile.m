@@ -1,4 +1,4 @@
-function pardata = ReadPythonParFile(fname, numchs)
+function pardata = ReadPythonParFile(fname)
 % ReadPythonParFile - read par file generated from python
 %
 %   INPUT:
