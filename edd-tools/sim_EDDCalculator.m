@@ -2,17 +2,17 @@ clear all
 close all
 clc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% MaterialName    = 'Al';                         % FCC Al 
-% latticeParms    = 4.050;                        % IN Angstrom
-% hkls            = load('fcc.hkls');
+MaterialName    = 'Al';                         % FCC Al 
+latticeParms    = 4.050;                        % IN Angstrom
+hkls            = load('fcc.hkls');
 
 % MaterialName    = 'Fe';                         % BCC Fe
 % latticeParms    = 2.87 ;                        % IN Angstrom
 % hkls            = load('bcc.hkls');
 
-MaterialName    = 'Fe';                         % FCC Fe
-latticeParms    = 3.515;                        % IN Angstrom
-hkls            = load('fcc.hkls');
+% MaterialName    = 'Fe';                         % FCC Fe
+% latticeParms    = 3.515;                        % IN Angstrom
+% hkls            = load('fcc.hkls');
 
 % MaterialName    = 'Ni';                         % FCC Ni
 % latticeParms    = 3.520;                        % IN Angstrom
@@ -23,7 +23,7 @@ hkls            = load('fcc.hkls');
 % hkls            = load('diamondcubic.hkls');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SampleThickness = 10;                          % IN cm
+SampleThickness = 3;                          % IN cm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 IncSlitSizeRad  = 0.2;                          % IN mm
 OutSlitSizeRad  = 0.2;                          % IN mm
@@ -32,11 +32,11 @@ numhkls         = size(hkls,1);
 d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
 BeamLineFlux    = load('bm_flux.data');
-TakeOffAngle    = 7;                    % IN deg
+TakeOffAngle    = 7:2:23;                    % IN deg
 
 GaugeLengthZUS  = IncSlitSizeRad*cosd(TakeOffAngle./2)./sind(TakeOffAngle);
 GaugeLengthZDS  = OutSlitSizeRad*cosd(TakeOffAngle./2)./sind(TakeOffAngle);
-GaugeLengthZ    = GaugeLengthZUS + GaugeLengthZDS;
+GaugeLengthZ    = GaugeLengthZUS + GaugeLengthZDS
 
 for j = 1:1:length(TakeOffAngle)
     wavelength      = 2*d_hkls.*sind(TakeOffAngle(j)/2);
@@ -92,7 +92,7 @@ subplot(2,2,3)
 plot(1:1:numhkls, PercentTransmission(:,1)*100, 'b.')
 hold on
 plot(1:1:numhkls, PercentTransmission(:,end)*100, 'r.')
-axis([1 numhkls 0 1])
+axis([1 numhkls 0 100])
 legend(num2str(TakeOffAngle(1)), num2str(TakeOffAngle(end)), 'Location', 'Best')
 xlabel('hkl id')
 ylabel('Percent transmission')

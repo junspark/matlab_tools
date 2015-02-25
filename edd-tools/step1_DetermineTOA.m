@@ -1,10 +1,12 @@
 clear all
 close all
 clc
-
-%%% FROM PREVIOUS STEP USING Cd109
+%%%%%%%%%%%%%%%%%
+% INPUT
+% CHANNEL TO ENERGY CONVERSION RESULT FROM PREVIOUS STEP USING Cd109
+%%%%%%%%%%%%%%%%%
 ChToEnergyConversion    = [0.0926   -0.0754];
-    
+
 %%%%%%%%%%%%%%%
 % Nominal Experimental Geometry
 TOA0    = 7;
