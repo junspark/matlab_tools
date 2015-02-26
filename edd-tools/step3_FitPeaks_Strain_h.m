@@ -9,6 +9,9 @@ TOA  = 6.97005;
 ChToEnergyConversion  = [0.0925699 -0.0754175];
 MeasurementPlane    = 'h';
 
+%%% NUMBER OF POINTS IN X,Y,Z (GET FROM PYTHON FILE)
+NX  = 15; NY  = 1; NZ  = 7;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MATERIAL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

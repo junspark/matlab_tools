@@ -5,9 +5,9 @@ clc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % INSTRUMENT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-TOA     =  6.970451365881403;
-ChToEnergyConversion    = [0.092570164886107  -0.077311622210394];
-MeasurementPlane        = 'h';
+TOA     = 6.886258908378000;
+ChToEnergyConversion    = [0.097317328321570  -0.009544487593012];
+MeasurementPlane        = 'v';
 
 %%% NUMBER OF POINTS IN X,Y,Z (GET FROM PYTHON FILE)
 NX  = 15; NY  = 1; NZ  = 7;
@@ -16,7 +16,7 @@ NX  = 15; NY  = 1; NZ  = 7;
 % MATERIAL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BCC Fe
-latticeParms    = 2.8688 ;                        % IN Angstrom
+latticeParms    = 2.8680 ;                        % IN Angstrom
 hkls            = load('bcc.hkls');
 d_hkl           = PlaneSpacings(latticeParms, 'cubic', hkls');
 pkid_fit        = 4:8;

@@ -9,9 +9,6 @@ TOA  = 6.97005;
 ChToEnergyConversion  = [0.0925699 -0.0754175];
 MeasurementPlane    = 'h';
 
-%%% NUMBER OF POINTS IN X,Y,Z (GET FROM PYTHON FILE)
-NX  = 1; NY  = 1; NZ  = 7;
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MATERIAL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,13 +16,15 @@ NX  = 1; NY  = 1; NZ  = 7;
 latticeParms    = 2.868 ;                        % IN Angstrom
 hkls            = load('bcc.hkls');
 d_hkl           = PlaneSpacings(latticeParms, 'cubic', hkls');
+pkid_fit        = 4:8;
+sqrt_hkls       = sqrt(sum(hkls(pkid_fit, :).*hkls(pkid_fit, :),2));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PAR FILE DESIGNATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 pname_pypar     = './strain-examples/';
-fname_pypar     = 'mach_feb15_TOA_7_Lap7_1.pypar';
+fname_pypar     = 'mach_feb15_TOA_7_Lap7.pypar';
 pfname_pypar    = fullfile(pname_pypar, fname_pypar);
 pardata         = ReadPythonParFile(pfname_pypar);
 
@@ -37,6 +36,10 @@ pname_data  = './strain-examples/Lap7/';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % END OF INPUTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+XS  = pardata.samX;
+YS  = pardata.samY;
+ZS  = pardata.samZ;
+
 lambda_hkl  = 2.*d_hkl*sind(TOA/2);
 E_hkl       = Angstrom2keV(lambda_hkl);
 
@@ -44,8 +47,6 @@ E_grid  = 1:1:2048;
 E_grid  = ChToEnergyConversion(1)*E_grid + ChToEnergyConversion(2);
 
 numDV   = length(pardata.day);
-data    = zeros(2048,1);
-data_stack  = zeros(2048,numDV);
 for i = 1:1:numDV
     if strcmpi(MeasurementPlane, 'h')
         fname   = pardata.HorzFileName{i}(1:end-1);
@@ -53,36 +54,59 @@ for i = 1:1:numDV
         fname   = pardata.VertFileName{i}(1:end-1);
     end
     
-    pfname  = fullfile(pname_data, fname);
-    datai	= load(pfname);
-    data    = data + datai;
-    data_stack(:,i)   = datai;
+    fname_fit   = [fname, '.fit.mat'];
+    pfname_fit  = fullfile(pname_data, fname_fit);
+    
+    fit_data    = load(pfname_fit);
+    
+    Efit(i,:)   = fit_data.Efit;
+    Afit(i,:)   = fit_data.Efit;
+    gfit(i,:)   = fit_data.Efit;
+    nfit(i,:)   = fit_data.Efit;
+    rn(i,:)     = fit_data.Efit;
+    
+    return
 end
-
-if strcmpi(MeasurementPlane, 'h')
-    titlestr    = 'data from horizontal detector';
-elseif strcmpi(MeasurementPlane, 'v')
-    titlestr    = 'data from vertical detector';
+return
+for i = 1:1:length(pkid_fit)
+    figure(100 + i)
+    subplot(2,3,1)
+    scatter3(XS, YS, ZS, 50, Afit(:,i), 'filled')
+    colorbar vert
+    xlabel('X (mm)')
+    ylabel('Y (mm)')
+    zlabel('Z (mm)')
+    title('peak amplitude (cts)')
+    
+    subplot(2,3,2)
+    scatter3(XS, YS, ZS, 50, gfit(:,i), 'filled')
+    colorbar vert
+    xlabel('X (mm)')
+    ylabel('Y (mm)')
+    zlabel('Z (mm)')
+    title('peak width (keV)')
+    
+    subplot(2,3,3)
+    scatter3(XS, YS, ZS, 50, nfit(:,i), 'filled')
+    colorbar vert
+    xlabel('X (mm)')
+    ylabel('Y (mm)')
+    zlabel('Z (mm)')
+    title('mix parameter')
+    
+    subplot(2,3,4)
+    scatter3(XS, YS, ZS, 50, Efit(:,i), 'filled')
+    colorbar vert
+    xlabel('X (mm)')
+    ylabel('Y (mm)')
+    zlabel('Z (mm)')
+    title('E fit (keV)')
+    
+    subplot(2,3,5)
+    scatter3(XS, YS, ZS, 50, Rwp(:,i), 'filled')
+    colorbar vert
+    xlabel('X (mm)')
+    ylabel('Y (mm)')
+    zlabel('Z (mm)')
+    title('peak fit weigted residual')
 end
-
-figure(1)
-subplot(2,1,1)
-imagesc(data_stack)
-YLabelTick  = str2num(get(gca, 'YTickLabel'));
-YLabelTick  = round(ChToEnergyConversion(1)*YLabelTick + ChToEnergyConversion(2));
-YLabelTick  = num2str(YLabelTick);
-set(gca, 'YTickLabel', YLabelTick)
-grid on
-xlabel('data number')
-ylabel('E (keV)')
-title(titlestr)
-
-subplot(2,1,2)
-plot(E_grid, data, 'k.')
-hold on
-plot(E_hkl, ones(length(E_hkl), 1), 'r^')
-grid on
-axis([min(E_grid) max(E_grid) min(data) max(data)])
-xlabel('Energy (keV)')
-ylabel('counts')
-title(titlestr)

@@ -5,9 +5,9 @@ clc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % INSTRUMENT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-TOA     =  6.970451365881403;
-ChToEnergyConversion    = [0.092570164886107  -0.077311622210394];
-MeasurementPlane        = 'h';
+TOA  = 6.97005;
+ChToEnergyConversion  = [0.0925699 -0.0754175];
+MeasurementPlane    = 'h';
 
 %%% NUMBER OF POINTS IN X,Y,Z (GET FROM PYTHON FILE)
 NX  = 15; NY  = 1; NZ  = 7;
@@ -16,7 +16,7 @@ NX  = 15; NY  = 1; NZ  = 7;
 % MATERIAL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BCC Fe
-latticeParms    = 2.8688 ;                        % IN Angstrom
+latticeParms    = 2.868 ;                        % IN Angstrom
 hkls            = load('bcc.hkls');
 d_hkl           = PlaneSpacings(latticeParms, 'cubic', hkls');
 pkid_fit        = 4:8;
@@ -43,9 +43,8 @@ XS  = pardata.samX;
 YS  = pardata.samY;
 ZS  = pardata.samZ;
 
-xs  = reshape(XS', NX, NY, NZ);
-ys  = reshape(YS', NX, NY, NZ);
-zs  = reshape(ZS', NX, NY, NZ);
+xs  = reshape(XS, NX, NZ);
+zs  = reshape(ZS, NX, NZ);
 
 lambda_hkl  = 2.*d_hkl*sind(TOA/2);
 E_hkl       = Angstrom2keV(lambda_hkl);
@@ -80,14 +79,16 @@ end
 for i = 1:1:length(pkid_fit)
     strain  = E_hkl(pkid_fit(i))./Efit(:,i) - 1;
     
+    c   = reshape(Afit(:,i), NX, NY, NZ);
     figure(100 + i)
     subplot(2,3,1)
-    scatter3(XS, YS, ZS, 50, Afit(:,i), 'filled')
+    contourslice(xs, ys, zs, c, 1:9, [], 0, linspace(-8,2,10))
     colorbar vert
     xlabel('X (mm)')
     ylabel('Y (mm)')
     zlabel('Z (mm)')
     title('peak amplitude (cts)')
+    return
     
     subplot(2,3,2)
     scatter3(XS, YS, ZS, 50, gfit(:,i), 'filled')
@@ -128,5 +129,4 @@ for i = 1:1:length(pkid_fit)
     ylabel('Y (mm)')
     zlabel('Z (mm)')
     title('strain')
-    caxis([-3e-3 3e-3])
 end
