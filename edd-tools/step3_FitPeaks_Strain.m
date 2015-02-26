@@ -24,14 +24,14 @@ sqrt_hkls       = sqrt(sum(hkls(pkid_fit, :).*hkls(pkid_fit, :),2));
 % PAR FILE DESIGNATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 pname_pypar     = './strain-examples/';
-fname_pypar     = 'mach_feb15_TOA_7_Lap7_1.pypar';
+fname_pypar     = 'mach_feb15_TOA_7_Lap7.pypar';
 pfname_pypar    = fullfile(pname_pypar, fname_pypar);
 pardata         = ReadPythonParFile(pfname_pypar);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PATH WHERE DATA FILES LIVE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-pname_data  = './strain-examples/Lap7_1/';
+pname_data  = './strain-examples/Lap7/';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % END OF INPUTS
@@ -99,7 +99,7 @@ for i = 1:1:numDV
             inf; ...
             ];
         
-        [p, rn(j), ~, ef(j)]	= lsqcurvefit(@pfunc, p0, xdata, ydata, pLB, pUB);
+        [p, rn(j), ~, ef(j)]   = lsqcurvefit(@pfunc, p0, xdata, ydata, pLB, pUB);
         
         yfit0   = pfunc(p0, xdata);
         yfit    = pfunc(p, xdata);
@@ -121,23 +121,15 @@ for i = 1:1:numDV
     figure(1)
     hold off
     
-    lambda      = keV2Angstrom(Efit);
+    lambda      = keV2Angstrom(Efit(i,:));
     d_hkl_fit   = lambda./2/sind(TOA/2);
     
     xdata       = 1./sqrt_hkls;
     ydata       = d_hkl_fit';
     
-    [p, a0_fit_s]   = polyfit(xdata, ydata, 1);
-    a0_fit          = p;
-    
-    figure(10);
-    plot(xdata, ydata, 'o')
-    hold on
-    plot(xdata, polyval(p, xdata), '-') 
-    xlabel('1/sqrt(hh+kk+ll)')
-    ylabel('d_{hkl} (Angstrom)')
-    title('a0 is the slope if the data are from reference state and material is cubic')
+    [p, a0_fit_s]    = polyfit(xdata, ydata, 1);
+    a0_fit(i,:)         = p;
     
     save(pfname_fit, 'Afit', 'gfit', 'nfit', 'Efit', 'bkg', 'Rwp', 'Re', 'Rp', 'rn', 'ef', 'a0_fit', 'a0_fit_s');
-    pause(1)
 end
+a0_fit

@@ -34,6 +34,11 @@ pardata         = ReadPythonParFile(pfname_pypar);
 pname_data  = './strain-examples/Lap7_1/';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FILE NAME FOR a0.mat
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+fname_a0    = 'mach_feb15_a0_h';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % END OF INPUTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 XS  = pardata.samX;
@@ -128,7 +133,9 @@ for i = 1:1:numDV
     ydata       = d_hkl_fit';
     
     [p, a0_fit_s]   = polyfit(xdata, ydata, 1);
+    
     a0_fit          = p;
+    a0_stats(i,:)   = [p Afit rn ef Rwp Re Rp];
     
     figure(10);
     plot(xdata, ydata, 'o')
@@ -141,3 +148,10 @@ for i = 1:1:numDV
     save(pfname_fit, 'Afit', 'gfit', 'nfit', 'Efit', 'bkg', 'Rwp', 'Re', 'Rp', 'rn', 'ef', 'a0_fit', 'a0_fit_s');
     pause(1)
 end
+
+save(fname_a0, 'a0_stats');
+xlswrite(fname_a0, a0_stats)
+disp(sprintf('a0 from DVs'))
+disp(sprintf('%f\n', a0_stats(:,1)'))
+disp(sprintf('mean a0 from DVs           : %f ', mean(a0_stats(:,1))))
+disp(sprintf('Spreadsheet file %s contains more information for a0', fname_a0))
