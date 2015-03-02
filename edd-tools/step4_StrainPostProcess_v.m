@@ -39,7 +39,7 @@ pname_data  = './strain-examples/Lap7/';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FILE NAME FOR STRAIN
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-fname_strain    = 'mach_feb15_strain_v';
+fname_strain    = 'mach_feb15_strain_v.csv';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % END OF INPUTS
@@ -86,6 +86,7 @@ for i = 1:1:length(pkid_fit)
     strain  = E_hkl(pkid_fit(i))./Efit(:,i) - 1;
     
     figure(100 + i)
+    set(gcf, 'Position', [120 450 1140 515])
     subplot(2,3,1)
     scatter3(XS, YS, ZS, 50, Afit(:,i), 'filled')
     colorbar vert
@@ -135,8 +136,8 @@ for i = 1:1:length(pkid_fit)
     title('strain')
     caxis([-3e-3 3e-3])
     
-    Strain(:,i) = strain;
+    Strain(:,(pkid_fit(i))) = strain;
 end
 
 output  = [XS YS ZS Strain];
-xlswrite(fname_strain, output)
+csvwrite(fname_strain, output)

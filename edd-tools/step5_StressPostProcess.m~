@@ -5,22 +5,15 @@ clc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % INSTRUMENT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-TOA     =  6.970451365881403;
-ChToEnergyConversion    = [0.092570164886107  -0.077311622210394];
-MeasurementPlane        = 'h';
-
 %%% NUMBER OF POINTS IN X,Y,Z (GET FROM PYTHON FILE)
 NX  = 15; NY  = 1; NZ  = 7;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MATERIAL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% BCC Fe
-latticeParms    = 2.8698 ;                        % IN Angstrom
-hkls            = load('bcc.hkls');
-d_hkl           = PlaneSpacings(latticeParms, 'cubic', hkls');
-pkid_fit        = 4:8;
-sqrt_hkls       = sqrt(sum(hkls(pkid_fit, :).*hkls(pkid_fit, :),2));
+E   = 200;          % [GPa]
+nu  = 0.3;          % [-]
+pkid_ave    = 4:8;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -39,7 +32,8 @@ pname_data  = './strain-examples/Lap7/';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FILE NAME FOR STRAIN
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-fname_strain    = 'mach_feb15_strain_h.csv';
+fname_strain_v  = 'mach_feb15_strain_v.csv';
+fname_strain_h  = 'mach_feb15_strain_h.csv';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % END OF INPUTS
@@ -52,35 +46,15 @@ xs  = reshape(XS', NX, NY, NZ);
 ys  = reshape(YS', NX, NY, NZ);
 zs  = reshape(ZS', NX, NY, NZ);
 
-lambda_hkl  = 2.*d_hkl*sind(TOA/2);
-E_hkl       = Angstrom2keV(lambda_hkl);
-
-E_grid  = 1:1:2048;
-E_grid  = ChToEnergyConversion(1)*E_grid + ChToEnergyConversion(2);
-
 numDV   = length(pardata.day);
-for i = 1:1:numDV
-    if strcmpi(MeasurementPlane, 'h')
-        fname   = pardata.HorzFileName{i}(1:end-1);
-    elseif strcmpi(MeasurementPlane, 'v')
-        fname   = pardata.VertFileName{i}(1:end-1);
-    end
+
+strain_v    = csvread(fname_strain_v);
+strain_h    = csvread(fname_strain_h);
     
-    fname_fit   = [fname, '.fit.mat'];
-    pfname_fit  = fullfile(pname_data, fname_fit);
-    
-    fit_data    = load(pfname_fit);
-    
-    Efit(i,:)   = fit_data.Efit;
-    Afit(i,:)   = fit_data.Afit;
-    gfit(i,:)   = fit_data.gfit;
-    nfit(i,:)   = fit_data.nfit;
-    rn(i,:)     = fit_data.rn;
-    
-    Rwp(i,:)    = fit_data.Rwp;
-    Rp(i,:)     = fit_data.Rp;
-    Re(i,:)     = fit_data.Re; 
-end
+e_vv    = mean(strain_v(:,pkid_ave + 3), 2);
+e_hh    = mean(strain_h(:,pkid_ave + 3), 2);
+
+return
 
 for i = 1:1:length(pkid_fit)
     strain  = E_hkl(pkid_fit(i))./Efit(:,i) - 1;
@@ -136,8 +110,8 @@ for i = 1:1:length(pkid_fit)
     title('strain')
     caxis([-3e-3 3e-3])
     
-    Strain(:,(pkid_fit(i))) = strain;
+    Strain(:,i) = strain;
 end
 
 output  = [XS YS ZS Strain];
-csvwrite(fname_strain, output)
+xlswrite(fname_strain, output)
