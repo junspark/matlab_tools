@@ -28,7 +28,7 @@ DarkName = DataReductionPrms.DarkName;
 DarkName = fullfile(DarkPath, DarkName{1});
 
 ImagePath = DataReductionPrms.ImagePath;
-ImageNames = DataReductionPrms.ImageNames;
+ImageNames = DataReductionPrms.ImageNames
 
 MacroPath = DataReductionPrms.MacroPath;
 MacroName = DataReductionPrms.MacroName;
