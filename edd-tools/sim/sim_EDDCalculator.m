@@ -2,13 +2,13 @@ clear all
 close all
 clc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% MaterialName    = 'Al';                         % FCC Al 
-% latticeParms    = 4.050;                        % IN Angstrom
-% hkls            = load('fcc.hkls');
+MaterialName    = 'Al';                         % FCC Al 
+latticeParms    = 4.050;                        % IN Angstrom
+hkls            = load('fcc.hkls');
 
-MaterialName    = 'Fe';                         % BCC Fe
-latticeParms    = 2.87 ;                        % IN Angstrom
-hkls            = load('bcc.hkls');
+% MaterialName    = 'Fe';                         % BCC Fe
+% latticeParms    = 2.87 ;                        % IN Angstrom
+% hkls            = load('bcc.hkls');
 
 % MaterialName    = 'Fe';                         % FCC Fe
 % latticeParms    = 3.515;                        % IN Angstrom
@@ -23,7 +23,7 @@ hkls            = load('bcc.hkls');
 % hkls            = load('diamondcubic.hkls');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SampleThickness = 30;                          % IN cm
+SampleThickness = 40;                          % IN cm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 IncSlitSizeRad  = 0.2;                          % IN mm
 OutSlitSizeRad  = 0.2;                          % IN mm
@@ -32,7 +32,7 @@ numhkls         = size(hkls,1);
 d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
 BeamLineFlux    = load('bm_flux.data');
-TakeOffAngle    = 5:1:10;                    % IN deg
+TakeOffAngle    = 3:0.5:10;                    % IN deg
 
 GaugeLengthZUS  = IncSlitSizeRad*cosd(TakeOffAngle./2)./sind(TakeOffAngle);
 GaugeLengthZDS  = OutSlitSizeRad*cosd(TakeOffAngle./2)./sind(TakeOffAngle);
