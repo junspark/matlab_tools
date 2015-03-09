@@ -84,7 +84,7 @@ for ii = 1:1:numAzi
         end
     end
     
-    if ~isfield(cakeParms, 'fastint') || ~cakeParms.fastint
+    if ~cakeParms.fastint | isfield(XRDIMAGE.CakePrms, 'fastint') 
         Ilist   = BuildMeshPolarXRD(R, V, mesh.qrule);
     else
         V       = mean(V,2);
