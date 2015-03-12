@@ -14,7 +14,7 @@ TOA0    = 7;
 %%%%%%%%%%%%%%%
 % X-ray emission lines (eV) - XRAY ORANGE BOOK
 % Ce Ka1     Ka2     Kb1     La1    La2    Lb1    Lb2    Lg1  Ma1
-CeO2_emission_energy        = load('CeO2.emission.data');
+CeO2_emission_energy        = load('Ce.emission.data');
 CeO2_emission_energy(1,:)   = CeO2_emission_energy(1,:)/1000;
 
 %%%%%%%%%%%%%%%
@@ -83,12 +83,7 @@ for i = 1:1:length(peaks2use)
 end
 lambda_fit  = keV2Angstrom(E_fit);
 
-PolynominalCoefficient  = polyfit(2.*d_hkl(peaks2use), lambda_fit, 1);
-
-lambda  = polyval(PolynominalCoefficient, 2.*d_hkl(peaks2use));
-lambda0 = polyval([PolynominalCoefficient(1), 0], 2.*d_hkl(peaks2use));
-TOA     = 2.*asind(PolynominalCoefficient(1));
-
+TOA         = lsqcurvefit(@funcBragg, TOA0, d_hkl(peaks2use), lambda_fit);
 lambda_hkl  = 2.*d_hkl*sind(TOA/2);
 E_hkl       = Angstrom2keV(lambda_hkl);
 
@@ -98,11 +93,19 @@ plot(E_hkl, ones(length(E_hkl), 1), 'k^')
 figure(2)
 plot(2.*d_hkl(peaks2use), lambda_fit, 'ko')
 hold on
-plot(2.*d_hkl(peaks2use), lambda0, 'r-')
-plot(2.*d_hkl(peaks2use), lambda, 'b-')
+plot(2.*d_hkl(peaks2use), lambda_hkl(peaks2use), 'g-')
 xlabel('2*d_{hkl} (Angstrom)')
 ylabel('lambda (Andstrom)')
-legend('data points', 'linear fit', 'linear fit without intercept')
+legend('data points', 'Bragg func fit')
+
+figure(3)
+plot(x, log(y), 'b.-');
+hold on
+plot((CeO2_emission_energy(1,:)-ChToEnergyConversion(2))/ChToEnergyConversion(1), log(CeO2_emission_energy(2,:)), 'g^')
+plot((E_hkl-ChToEnergyConversion(2))/ChToEnergyConversion(1), ones(length(E_hkl), 1), 'k^')
+grid on
+xlabel('channel number')
+ylabel('counts')
 
 disp(sprintf('*****************************************************************'))
 disp(sprintf('Channel to Energy relathionship'));
@@ -112,10 +115,8 @@ disp(sprintf('b = %f', ChToEnergyConversion(2)));
 disp(sprintf('Channel Number starts from 1'));
 disp(sprintf('*****************************************************************'))
 disp(sprintf('lambda_hkl = sin (TOA / 2) * (2 * d_hkl)'))
-disp(sprintf('Figure 2 should look linear with y-intercept close to zero)'))
-disp(sprintf('PolynominalCoefficient(1) = sin (TOA / 2) = %f', PolynominalCoefficient(1)))
-disp(sprintf('PolynominalCoefficient(2) = %f', PolynominalCoefficient(2)))
-disp(sprintf('TOA in degrees'));
+disp(sprintf('Figure 2 should be linear'))
+disp(sprintf('TOA = %f degree', TOA));
 disp(sprintf('*****************************************************************'))
 disp(sprintf('*************** ATTENTION | ACHTUNG | FIGYELEM ******************'))
 disp(sprintf('Copy the these commands into following steps.'))
