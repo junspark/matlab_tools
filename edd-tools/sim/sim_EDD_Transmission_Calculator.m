@@ -25,18 +25,11 @@ hkls            = load('fcc.hkls');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SampleThickness = 40;                          % IN cm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-IncSlitSizeRad  = 0.2;                          % IN mm
-OutSlitSizeRad  = 0.2;                          % IN mm
+BeamLineFlux    = load('bm_flux.data');
+TakeOffAngle    = 3:0.5:10;                    % IN deg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 numhkls         = size(hkls,1);
 d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
-
-BeamLineFlux    = load('bm_flux.data');
-TakeOffAngle    = 3:0.5:10;                    % IN deg
-
-GaugeLengthZUS  = IncSlitSizeRad*cosd(TakeOffAngle./2)./sind(TakeOffAngle);
-GaugeLengthZDS  = OutSlitSizeRad*cosd(TakeOffAngle./2)./sind(TakeOffAngle);
-GaugeLengthZ    = GaugeLengthZUS + GaugeLengthZDS
 
 for j = 1:1:length(TakeOffAngle)
     wavelength      = 2*d_hkls.*sind(TakeOffAngle(j)/2);
@@ -69,7 +62,7 @@ for j = 1:1:length(TakeOffAngle)
     PhotonTransAtNormalIncidence(:,j)   = PercentTransmission(:,j).*Flux;
 end
 
-figure,
+figure(1)
 set(gcf, 'Position', [1007 33 902 977])
 subplot(2,2,1)
 semilogy(BeamLineFlux(:,1), BeamLineFlux(:,2), 'k.')
@@ -108,10 +101,3 @@ xlabel('hkl id')
 ylabel('Number of photons transmitted')
 grid on
 
-figure,
-plot(TakeOffAngle, GaugeLengthZ, 'ko')
-axis tight
-title(['IncSlit = ', num2str(IncSlitSizeRad), ' mm & OutSlit = ', num2str(IncSlitSizeRad), ' mm'])
-xlabel('take off angle (deg)')
-ylabel('gauge length in z (mm)')
-grid on
