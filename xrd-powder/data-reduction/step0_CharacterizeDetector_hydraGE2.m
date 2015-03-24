@@ -3,30 +3,21 @@ close all
 clc
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Instrument parameter optimization results
-% Update parameters accordingly
-% XRDIMAGE.Instr.centers  : -1.521051 , 1.873511
-% XRDIMAGE.Instr.distance : 1859.003585
-% XRDIMAGE.Instr.gammaX   : -0.019055
-% XRDIMAGE.Instr.gammaY   : 0.001219
-% Detector distortion prm : 0.088341
-% Detector distortion prm : -0.096858
-% Detector distortion prm : 2.164266
-% Detector distortion prm : 2.054851
-% Detector distortion prm : 312.017158
-% Detector distortion prm : 0.000058
+% pname   = '.\example\APS\balogh_march14';
+% fname   = 'Ceo2_calibr1_00029.ge4.sum';
+% pfname  = fullfile(pname, fname);
 % 
-% ###########################
-% mean pseudo-strain using p0 : 0.001380
-% mean pseudo-strain using p  : 0.000352
-% 
-% std pseudo-strain using p0 : 0.001801
-% std pseudo-strain using p  : 0.000589
+% data    = ReadSUM(pfname);
+% data    = imrotate(data,  242.5);
+% data    = [zeros(size(data,1), 1040), data];
+% data    = [zeros(520, size(data,2)); data; zeros(520, size(data,2))];
+% imagesc(log(data))
+% axis equal tight
+% size(data)
+% return
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% rotation for GE1 is 152.5
-XRDIMAGE.Image.RotAngle     = 152.5;
+% rotation for GE4 is 152.5
+XRDIMAGE.Image.RotAngle     = 62.5;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% INPUT PARAMETERS
@@ -36,53 +27,41 @@ XRDIMAGE.Image.fbase        = 'Ceo2_calibr1_';
 XRDIMAGE.Image.fnumber      = 30;
 XRDIMAGE.Image.numframe     = 1;
 XRDIMAGE.Image.numdigs      = 5;
-XRDIMAGE.Image.fext         = 'ge1.sum';
+XRDIMAGE.Image.fext         = 'ge2.sum';
 
 %%% INSTRUMENT PARAMETERS
 XRDIMAGE.Instr.energy       = 65.351;       % keV
 XRDIMAGE.Instr.wavelength   = keV2Angstrom(XRDIMAGE.Instr.energy);  % wavelength (Angstrom)
 XRDIMAGE.Instr.pixelsize    = 0.2;          % mm
 XRDIMAGE.Instr.detectorsize = 3805*XRDIMAGE.Instr.pixelsize;    % mm
-XRDIMAGE.Instr.distance     = 1859.003585;     % mm
-XRDIMAGE.Instr.centers      = [-1.521051 , 1.873511 ]; % center offsets x & y (um)
-XRDIMAGE.Instr.gammaX       = -0.019055;    % rad
-XRDIMAGE.Instr.gammaY       = 0.001219;    % rad
+XRDIMAGE.Instr.distance     = 1884.906965;     % mm
+XRDIMAGE.Instr.centers      = [ -231.424111 , -411.514111 ]; % center offsets x & y (um)
+XRDIMAGE.Instr.gammaX       = 0.019714;     % rad
+XRDIMAGE.Instr.gammaY       = 0.007226;    % rad
 XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
 
 % RADIAL CORRECTION
 % 0 : no correction
 % 1 : constant radial offset
 % 2 : PROPOSED BY ISSN 0909-0495 LEE
-XRDIMAGE.Instr.dettype  = '2a';
+XRDIMAGE.Instr.dettype  = '2';
 
 % 0 : []
 % 1 : constant value
 % 2 : [a1 a2 n1 n2 rhod]
 XRDIMAGE.Instr.detpars  = [ ...
-    0.088341 ...
-    -0.096858 ...
-    2.164266 ...
-    2.054851 ...
-    312.017158 ...
-    0.000058];
-
-% Detector distortion prm : 0.088341
-% Detector distortion prm : -0.096858
-% Detector distortion prm : 2.164266
-% Detector distortion prm : 2.054851
-% Detector distortion prm : 312.017158
-% Detector distortion prm : 0.000058
+     -0.000020293901802  -0.000028321143194  -0.025765631863080  -0.014462281373550   2.330900928768550   0.000000081220556].* 1e2;
 
 %%% CAKE PARAMETERS
-XRDIMAGE.CakePrms.bins(1)   = 10;               % number of azimuthal bins over angular range defined by XRDIMAGE.CakePrms.sector(1) and XRDIMAGE.CakePrms.sector(2)
-XRDIMAGE.CakePrms.bins(2)   = 2000;             % number of radial bins over radial range defined by XRDIMAGE.CakePrms.sector(3) and XRDIMAGE.CakePrms.sector(3)
-XRDIMAGE.CakePrms.bins(3)   = 10;               % number of angular bins
-XRDIMAGE.CakePrms.origin(1) = 1487.69889054500;             % x center in pixels, 
-XRDIMAGE.CakePrms.origin(2) =  814.65219783500;             % y center in pixels, 
-XRDIMAGE.CakePrms.sector(1) = 60;               % start azimuth (min edge of bin) in degrees    %% -360/XRDIMAGE.CakePrms.bins(1)/2
-XRDIMAGE.CakePrms.sector(2) = 100;              % stop  azimuth (max edge of bin) in degrees   %% 360-360/XRDIMAGE.CakePrms.bins(1)/2
-XRDIMAGE.CakePrms.sector(3) = 450;              % start radius (min edge of bin) in pixels
-XRDIMAGE.CakePrms.sector(4) = 2250;             % stop  radius (max edge of bin) in pixels
+XRDIMAGE.CakePrms.bins(1)   = 10;           % number of azimuthal bins
+XRDIMAGE.CakePrms.bins(2)   = 2000;         % number of radial bins
+XRDIMAGE.CakePrms.bins(3)   = 10;           % number of angular bins
+XRDIMAGE.CakePrms.origin(1) = 2288;         % x center in pixels, 
+XRDIMAGE.CakePrms.origin(2) = 791;         % y center in pixels, 
+XRDIMAGE.CakePrms.sector(1) = 150;           % start azimuth (min edge of bin) in degrees    %% -360/XRDIMAGE.CakePrms.bins(1)/2
+XRDIMAGE.CakePrms.sector(2) = 190;          % stop  azimuth (max edge of bin) in degrees   %% 360-360/XRDIMAGE.CakePrms.bins(1)/2
+XRDIMAGE.CakePrms.sector(3) = 500;         % start radius (min edge of bin) in pixels
+XRDIMAGE.CakePrms.sector(4) = 2300;         % stop  radius (max edge of bin) in pixels
 
 eta_step    = (XRDIMAGE.CakePrms.sector(2) - XRDIMAGE.CakePrms.sector(1))/XRDIMAGE.CakePrms.bins(1);
 eta_ini     = XRDIMAGE.CakePrms.sector(1) + eta_step/2;
@@ -94,14 +73,30 @@ XRDIMAGE.CakePrms.azim  = azim;
 XRDIMAGE.Material.num       = 1;
 XRDIMAGE.Material.lattparms = 5.411651;        % CeO2
 XRDIMAGE.Material.structure = 'fcc';
-XRDIMAGE.Material.numpk     = 12;
+XRDIMAGE.Material.numpk     = 5;
 XRDIMAGE.Material.pkidx     = {...
-    [1] [2] [3] [4] [5] [6] [7] [8] [9] [12] [13] [16]
+    [1] [2] [3] [4] [5]
     };
 XRDIMAGE.Material.pkrange    = [...
-    3.3796 3.9181 5.5837 6.5657 6.8625 7.9412 8.6641 8.8922 9.7525 11.2814 11.8048 12.6301; ...
-    3.5796 4.1181 5.7837 6.7657 7.0625 8.1412 8.8641 9.0922 9.9525 11.4814 12.0048 12.8301; ...
+    3.3796 3.9181 5.5837 6.5657 6.8625; ...
+    3.5796 4.1181 5.7337 6.7157 7.0025; ...
     ];
+% XRDIMAGE.Material.numpk     = 12;
+% XRDIMAGE.Material.pkidx     = {...
+%     [1] [2] [3] [4] [5] [6] [7] [8] [9] [12] [13] [16]
+%     };
+% XRDIMAGE.Material.pkrange    = [...
+%     3.3796 3.9181 5.5837 6.5657 6.8625 7.9412 8.6641 8.8922 9.7525 11.2814 11.8048 12.6301; ...
+%     3.5796 4.1181 5.7337 6.7157 7.0025 8.0912 8.8141 9.0422 9.9025 11.4314 11.9548 12.7801; ...
+%     ];
+% XRDIMAGE.Material.numpk     = 10;
+% XRDIMAGE.Material.pkidx     = {...
+%     [3] [4] [5] [6] [7] [8] [9] [12] [13] [16]
+%     };
+% XRDIMAGE.Material.pkrange    = [...
+%     5.5837 6.5657 6.8625 7.9412 8.6641 8.8922 9.7525 11.2814 11.8048 12.6301; ...
+%     5.7337 6.7157 7.0025 8.0912 8.8141 9.0422 9.9025 11.4314 11.9548 12.7801; ...
+%     ];
 XRDIMAGE.Material.pkbck     = 2;
 XRDIMAGE.Material.pkfunc    = 4;
 XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
@@ -150,8 +145,8 @@ if Analysis_Options.make_polimg
         
         imgi    = ReadSUM(pfname{i,1});
         imgi    = imrotate(imgi, XRDIMAGE.Image.RotAngle);
-        imgi    = [nan(1040, size(imgi,2)); imgi];
-        imgi    = [nan(size(imgi,1), 520) imgi nan(size(imgi,1), 520)];
+        imgi    = [zeros(size(imgi,1), 1040), imgi];
+        imgi    = [zeros(520, size(imgi,2)); imgi; zeros(520, size(imgi,2))];
         
         figure(1)
         hold off
@@ -195,7 +190,7 @@ if Analysis_Options.make_polimg
         disp(' ')
     end
 end
-% return
+
 if Analysis_Options.fits_spectra
     for i = 1:1:numimg
         pfname_polimage = [pfname{i,1}, '.polimg.mat'];
@@ -243,14 +238,14 @@ if Analysis_Options.fits_spectra
                     yr  = y(idx)';
                     
                     pr0 = [...
-                        max(yr) ...
+                        max(yr)/1.5 ...
                         0.5 ...
                         0.15 ...
                         XRDIMAGE.Instr.distance*tand(tth(XRDIMAGE.Material.pkidx{k})) ...
                         0 ...
                         100];
                 else
-                    pkrange = [pkfit.rho(j-1,k)-2.5 pkfit.rho(j-1,k)+2.5];
+                    pkrange = [pkfit.rho(j-1,k)-1.5 pkfit.rho(j-1,k)+1.5];
                     idx = find(x >= pkrange(1) & x <= pkrange(2));
                     xr  = x(idx)';
                     yr  = y(idx)';
@@ -263,9 +258,14 @@ if Analysis_Options.fits_spectra
                         pkfit.bkg{j-1,k}];
                 end
                 
+%                 LB  = [0 0 0 0 XRDIMAGE.Material.pkrange(1,k)-0.25 -inf -inf];
+%                 UB  = [inf inf inf inf XRDIMAGE.Material.pkrange(2,k)+0.25 inf inf];
+                
                 y0  = pfunc(pr0,xr);
                 [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
                     [], [], Analysis_Options.PkFitOptions);
+%                 [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
+%                     LB, UB, Analysis_Options.PkFitOptions);
                 yf  = pfunc(pr,xr);
                 
                 figure(11)
@@ -292,11 +292,12 @@ if Analysis_Options.fits_spectra
                 pkfit.rsn(j,k)  = rsn;
                 pkfit.ef(j,k)   = ef;
                 pkfit.rwp(j,k)  = ErrorRwp(yr, yf);
-                % pause
+%                 pause
             end
             figure(11)
             subplot(1,2,1)
             hold off
+%             return
         end
         
         if Analysis_Options.save_fits

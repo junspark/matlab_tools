@@ -16,12 +16,13 @@ clc
 % size(data)
 % return
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% rotation for GE1 is 152.5
+% rotation for GE4 is 152.5
 XRDIMAGE.Image.RotAngle     = 242.5;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% INPUT PARAMETERS
-XRDIMAGE.Image.pname        = '.\example\APS\balogh_march14';
+% XRDIMAGE.Image.pname        = '.\example\APS\balogh_march14';
+XRDIMAGE.Image.pname        = '/home/beams/S1IDUSER/mnt/s1b/__eval/matlab_tools_examples';
 XRDIMAGE.Image.fbase        = 'Ceo2_calibr1_';
 XRDIMAGE.Image.fnumber      = 30;
 XRDIMAGE.Image.numframe     = 1;
@@ -52,9 +53,9 @@ XRDIMAGE.Instr.detpars  = [ ...
      -0.000020293901802  -0.000028321143194  -0.025765631863080  -0.014462281373550   2.330900928768550   0.000000081220556].* 1e2;
 
 %%% CAKE PARAMETERS
-XRDIMAGE.CakePrms.bins(1)   = 8;           % number of azimuthal bins
-XRDIMAGE.CakePrms.bins(2)   = 4000;         % number of radial bins
-XRDIMAGE.CakePrms.bins(3)   = 7;            % number of angular bins
+XRDIMAGE.CakePrms.bins(1)   = 10;           % number of azimuthal bins
+XRDIMAGE.CakePrms.bins(2)   = 2000;         % number of radial bins
+XRDIMAGE.CakePrms.bins(3)   = 10;           % number of angular bins
 XRDIMAGE.CakePrms.origin(1) = 791;         % x center in pixels, 
 XRDIMAGE.CakePrms.origin(2) = 2288;         % y center in pixels, 
 XRDIMAGE.CakePrms.sector(1) = -35;           % start azimuth (min edge of bin) in degrees    %% -360/XRDIMAGE.CakePrms.bins(1)/2
@@ -72,14 +73,14 @@ XRDIMAGE.CakePrms.azim  = azim;
 XRDIMAGE.Material.num       = 1;
 XRDIMAGE.Material.lattparms = 5.411651;        % CeO2
 XRDIMAGE.Material.structure = 'fcc';
-% XRDIMAGE.Material.numpk     = 5;
-% XRDIMAGE.Material.pkidx     = {...
-%     [1] [2] [3] [4] [5]
-%     };
-% XRDIMAGE.Material.pkrange    = [...
-%     3.3796 3.9181 5.5837 6.5657 6.8625; ...
-%     3.5796 4.1181 5.7337 6.7157 7.0025; ...
-%     ];
+XRDIMAGE.Material.numpk     = 5;
+XRDIMAGE.Material.pkidx     = {...
+    [1] [2] [3] [4] [5]
+    };
+XRDIMAGE.Material.pkrange    = [...
+    3.3796 3.9181 5.5837 6.5657 6.8625; ...
+    3.5796 4.1181 5.7337 6.7157 7.0025; ...
+    ];
 % XRDIMAGE.Material.numpk     = 12;
 % XRDIMAGE.Material.pkidx     = {...
 %     [1] [2] [3] [4] [5] [6] [7] [8] [9] [12] [13] [16]
@@ -88,14 +89,14 @@ XRDIMAGE.Material.structure = 'fcc';
 %     3.3796 3.9181 5.5837 6.5657 6.8625 7.9412 8.6641 8.8922 9.7525 11.2814 11.8048 12.6301; ...
 %     3.5796 4.1181 5.7337 6.7157 7.0025 8.0912 8.8141 9.0422 9.9025 11.4314 11.9548 12.7801; ...
 %     ];
-XRDIMAGE.Material.numpk     = 10;
-XRDIMAGE.Material.pkidx     = {...
-    [3] [4] [5] [6] [7] [8] [9] [12] [13] [16]
-    };
-XRDIMAGE.Material.pkrange    = [...
-    5.5837 6.5657 6.8625 7.9412 8.6641 8.8922 9.7525 11.2814 11.8048 12.6301; ...
-    5.7337 6.7157 7.0025 8.0912 8.8141 9.0422 9.9025 11.4314 11.9548 12.7801; ...
-    ];
+% XRDIMAGE.Material.numpk     = 10;
+% XRDIMAGE.Material.pkidx     = {...
+%     [3] [4] [5] [6] [7] [8] [9] [12] [13] [16]
+%     };
+% XRDIMAGE.Material.pkrange    = [...
+%     5.5837 6.5657 6.8625 7.9412 8.6641 8.8922 9.7525 11.2814 11.8048 12.6301; ...
+%     5.7337 6.7157 7.0025 8.0912 8.8141 9.0422 9.9025 11.4314 11.9548 12.7801; ...
+%     ];
 XRDIMAGE.Material.pkbck     = 2;
 XRDIMAGE.Material.pkfunc    = 4;
 XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
@@ -165,8 +166,8 @@ if Analysis_Options.make_polimg
         end
         
         %%% POLAR REBINNING
-        imgi    = rot90(fliplr(imgi), 1);
-        polimg  = PolarBinXRD2(DetectorMesh, ...
+        % imgi    = rot90(fliplr(imgi), 1);
+        polimg  = PolarBinXRD(DetectorMesh, ...
             XRDIMAGE.Instr, ...
             XRDIMAGE.CakePrms, ...
             imgi);

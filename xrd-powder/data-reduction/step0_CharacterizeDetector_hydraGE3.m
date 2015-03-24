@@ -16,12 +16,13 @@ clc
 % size(data)
 % return
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% rotation for GE1 is 152.5
+% rotation for GE3 is 332.5
 XRDIMAGE.Image.RotAngle     = 332.5;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% INPUT PARAMETERS
-XRDIMAGE.Image.pname        = '.\example\APS\balogh_march14';
+% XRDIMAGE.Image.pname        = '.\example\APS\balogh_march14';
+XRDIMAGE.Image.pname        = '/home/beams/S1IDUSER/mnt/s1b/__eval/matlab_tools_examples';
 XRDIMAGE.Image.fbase        = 'Ceo2_calibr1_';
 XRDIMAGE.Image.fnumber      = 30;
 XRDIMAGE.Image.numframe     = 1;
@@ -49,12 +50,17 @@ XRDIMAGE.Instr.dettype  = '2a';
 % 1 : constant value
 % 2 : [a1 a2 n1 n2 rhod]
 XRDIMAGE.Instr.detpars  = [ ...
-     -0.000527203748645   0.000567583036482   0.005329663481752   0.004926554638110   2.330900705316401   0.000000081220556].* 1e2;
+     -0.000527203748645 ...
+     0.000567583036482 ...
+     0.005329663481752 ...
+     0.004926554638110 ...
+     2.330900705316401 ...
+     0.000000081220556].* 1e2;
 
 %%% CAKE PARAMETERS
 XRDIMAGE.CakePrms.bins(1)   = 10;           % number of azimuthal bins
-XRDIMAGE.CakePrms.bins(2)   = 4100;         % number of radial bins
-XRDIMAGE.CakePrms.bins(3)   = 7;            % number of angular bins
+XRDIMAGE.CakePrms.bins(2)   = 2000;         % number of radial bins
+XRDIMAGE.CakePrms.bins(3)   = 10;            % number of angular bins
 XRDIMAGE.CakePrms.origin(1) = 2277;         % x center in pixels, 
 XRDIMAGE.CakePrms.origin(2) = 2993;         % y center in pixels, 
 XRDIMAGE.CakePrms.sector(1) = 230;           % start azimuth (min edge of bin) in degrees    %% -360/XRDIMAGE.CakePrms.bins(1)/2
@@ -149,8 +155,8 @@ if Analysis_Options.make_polimg
         end
         
         %%% POLAR REBINNING
-        imgi    = rot90(fliplr(imgi), 1);
-        polimg  = PolarBinXRD2(DetectorMesh, ...
+        % imgi    = rot90(fliplr(imgi), 1);
+        polimg  = PolarBinXRD(DetectorMesh, ...
             XRDIMAGE.Instr, ...
             XRDIMAGE.CakePrms, ...
             imgi);
