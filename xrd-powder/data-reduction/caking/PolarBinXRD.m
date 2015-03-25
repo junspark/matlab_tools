@@ -1,4 +1,6 @@
 function polImg = PolarBinXRD(mesh, instr, cakeParms, img)
+% save('PolarBinXRD_input.mat')
+% return
 % Polar integration of image data
 
 % clear all
@@ -7,6 +9,7 @@ function polImg = PolarBinXRD(mesh, instr, cakeParms, img)
 % load('PolarBinXRD_input.mat')
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 img   = double(img);
+imgi    = rot90(fliplr(img), 1);
 
 L   = instr.detectorsize/instr.pixelsize;
 
@@ -14,10 +17,19 @@ L   = instr.detectorsize/instr.pixelsize;
 x0  = cakeParms.origin(1);   % in pixels
 y0  = cakeParms.origin(2);   % in pixels
 
+figure(1000)
+imagesc(log(img))
+hold on
+axis equal tight
+plot(x0, y0, 'r*')
+
 startRho    = cakeParms.sector(3);
 stopRho     = cakeParms.sector(4);
 
+%%% NUMBER OF AZIMUTHAL BINS OVER ANGULAR RANGE DEFINED BY cakeParms.sector(1) AND cakeParms.sector(2)
 numAzi  = cakeParms.bins(1);             %%% NUMBER OF AZIMUTHAL POINTS
+%%% NUMBER OF RADIAL POINTS PER AZIMHUTHAL BIN OVER RADIAL RANGE DEFINED BY cakeParms.sector(3) AND cakeParms.sector(4)
+
 numRho  = cakeParms.bins(2);             %%% NUMBER OF RADIAL POINTS PER AZIMHUTH
 numEta  = cakeParms.bins(3);             %%% NUMBER OF ETA POINTS PER AZIMUTH
 dAzi    = 360/numAzi;
@@ -38,20 +50,25 @@ for ii = 1:1:numAzi
     
     azi_ini = polImg.azimuth(ii) - dAzi/2;
     azi_fin = polImg.azimuth(ii) + dAzi/2;
+    
     TH  = azi_ini:dEta:azi_fin;
     TH  = repmat(TH, numRho + 1, 1);
     
     [x, y]  = pol2cart(deg2rad(TH),R);
     x       = x0 + x;
     y       = y0 + y;
-    
+
+    figure(1000)
+    title(num2str(polImg.azimuth(ii)))
+    plot(x, y, 'k.')
+
+    % tic
     V   = zeros(numRho + 1, numEta + 1);
     for i = 1:1:(numRho + 1)
         for j = 1:1:(numEta + 1)
             xy  = [x(i,j); y(i,j)];
             
             V(i,j) = DataCoordinates(xy, L, mesh, img);
-            
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % SOME BENCHMARK TESTS
             % gridNum     = (L - 1)*(fix(xy(2)) - 1) + fix(xy(1));
@@ -83,7 +100,9 @@ for ii = 1:1:numAzi
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         end
     end
-    
+    % toc
+
+    % tic
     if ~isfield(cakeParms, 'fastint') || ~cakeParms.fastint
         Ilist   = BuildMeshPolarXRD(R, V, mesh.qrule);
     else
@@ -91,6 +110,7 @@ for ii = 1:1:numAzi
         V       = (V(1:end-1) + V(2:end))/2;
         Ilist   = V;
     end
+    % toc
     
     polImg.radius(:,ii)    = Rlist';
     polImg.intensity(:,ii) = Ilist';
@@ -99,6 +119,8 @@ for ii = 1:1:numAzi
     fprintf('Processing time for sector %d is %1.4f\n', ii, dtime);
     % return
 end
-% return
+
 polImg.radius       = polImg.radius';
 polImg.intensity    = polImg.intensity';
+
+close(figure(1000))
