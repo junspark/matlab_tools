@@ -21,7 +21,7 @@ x0  = cakeParms.origin(1);   % in pixels
 y0  = cakeParms.origin(2);   % in pixels
 
 figure(1000)
-imagesc(log(img))
+imagesc(log(abs(img)))
 hold on
 axis equal tight
 plot(x0, y0, 'r*')
