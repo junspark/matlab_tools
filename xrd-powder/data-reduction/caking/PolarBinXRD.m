@@ -1,15 +1,18 @@
 function polImg = PolarBinXRD(mesh, instr, cakeParms, img)
+% Polar integration of image data
+
 % save('PolarBinXRD_input.mat')
 % return
-% Polar integration of image data
 
 % clear all
 % close all
 % clc
 % load('PolarBinXRD_input.mat')
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 img   = double(img);
-imgi    = rot90(fliplr(img), 1);
+imgi  = rot90(fliplr(img), 1);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 L   = instr.detectorsize/instr.pixelsize;
 
@@ -23,19 +26,23 @@ hold on
 axis equal tight
 plot(x0, y0, 'r*')
 
+startAzi    = cakeParms.sector(1);
+endAzi      = cakeParms.sector(2);
+
 startRho    = cakeParms.sector(3);
-stopRho     = cakeParms.sector(4);
+endRho      = cakeParms.sector(4);
 
 %%% NUMBER OF AZIMUTHAL BINS OVER ANGULAR RANGE DEFINED BY cakeParms.sector(1) AND cakeParms.sector(2)
-numAzi  = cakeParms.bins(1);             %%% NUMBER OF AZIMUTHAL POINTS
-%%% NUMBER OF RADIAL POINTS PER AZIMHUTHAL BIN OVER RADIAL RANGE DEFINED BY cakeParms.sector(3) AND cakeParms.sector(4)
+numAzi  = cakeParms.bins(1);
+%%% NUMBER OF RADIAL POINTS PER AZIMHUTHAL BIN OVER RADIAL RANGE DEFINED BY startRho AND endRho
+numRho  = cakeParms.bins(2);
+%%% NUMBER OF ETA POINTS PER AZIMUTH
+numEta  = cakeParms.bins(3);
 
-numRho  = cakeParms.bins(2);             %%% NUMBER OF RADIAL POINTS PER AZIMHUTH
-numEta  = cakeParms.bins(3);             %%% NUMBER OF ETA POINTS PER AZIMUTH
-dAzi    = 360/numAzi;
+dAzi    = (endAzi - startAzi)/numAzi;
 dEta    = dAzi/numEta;
 
-R   = cakeParms.sector(3):(cakeParms.sector(4)-cakeParms.sector(3))/numRho:cakeParms.sector(4);
+R   = startRho:(endRho-startRho)/numRho:endRho;
 R   = repmat(R, numEta + 1, 1)';
 
 Rlist   = mean((R(1:end - 1,:) + R(2:end,:))./2,2);
@@ -68,7 +75,7 @@ for ii = 1:1:numAzi
         for j = 1:1:(numEta + 1)
             xy  = [x(i,j); y(i,j)];
             
-            V(i,j) = DataCoordinates(xy, L, mesh, img);
+            V(i,j) = DataCoordinates(xy, L, mesh, imgi);
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % SOME BENCHMARK TESTS
             % gridNum     = (L - 1)*(fix(xy(2)) - 1) + fix(xy(1));
@@ -111,6 +118,9 @@ for ii = 1:1:numAzi
         Ilist   = V;
     end
     % toc
+    
+    % figure,
+    % plot(Ilist)
     
     polImg.radius(:,ii)    = Rlist';
     polImg.intensity(:,ii) = Ilist';

@@ -60,12 +60,12 @@ XRDIMAGE.Instr.detpars  = [ ...
 %%% CAKE PARAMETERS
 XRDIMAGE.CakePrms.bins(1)   = 10;           % number of azimuthal bins
 XRDIMAGE.CakePrms.bins(2)   = 2000;         % number of radial bins
-XRDIMAGE.CakePrms.bins(3)   = 10;            % number of angular bins
+XRDIMAGE.CakePrms.bins(3)   = 10;           % number of angular bins
 XRDIMAGE.CakePrms.origin(1) = 2277;         % x center in pixels, 
 XRDIMAGE.CakePrms.origin(2) = 2993;         % y center in pixels, 
-XRDIMAGE.CakePrms.sector(1) = 230;           % start azimuth (min edge of bin) in degrees    %% -360/XRDIMAGE.CakePrms.bins(1)/2
+XRDIMAGE.CakePrms.sector(1) = 230;          % start azimuth (min edge of bin) in degrees    %% -360/XRDIMAGE.CakePrms.bins(1)/2
 XRDIMAGE.CakePrms.sector(2) = 290;          % stop  azimuth (max edge of bin) in degrees   %% 360-360/XRDIMAGE.CakePrms.bins(1)/2
-XRDIMAGE.CakePrms.sector(3) = 450;         % start radius (min edge of bin) in pixels
+XRDIMAGE.CakePrms.sector(3) = 450;          % start radius (min edge of bin) in pixels
 XRDIMAGE.CakePrms.sector(4) = 2300;         % stop  radius (max edge of bin) in pixels
 
 eta_step    = (XRDIMAGE.CakePrms.sector(2) - XRDIMAGE.CakePrms.sector(1))/XRDIMAGE.CakePrms.bins(1);
