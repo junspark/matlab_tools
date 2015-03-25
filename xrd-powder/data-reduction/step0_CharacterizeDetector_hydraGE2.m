@@ -16,7 +16,7 @@ clc
 % size(data)
 % return
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% rotation for GE4 is 152.5
+% rotation for GE2 is 62.5
 XRDIMAGE.Image.RotAngle     = 62.5;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
