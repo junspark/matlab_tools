@@ -55,6 +55,7 @@ for i = 1:numSpectra
     %% PROPOSED BY Lee J.H.
     f = DistPars(1)*((data(:,i)/DistPars(5)).^(DistPars(3)))*cosd(DistPars(6)*azim(i))...
         + DistPars(2)*((data(:,i)/DistPars(5)).^DistPars(4)) + 1;
+    
     rhoHatdPrime  = f.*data(:,i);
     
     %% assign azimuth (note units!)
@@ -69,8 +70,8 @@ for i = 1:numSpectra
     xHatPrime = xHatdPrime + repmat(tHatPrimeToHatdPrime(1), [numPts, 1]);
     yHatPrime = yHatdPrime + repmat(tHatPrimeToHatdPrime(2), [numPts, 1]);
     
-    rhoHatPrime = sqrt(xHatPrime.^2 + yHatPrime.^2);
-    etaHatPrime = rad2deg(atan2(yHatPrime, xHatPrime));
+    % rhoHatPrime = sqrt(xHatPrime.^2 + yHatPrime.^2);
+    % etaHatPrime = rad2deg(atan2(yHatPrime, xHatPrime));
     
     %% full components in IP-centered (hat prime) frame
     P3HatPrime = [xHatPrime, yHatPrime, zeros(numPts, 1)]';
