@@ -130,9 +130,7 @@ for ii = 1:1:numAzi
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         end
     end
-    % toc
-
-    % tic
+    
     if ~isfield(cakeParms, 'fastint') || ~cakeParms.fastint
         Ilist   = BuildMeshPolarXRD(R, V, mesh.qrule);
     else
@@ -140,17 +138,12 @@ for ii = 1:1:numAzi
         V       = (V(1:end-1) + V(2:end))/2;
         Ilist   = V;
     end
-    % toc
-    
-    % figure,
-    % plot(Ilist)
     
     polImg.radius(:,ii)    = Rlist';
     polImg.intensity(:,ii) = Ilist';
     
     dtime   = toc;
     fprintf('Processing time for sector %d is %1.4f\n', ii, dtime);
-    % return
 end
 
 polImg.radius       = polImg.radius';
