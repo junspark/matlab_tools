@@ -419,12 +419,21 @@ if Analysis_Options.find_instrpars
             XRDIMAGE.Instr.gammaY, ...
             XRDIMAGE.Instr.detpars];
         
-        dtth0   = ApplyGeometricModel(p0);
+        GeomModelParams.pkidx           = [XRDIMAGE.Material.pkidx{:}]';
+        GeomModelParams.tth             = XRDIMAGE.Material.tth;
+        GeomModelParams.azim            = XRDIMAGE.CakePrms.azim;
+        GeomModelParams.rho             = pkfit.rho';
+        GeomModelParams.dettype         = XRDIMAGE.Instr.dettype;
+        GeomModelParams.DistortParams0  = XRDIMAGE.Instr.detpars;
+        GeomModelParams.find_detpars    = Analysis_Options.find_detpars;
+        
+        dtth0   = ApplyGeometricModel(p0, GeomModelParams);
         tth0    = tth([XRDIMAGE.Material.pkidx{:}])';
         tth0    = repmat(tth0, 1, size(dtth0, 2));
         strain0 = sind(tth0)./sind(tth0 - dtth0) - 1;
         
-        p	= lsqnonlin(@ApplyGeometricModel, p0, [], [], Analysis_Options.InstrPrmFitOptions);
+        ydata   = zeros(XRDIMAGE.Material.numpk, XRDIMAGE.CakePrms.bins(1));
+        p       = lsqcurvefit(@ApplyGeometricModel, p0, GeomModelParams, ydata, [], [], Analysis_Options.InstrPrmFitOptions);
         
         disp('Instrument parameter optimization results')
         disp('Update parameters accordingly')
@@ -434,7 +443,7 @@ if Analysis_Options.find_instrpars
         disp(sprintf('XRDIMAGE.Instr.gammaY   : %f', p(5)))
         disp(sprintf('Detector distortion prm : %f\n', p(6:end)))
         
-        dtth    = ApplyGeometricModel(p);
+        dtth    = ApplyGeometricModel(p, GeomModelParams);
         strain  = sind(tth0)./sind(tth0 - dtth) - 1;
         
         figure(100)
@@ -477,7 +486,7 @@ if Analysis_Options.find_instrpars
         disp(sprintf('std pseudo-strain using p  : %f\n', std(strain(:))))
         
         %%% ASSIGN NEW INSTRUMENT PARAMETERS USING OPTIMIZATION RESULTS
-        Instr   = XRDIMAGE.Instr;
+        Instr           = XRDIMAGE.Instr;
         Instr.centers   = p(1:2);
         Instr.distance  = p(3);
         Instr.gammaX    = p(4);

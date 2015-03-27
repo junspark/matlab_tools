@@ -279,7 +279,7 @@ if Analysis_Options.make_polimg
         disp(' ')
     end
 end
-return
+
 if Analysis_Options.fits_spectra
     for i = 1:1:numimg
         pfname_polimage = [pfname{i,1}, '.polimg.mat'];
@@ -405,7 +405,7 @@ if Analysis_Options.find_instrpars
         disp(sprintf('Looking at %s to find instrument parameters.', pfname{i,1}))
         disp('###########################')
         
-        disp(sprintf('Loading peak fits in %s\n', pfname_polimage))
+        disp(sprintf('Loading polimg in %s\n', pfname_polimage))
         polimg  = load(pfname_polimage);
         polimg  = polimg.polimg;
         
@@ -419,6 +419,13 @@ if Analysis_Options.find_instrpars
             XRDIMAGE.Instr.gammaY, ...
             XRDIMAGE.Instr.detpars];
         
+        GeometricModelParams.pkidx  = [XRDIMAGE.Material.pkidx{:}]';
+        GeometricModelParams.tth    = XRDIMAGE.Material.tth;
+        GeometricModelParams.azim   = XRDIMAGE.CakePrms.azim;
+        GeometricModelParams.rho    = pkfit.rho;
+        
+        ApplyGeometricModel2(p0)
+        return
         dtth0   = ApplyGeometricModel(p0);
         tth0    = tth([XRDIMAGE.Material.pkidx{:}])';
         tth0    = repmat(tth0, 1, size(dtth0, 2));
