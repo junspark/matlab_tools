@@ -1,49 +1,25 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Instrument parameter optimization results
 % Update parameters accordingly
-% XRDIMAGE.Instr.centers  : 187.067232 , 37.184247
-% XRDIMAGE.Instr.distance : 1001.316400
-% XRDIMAGE.Instr.gammaX   : 0.001295
-% XRDIMAGE.Instr.gammaY   : -0.002228
-% Detector distortion prm : -0.000720
-% Detector distortion prm : -0.005746
-% Detector distortion prm : 2.337118
-% Detector distortion prm : 2.395277
-% Detector distortion prm : 642.146977
-% Detector distortion prm : 2.155116
+% XRDIMAGE.Instr.centers  : -308.069299 , 36.842700
+% XRDIMAGE.Instr.distance : 1001.299258
+% XRDIMAGE.Instr.gammaX   : 0.001288
+% XRDIMAGE.Instr.gammaY   : 0.002168
+% Detector distortion prm : -0.000270
+% Detector distortion prm : -0.001470
+% Detector distortion prm : 2.583568
+% Detector distortion prm : 2.094872
+% Detector distortion prm : 390.791833
+% Detector distortion prm : 1.907415
 % 
+% GeometricModelXRD2a
 % ###########################
-% mean pseudo-strain using p0 : 0.001098
-% mean pseudo-strain using p  : 0.000015
+% mean pseudo-strain using p0 : 0.000039
+% mean pseudo-strain using p  : 0.000018
 % 
-% std pseudo-strain using p0 : 0.001105
-% std pseudo-strain using p  : 0.000024
-% 
-% ###########################
-% Saving optimized innstrument parameters in ./CeO2_1.5s_00336.ge3.instr.mat
-% 
-% Instrument parameter optimization results
-% Update parameters accordingly
-% XRDIMAGE.Instr.centers  : 187.125882 , 36.478194
-% XRDIMAGE.Instr.distance : 997.785466
-% XRDIMAGE.Instr.gammaX   : 0.001259
-% XRDIMAGE.Instr.gammaY   : -0.002217
-% Detector distortion prm : -0.000244
-% Detector distortion prm : -0.001998
-% Detector distortion prm : 2.186355
-% Detector distortion prm : 2.161393
-% Detector distortion prm : 431.807159
-% Detector distortion prm : 2.151493
-% 
-% ###########################
-% mean pseudo-strain using p0 : 0.002634
-% mean pseudo-strain using p  : 0.000015
-% 
-% std pseudo-strain using p0 : 0.001113
-% std pseudo-strain using p  : 0.000024
-% 
-% ###########################
-% Saving optimized innstrument parameters in ./CeO2_1.5s_00337.ge3.instr.mat
-
+% std pseudo-strain using p0 : 0.000043
+% std pseudo-strain using p  : 0.000030
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all
 close all
 clc
@@ -73,10 +49,10 @@ XRDIMAGE.Instr.energy       = 65.351;       % keV
 XRDIMAGE.Instr.wavelength   = keV2Angstrom(XRDIMAGE.Instr.energy);  % wavelength (Angstrom)
 XRDIMAGE.Instr.detectorsize = 409.6;        % mm
 XRDIMAGE.Instr.pixelsize    = 0.2;          % mm
-XRDIMAGE.Instr.distance     = 1000.427;   % mm
-XRDIMAGE.Instr.centers      = [0 , 0]; % center offsets x & y (um)
-XRDIMAGE.Instr.gammaX       = 0;    % rad
-XRDIMAGE.Instr.gammaY       = 0;    % rad
+XRDIMAGE.Instr.distance     = 1001.292257;  % mm
+XRDIMAGE.Instr.centers      = [ -307.661284 , 36.919302 ]; % center offsets x & y (um)
+XRDIMAGE.Instr.gammaX       = 0.001291;    % rad
+XRDIMAGE.Instr.gammaY       = 0.002164;    % rad
 XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
 
 % RADIAL CORRECTION
@@ -89,17 +65,18 @@ XRDIMAGE.Instr.dettype  = '2a';
 % 1 : constant value
 % 2 : [a1 a2 n1 n2 rhod]
 XRDIMAGE.Instr.detpars  = [ ...
-    -2.441183945741672e-04 ...
-    -6.821055078203234e-04 ...
-    2.420725306801212 ...
-    1.907763397879183 ...
-    2.607928521845170e+02 ...
-    1.997318743467190];
+    -0.000002441183946 ...
+    -0.000006821055078 ...
+    0.024207253068012 ...
+    0.019077633978792 ...
+    2.607928521845170 ...
+    0.019973187434672 ...
+    ]*1e2;
 
 %%% CAKE PARAMETERS
-XRDIMAGE.CakePrms.bins(1)   = 72;           % number of azimuthal bins
+XRDIMAGE.CakePrms.bins(1)   = 18;           % number of azimuthal bins
 XRDIMAGE.CakePrms.bins(2)   = 3000;         % number of radial bins
-XRDIMAGE.CakePrms.bins(3)   = 5;            % number of angular bins
+XRDIMAGE.CakePrms.bins(3)   = 10;            % number of angular bins
 XRDIMAGE.CakePrms.origin(1) = 1024.190;         % x center in pixels, fit2d Y 
 XRDIMAGE.CakePrms.origin(2) = 1037.110;         % y center in pixels, fit2d X
 XRDIMAGE.CakePrms.sector(1) = -360/XRDIMAGE.CakePrms.bins(1)/2;     % start azimuth (min edge of bin) in degrees
@@ -119,18 +96,6 @@ XRDIMAGE.CakePrms.fastint   = 1;
 XRDIMAGE.Material.num       = 1;
 XRDIMAGE.Material.lattparms = 5.411651;        % CeO2
 XRDIMAGE.Material.structure = 'fcc';
-XRDIMAGE.Material.numpk     = 10;
-XRDIMAGE.Material.pkidx     = {...
-    [1] [2] [3] [4] [5] [6] [7] [8] [9] [10]
-    };
-
-XRDIMAGE.Material.pkrange    = [...
-    3.3796 3.9181 5.5837 6.5657 6.8625 7.9412 8.6641 8.8922 9.7525 10.3518 ; ...
-    3.5796 4.1181 5.7837 6.7657 7.0625 8.1412 8.8641 9.0922 9.9525 10.5518; ...
-    ];
-
-XRDIMAGE.Material.pkbck     = 2;
-XRDIMAGE.Material.pkfunc    = 4;
 XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
 
 %%% CALCULATE THEORETICAL TTH
@@ -138,9 +103,29 @@ XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
     'cubic', XRDIMAGE.Material.hkls', ...
     XRDIMAGE.Instr.wavelength);
 tth     = 2*th;
+d_spacing_range = 0.01;
+d_spacing_UB    = (1 + d_spacing_range)*d;
+d_spacing_LB    = (1 - d_spacing_range)*d;
+
+tth_UB  = 2.*asind(XRDIMAGE.Instr.wavelength/2)./d_spacing_LB;
+tth_LB  = 2.*asind(XRDIMAGE.Instr.wavelength/2)./d_spacing_UB;
 
 XRDIMAGE.Material.tth       = tth;
 XRDIMAGE.Material.d_spacing = d;
+XRDIMAGE.Material.numpk     = 10;
+XRDIMAGE.Material.numbounds = 10;
+XRDIMAGE.Material.pkidx     = {...
+    [1] [2] [3] [4] [5] [6] [7] [8] [9] [10]
+    };
+for i = 1:1:XRDIMAGE.Material.numbounds
+    XRDIMAGE.Material.pkrange(:,i)  = [ ...
+        min(tth_LB(XRDIMAGE.Material.pkidx{i})); ...
+        max(tth_UB(XRDIMAGE.Material.pkidx{i})); ...
+        ];
+end
+XRDIMAGE.Material.pkbck     = 2;
+XRDIMAGE.Material.pkfunc    = 4;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
