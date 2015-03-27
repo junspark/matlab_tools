@@ -112,6 +112,7 @@ eta_ini     = XRDIMAGE.CakePrms.sector(1) + eta_step/2;
 eta_fin     = XRDIMAGE.CakePrms.sector(2) - eta_step/2;
 azim        = eta_ini:eta_step:eta_fin;
 XRDIMAGE.CakePrms.azim      = 0:360/XRDIMAGE.CakePrms.bins(1):XRDIMAGE.CakePrms.sector(2);
+XRDIMAGE.CakePrms.fastint   = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%% MATERIAL PARAMETERS - CeO2
@@ -170,10 +171,10 @@ XRDIMAGE.Material.d_spacing = d;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% DATA REDUCTION FLAGS
-Analysis_Options.make_polimg    = 1;
-Analysis_Options.save_polimg    = 1;
-Analysis_Options.fits_spectra   = 1;
-Analysis_Options.save_fits      = 1;
+Analysis_Options.make_polimg    = 0;
+Analysis_Options.save_polimg    = 0;
+Analysis_Options.fits_spectra   = 0;
+Analysis_Options.save_fits      = 0;
 Analysis_Options.find_instrpars = 1;
 Analysis_Options.save_instrpars = 1;
 Analysis_Options.find_detpars	= 1;
@@ -278,7 +279,7 @@ if Analysis_Options.make_polimg
         disp(' ')
     end
 end
-return
+
 if Analysis_Options.fits_spectra
     for i = 1:1:numimg
         pfname_polimage = [pfname{i,1}, '.polimg.mat'];
@@ -404,7 +405,7 @@ if Analysis_Options.find_instrpars
         disp(sprintf('Looking at %s to find instrument parameters.', pfname{i,1}))
         disp('###########################')
         
-        disp(sprintf('Loading peak fits in %s\n', pfname_polimage))
+        disp(sprintf('Loading polimg in %s\n', pfname_polimage))
         polimg  = load(pfname_polimage);
         polimg  = polimg.polimg;
         
@@ -456,39 +457,7 @@ if Analysis_Options.find_instrpars
             Data{ii}    = [XRDIMAGE.Instr.pixelsize*polimg.radius(ii,:)' polimg.intensity(ii,:)'];
         end
         
-        %%% DEPENDS ON WHICH MODEL
-        if strcmp(XRDIMAGE.Instr.dettype, '0')
-            mapped_tth  = GeometricModelXRD0(...
-                XRDIMAGE.Instr.centers./1000, ...
-                XRDIMAGE.Instr.distance, ...
-                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
-                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
-        elseif strcmp(XRDIMAGE.Instr.dettype, '1')
-            mapped_tth  = GeometricModelXRD1(...
-                XRDIMAGE.Instr.centers./1000, ...
-                XRDIMAGE.Instr.distance, ...
-                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
-                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
-        elseif strcmp(XRDIMAGE.Instr.dettype, '2')
-            mapped_tth  = GeometricModelXRD2(...
-                XRDIMAGE.Instr.centers./1000, ...
-                XRDIMAGE.Instr.distance, ...
-                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
-                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
-        elseif strcmp(XRDIMAGE.Instr.dettype, '2a')
-            mapped_tth  = GeometricModelXRD2a(...
-                XRDIMAGE.Instr.centers./1000, ...
-                XRDIMAGE.Instr.distance, ...
-                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
-                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
-        elseif strcmp(XRDIMAGE.Instr.dettype, '2b')
-            mapped_tth  = GeometricModelXRD2b(...
-                XRDIMAGE.Instr.centers./1000, ...
-                XRDIMAGE.Instr.distance, ...
-                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
-                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
-        end
-        
+        mapped_tth  = GeometricModelXRDSwitch(XRDIMAGE.Instr, polimg);
         polimg.mapped_tth_for_intensity = mapped_tth;
         
         [tth_grid, intensity_in_tth_grid]   = MapIntensityToTThGrid(XRDIMAGE, polimg);
@@ -521,7 +490,7 @@ if Analysis_Options.find_instrpars
             save(pfname_instr, 'Instr')
         else
             disp('###########################')
-            disp(sprintf('NOT saving optimized innstrument parameters for %s\n', pfname{i,1}))
+            disp(sprintf('NOT saving optimized instrument parameters for %s\n', pfname{i,1}))
         end
     end
 end
