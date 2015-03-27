@@ -1,5 +1,28 @@
 function polImg = PolarBinXRD(mesh, instr, cakeParms, img)
-% Polar integration of image data
+% PolarBinXRD - Polar integration of image data
+%
+%   USAGE:
+%
+%   polImg = PolarBinXRD(mesh, instr, cakeParms, img)
+%
+%   INPUT:
+%
+%   mesh
+%       mesh structure for finite element integration
+%
+%   instr
+%       instrument parameters to correct for the experimental geometry
+%
+%   cakeParms
+%       caking parameters for integration
+%
+%   img
+%       image data for integration
+%
+%   OUTPUT:
+%
+%   polImg
+%       radially integrated data organized in struct variable
 
 % save('PolarBinXRD_input.mat')
 % return
@@ -21,7 +44,7 @@ x0  = cakeParms.origin(1);   % in pixels
 y0  = cakeParms.origin(2);   % in pixels
 
 figure(1000)
-imagesc(log(abs(img)))
+imagesc(log(abs(rot90(img,1))))
 hold on
 axis equal tight
 plot(x0, y0, 'r*')
