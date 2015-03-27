@@ -97,9 +97,9 @@ XRDIMAGE.Instr.detpars  = [ ...
     1.997318743467190];
 
 %%% CAKE PARAMETERS
-XRDIMAGE.CakePrms.bins(1)   = 72;           % number of azimuthal bins
-XRDIMAGE.CakePrms.bins(2)   = 3000;         % number of radial bins
-XRDIMAGE.CakePrms.bins(3)   = 5;            % number of angular bins
+XRDIMAGE.CakePrms.bins(1)   = 18;           % number of azimuthal bins
+XRDIMAGE.CakePrms.bins(2)   = 1500;         % number of radial bins
+XRDIMAGE.CakePrms.bins(3)   = 20;           % number of angular bins
 XRDIMAGE.CakePrms.origin(1) = 1024.190;         % x center in pixels, fit2d Y 
 XRDIMAGE.CakePrms.origin(2) = 1037.110;         % y center in pixels, fit2d X
 XRDIMAGE.CakePrms.sector(1) = -360/XRDIMAGE.CakePrms.bins(1)/2;     % start azimuth (min edge of bin) in degrees
@@ -212,7 +212,6 @@ else
     bg      = NreadGE(pfname{1,1}, 1);
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% LOAD XRD IMAGES & GENERATE POLIMG
 pfname  = GenerateGEpfname(XRDIMAGE.Image);
 numimg  = length(pfname);
@@ -247,13 +246,10 @@ if Analysis_Options.make_polimg
         caxis([-10 3000])
         xlabel('X_L (pixels)')
         ylabel('Y_L (pixels)')
-        title('Ensure that image matches the coordinate system')
+        title('Ensure that image shown matches the coordinate system employeed')
         text(0, 0, 'TO')
         text(2048, 0, 'TI')
-        text(0, 0, 'TO')
-        text(0, 2048, 'BO')
-        text(2048, 2048, 'BI')
-        
+        return
         %%% POLAR REBINNING
         polimg  = PolarBinXRD(DetectorMesh, ...
             XRDIMAGE.Instr, ...
