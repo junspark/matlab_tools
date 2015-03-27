@@ -1,23 +1,24 @@
-function fout = ApplyGeometricModel(x)
-centers     = [x(1) x(2)]./1000;
-distance    = x(3);
-gX          = x(4);
-gY          = x(5);
+function fout = ApplyGeometricModel(p, params)
+centers             = [p(1) p(2)]./1000;
+distance            = p(3);
+gX                  = p(4);
+gY                  = p(5);
 
-pkidx           = evalin('base','[XRDIMAGE.Material.pkidx{:}]');
-tth             = evalin('base','tth');
-azim            = evalin('base','XRDIMAGE.CakePrms.azim');
-rho             = evalin('base','pkfit.rho')';
-dettype         = evalin('base','XRDIMAGE.Instr.dettype');
-find_detpars    = evalin('base','Analysis_Options.find_detpars');
+pkidx           = params.pkidx;
+tth             = params.tth;
+azim            = params.azim;
+dettype         = params.dettype;
+rho             = params.rho;
+find_detpars    = params.find_detpars;
+DistortParams0  = params.DistortParams0;
 
-tth = tth(pkidx);
 if find_detpars
-    distPars    = x(6:end);
+    DistortionParams    = p(6:end);
 else
-    distPars    = evalin('base','XRDIMAGE.Instr.detpars')';
+    DistortionParams    = DistortParams0;
 end
 
+tth = tth(pkidx);
 if strcmp(dettype,'0')
     mapped_tth  = GeometricModelXRD0(...
         centers, ...
@@ -29,26 +30,25 @@ elseif strcmp(dettype,'1')
         centers, ...
         distance, ...
         gY, gX, ...
-        rho, azim, distPars);
+        rho, azim, DistortionParams);
 elseif strcmp(dettype,'2')
     mapped_tth  = GeometricModelXRD2(...
         centers, ...
         distance, ...
         gY, gX, ...
-        rho, azim, distPars);
+        rho, azim, DistortionParams);
 elseif strcmp(dettype,'2a')
     mapped_tth  = GeometricModelXRD2a(...
         centers, ...
         distance, ...
         gY, gX, ...
-        rho, azim, distPars);
+        rho, azim, DistortionParams);
 elseif strcmp(dettype,'2b')
     mapped_tth  = GeometricModelXRD2b(...
         centers, ...
         distance, ...
         gY, gX, ...
-        rho, azim, distPars);
+        rho, azim, DistortionParams);
 end
-
 tth     = repmat(tth,size(mapped_tth,2),1)';
 fout    = tth - mapped_tth;
