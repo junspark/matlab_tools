@@ -33,8 +33,8 @@ function polImg = PolarBinXRD(mesh, instr, cakeParms, img)
 % load('PolarBinXRD_input.mat')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-img   = double(img);
-imgi  = rot90(fliplr(img), 1);
+img   = double(img); imgi   = img;
+% imgi  = rot90(fliplr(img), 1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 L   = instr.detectorsize/instr.pixelsize;

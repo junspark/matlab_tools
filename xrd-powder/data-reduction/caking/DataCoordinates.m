@@ -4,6 +4,8 @@ function values = DataCoordinates(XY, L, mesh, Ifunc)
 crd = mesh.crd;
 con = mesh.con;
 
+L   = fix(L);
+
 %square grid
 gridNum     = (L-1)*(fix(XY(2))-1)+fix(XY(1));
 elemNums    = [gridNum*2-1 gridNum*2];
