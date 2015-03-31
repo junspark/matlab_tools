@@ -3,10 +3,14 @@ function mesh = BuildMeshDetector(Lx, Ly)
 %   
 %   mesh = BuildMeshDetector(Lx, Ly)
 %
-%   Lx is the number of pixels in the image in the horizontal direction.
-%   Ly is the number of pixels in the image in the vertical direction.
+%   Lx
+%       number of pixels in the image in the horizontal direction
 %
-%   mesh is a mesh structure of the detector with appropriate fields
+%   Ly 
+%       number of pixels in the image in the vertical direction
+%
+%   mesh 
+%       mesh structure of the detector with appropriate fields
 %
 if nargin == 1
     disp('square image')
