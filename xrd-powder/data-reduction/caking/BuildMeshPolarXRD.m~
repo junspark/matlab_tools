@@ -26,9 +26,6 @@ function Ilist=BuildMeshPolarXRD(R, V, qrule)
 %     0.10995174365532; ...
 %     ];
 
-wts = qrule.wts;
-pts = qrule.pts;
-
 numRho  = size(V,1) - 1;
 numEta  = size(V,2) - 1;
 
@@ -69,8 +66,7 @@ for jj = 1:1:numRho
             ];
         jac2    = abs(det(m));
         for kk = 1:1:size(qrule.pts,2)
-            q   = pts(:,kk);
-            
+            q   = [qrule.pts(1,kk); qrule.pts(2,kk); qrule.pts(1,kk)];
             %%% TRIANGLE 1 (1-3-2)
             v1  = [vji vj1i vji1]*q;
             r1  = [rji rj1i rji1]*q;
@@ -89,8 +85,8 @@ for jj = 1:1:numRho
             % vjj = vjj + v*r*qrule.wts(kk)*jac2;
             % ajj = ajj + r*qrule.wts(kk)*jac2;
             
-            vjj = vjj + v1*r1*wts(kk)*jac1 + v2*r2*wts(kk)*jac2;
-            ajj = ajj + r1*wts(kk)*jac1 + r2*wts(kk)*jac2;
+            vjj = vjj + v1*r1*qrule.wts(kk)*jac1 + v2*r2*qrule.wts(kk)*jac2;
+            ajj = ajj + r1*qrule.wts(kk)*jac1 + r2*qrule.wts(kk)*jac2;
         end
     end
     
