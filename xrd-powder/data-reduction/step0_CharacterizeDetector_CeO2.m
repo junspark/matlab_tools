@@ -1,24 +1,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Instrument parameter optimization results
-% Update parameters accordingly
-% XRDIMAGE.Instr.centers  : -308.069299 , 36.842700
-% XRDIMAGE.Instr.distance : 1001.299258
-% XRDIMAGE.Instr.gammaX   : 0.001288
-% XRDIMAGE.Instr.gammaY   : 0.002168
-% Detector distortion prm : -0.000270
-% Detector distortion prm : -0.001470
-% Detector distortion prm : 2.583568
-% Detector distortion prm : 2.094872
-% Detector distortion prm : 390.791833
-% Detector distortion prm : 1.907415
+% Update parameters in XRDIMAGE.Instr variable accordingly
+% Instr.centers  : -146.440630 , -366.383718
+% Instr.distance : 1001.306067
+% Instr.gammaX   : -0.002070
+% Instr.gammaY   : -0.001311
+% Detector distortion prm : 0.000176
+% Detector distortion prm : -0.001961
+% Detector distortion prm : 1.929915
+% Detector distortion prm : 2.282699
+% Detector distortion prm : 417.585333
+% Detector distortion prm : 2.122985
 % 
 % GeometricModelXRD2a
 % ###########################
-% mean pseudo-strain using p0 : 0.000039
-% mean pseudo-strain using p  : 0.000018
+% mean pseudo-strain using p0 : 0.000246
+% mean pseudo-strain using p  : 0.000022
 % 
-% std pseudo-strain using p0 : 0.000043
+% std pseudo-strain using p0 : 0.000293
 % std pseudo-strain using p  : 0.000030
+% ###########################
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all
 close all
@@ -51,11 +52,12 @@ XRDIMAGE.Instr.energy       = 65.351;       % keV
 XRDIMAGE.Instr.wavelength   = keV2Angstrom(XRDIMAGE.Instr.energy);  % wavelength (Angstrom)
 XRDIMAGE.Instr.detectorsize = 409.6;        % mm
 XRDIMAGE.Instr.pixelsize    = 0.2;          % mm
-XRDIMAGE.Instr.distance     = 1001.317145;  % mm
-XRDIMAGE.Instr.centers      = [ -146.606786 , -326.721671 ]; % center offsets x & y (um)
-XRDIMAGE.Instr.gammaX       = -0.002251;    % rad
-XRDIMAGE.Instr.gammaY       = -0.001299;    % rad
+XRDIMAGE.Instr.distance     = 1001.306067;  % mm
+XRDIMAGE.Instr.centers      = [ -146.440630 , -366.383718 ]; % center offsets x & y (um)
+XRDIMAGE.Instr.gammaX       = -0.002070;    % rad
+XRDIMAGE.Instr.gammaY       = -0.001311;    % rad
 XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
+XRDIMAGE.Instr.imrotation   = 0;
 
 % RADIAL CORRECTION
 % 0 : no correction
