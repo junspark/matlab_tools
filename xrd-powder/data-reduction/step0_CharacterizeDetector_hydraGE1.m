@@ -35,7 +35,9 @@ XRDIMAGE.Instr.distance     = 2724.676165;     % mm
 XRDIMAGE.Instr.centers      = [ -0.296080 , 3.112774 ]; % center offsets x & y (um)
 XRDIMAGE.Instr.gammaX       = -0.163737;    % rad
 XRDIMAGE.Instr.gammaY       = 0.178772;    % rad
-
+XRDIMAGE.Instr.detectorsize = 409.6;    % mm
+XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
+    
 % RADIAL CORRECTION
 % 0 : no correction
 % 1 : constant radial offset
@@ -60,20 +62,32 @@ XRDIMAGE.CakePrms.bins(2)   = 2000;             % number of radial bins over rad
 XRDIMAGE.CakePrms.bins(3)   = 40;              % number of angular bins
 
 if XRDIMAGE.Image.IsHydra      == 0
+    XRDIMAGE.CakePrms.origin(1) = 1024;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+    XRDIMAGE.CakePrms.origin(2) = 1024;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+    
+    XRDIMAGE.Image.rotation = 0.0;
+elseif XRDIMAGE.Image.IsHydra      == 1
     XRDIMAGE.CakePrms.origin(1) = 2548;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
     XRDIMAGE.CakePrms.origin(2) = -200;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
-    XRDIMAGE.CakePrms.origin(2) = 2048-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDINATES
-
-    XRDIMAGE.Instr.detectorsize = 409.6;    % mm
-    XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
-elseif XRDIMAGE.Image.IsHydra      == 1
-    XRDIMAGE.CakePrms.origin(1) = 1047;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
-    XRDIMAGE.CakePrms.origin(2) = 221;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
-    XRDIMAGE.CakePrms.origin(2) = 3365-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDINATES
-
-    XRDIMAGE.Instr.detectorsize = 3365*0.2;    % mm
-    XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
+    
+    XRDIMAGE.Image.rotation = 62.5;
+elseif XRDIMAGE.Image.IsHydra      == 2
+    XRDIMAGE.CakePrms.origin(1) = 2548;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+    XRDIMAGE.CakePrms.origin(2) = -200;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+    
+    XRDIMAGE.Image.rotation = 62.5;
+elseif XRDIMAGE.Image.IsHydra      == 3
+    XRDIMAGE.CakePrms.origin(1) = 2548;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+    XRDIMAGE.CakePrms.origin(2) = -200;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+    
+    XRDIMAGE.Image.rotation = 62.5;
+elseif XRDIMAGE.Image.IsHydra      == 4
+    XRDIMAGE.CakePrms.origin(1) = 2548;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+    XRDIMAGE.CakePrms.origin(2) = -200;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+    
+    XRDIMAGE.Image.rotation = 62.5;
 end
+XRDIMAGE.CakePrms.origin(2) = 2048-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDINATES
 
 XRDIMAGE.CakePrms.sector(1) = 190;      % start azimuth (min edge of bin) in degrees
 XRDIMAGE.CakePrms.sector(2) = 230;      % stop  azimuth (max edge of bin) in degrees
@@ -183,42 +197,6 @@ if Analysis_Options.make_polimg
                 imgi    = imgi + imgj;
             end
             imgi    = imgi - bg.*XRDIMAGE.Image.numframe;
-        end
-        
-        switch XRDIMAGE.Image.IsHydra
-            case 0
-                disp('single panel')
-                [Lx, Ly]    = size(imgi);
-
-                % imgi(1024:end,:)            = 2000;
-                % imgi(:,1024:end)            = 1000;
-                % imgi(1024:end,1024:end)     = 500;
-                % imgi(1:1024,1:1024)         = 3000;
-            case 1
-                disp('GE1')
-                imgi        = imrotate(imgi, 62.5, 'bilinear');
-                
-                [Lx, Ly]    = size(imgi);
-                imgi    = [imgi; zeros(600, Ly)];
-                [Lx, Ly]    = size(imgi);
-                imgi    = [imgi zeros(3365, 600)];
-                
-                [Lx, Ly]    = size(imgi);
-                XRDIMAGE.Instr.numpixels    = size(imgi,1);
-
-                % imgi(1324:end,:)            = 2000;
-                % imgi(:,1324:end)            = 1000;
-                % imgi(1325:end,1325:end)     = 500;
-                % imgi(1:1324,1:1324)         = 3000;
-        
-            case 2
-                disp('GE2')
-            case 3
-                disp('GE3')
-            case 4
-                disp('GE4')
-            otherwise
-                disp('Unknown configuration!!')
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
