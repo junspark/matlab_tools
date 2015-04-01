@@ -3,7 +3,6 @@ function values = DataCoordinates(XY, L, mesh, Ifunc)
 % clear all
 % close all
 % clc
-
 % load DataCoordinates_input.mat 
 
 crd = mesh.crd;
@@ -11,7 +10,7 @@ con = mesh.con;
 
 L   = fix(L);
 
-%square grid
+% square grid
 gridNum     = (L-1)*(fix(XY(2))-1)+fix(XY(1));
 elemNums    = [gridNum*2-1 gridNum*2];
 
@@ -33,8 +32,8 @@ else
     fcrd    = [Y2(1) Y2(2) 1-Y2(1)-Y2(2)];
 end
 
-% fele
-% fcrd
-% con(:, fele)
+% fele;
+% fcrd;
+% con(:, fele);
 fcon    = Ifunc(con(:, fele));
 values  = dot(fcon, fcrd', 1);

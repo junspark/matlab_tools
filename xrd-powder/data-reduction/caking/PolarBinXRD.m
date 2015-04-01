@@ -51,7 +51,7 @@ figure(1000)
 % imagesc(log(abs(rot90(img,1))))
 imagesc(rot90(img,1))
 hold on
-axis equal tight
+axis equal
 plot(x0plt, y0plt, 'rh')
 xlabel('X_L (pixels)')
 ylabel('Y_L (pixels)')
@@ -106,11 +106,23 @@ for ii = 1:1:numAzi
     
     tic
     V   = zeros(numRho + 1, numEta + 1);
+    warn_user   = 0;
     for i = 1:1:(numRho + 1)
         for j = 1:1:(numEta + 1)
-            xy  = [x(i,j); y(i,j)];
-            V(i,j) = DataCoordinates(xy, L, mesh, imgi);
+            % figure(1000)
+            % plot(xplt(i,j), yplt(i,j), 'r.')
             
+            if (x(i,j) > L) || (x(i,j) < 0) || (y(i,j) > L) || (y(i,j) < 0)
+                V(i,j)      = nan;
+                warn_user   = 1;
+            else
+                xy  = [x(i,j); y(i,j)];
+                V(i,j) = DataCoordinates(xy, L, mesh, imgi);
+            end
+            
+            % V(i,j);
+            % xy;
+            % pause
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % SOME BENCHMARK TESTS
             % gridNum     = (L - 1)*(fix(xy(2)) - 1) + fix(xy(1));
@@ -145,6 +157,7 @@ for ii = 1:1:numAzi
     
     if ~isfield(cakeParms, 'fastint') || ~cakeParms.fastint
         Ilist   = BuildMeshPolarXRD(R, V, mesh.qrule);
+        % pause
     else
         V       = mean(V,2);
         V       = (V(1:end-1) + V(2:end))/2;
@@ -155,6 +168,9 @@ for ii = 1:1:numAzi
     polimg.intensity(:,ii) = Ilist';
     
     dtime   = toc;
+    if warn_user
+        disp('Some requested nodal points are out of grid.')
+    end
     fprintf('Processing time for sector %d is %1.4f\n', ii, dtime);
 end
 

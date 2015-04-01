@@ -3,37 +3,38 @@ close all
 clc
 
 %%% INPUT PARAMETERS
-XRDIMAGE.Image.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS\hydra_example_meimei_aug14\';
+% XRDIMAGE.Image.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS\hydra_example_meimei_aug14\';
+XRDIMAGE.Image.pname        = '/net/s1dserv/export/s1b/__eval/meimei_maud';
 XRDIMAGE.Image.fbase        = 'ceria_';
 XRDIMAGE.Image.fnumber      = 15;
 XRDIMAGE.Image.numframe     = 1;
 XRDIMAGE.Image.numdigs      = 5;
 XRDIMAGE.Image.fext         = 'ge1.sum';
 XRDIMAGE.Image.corrected    = 1;
-XRDIMAGE.Image.IsHydra      = 1;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
+XRDIMAGE.Image.IsHydra      = 0;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
 
 %%% DARK FILES ONLY USED IF THE IMAGES ARE UNCORRECTED
-XRDIMAGE.DarkField.pname    = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS';
+% XRDIMAGE.DarkField.pname    = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS';
+XRDIMAGE.DarkField.pname    = '/net/s1dserv/export/s1b/__eval/meimei_maud';
 XRDIMAGE.DarkField.fbase    = 'dark_1.5s_';
 XRDIMAGE.DarkField.fnumber  = 338;
 XRDIMAGE.DarkField.numframe = 1;
 XRDIMAGE.DarkField.numdigs  = 5;
-XRDIMAGE.DarkField.fext     = 'ge3';
+XRDIMAGE.DarkField.fext     = 'ge1';
 
-XRDIMAGE.Calib.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS\hydra_example_meimei_aug14\';
+% XRDIMAGE.Calib.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS\hydra_example_meimei_aug14\';
+XRDIMAGE.Calib.pname        = '/net/s1dserv/export/s1b/__eval/meimei_maud';
 XRDIMAGE.Calib.fbase        = 'ceria_';
 XRDIMAGE.Calib.fnumber      = 15;
 
 %%% INSTRUMENT PARAMETERS
 XRDIMAGE.Instr.energy       = 86;       % keV
 XRDIMAGE.Instr.wavelength   = keV2Angstrom(XRDIMAGE.Instr.energy);  % wavelength (Angstrom)
-XRDIMAGE.Instr.detectorsize = 409.6;    % mm
 XRDIMAGE.Instr.pixelsize    = 0.2;          % mm
 XRDIMAGE.Instr.distance     = 2724.676165;     % mm
 XRDIMAGE.Instr.centers      = [ -0.296080 , 3.112774 ]; % center offsets x & y (um)
 XRDIMAGE.Instr.gammaX       = -0.163737;    % rad
 XRDIMAGE.Instr.gammaY       = 0.178772;    % rad
-XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
 
 % RADIAL CORRECTION
 % 0 : no correction
@@ -54,25 +55,37 @@ XRDIMAGE.Instr.detpars  = [ ...
     ]*1e2;
 
 %%% CAKE PARAMETERS
-XRDIMAGE.CakePrms.bins(1)   = 9;               % number of azimuthal bins over angular range defined by XRDIMAGE.CakePrms.sector(1) and XRDIMAGE.CakePrms.sector(2)
-XRDIMAGE.CakePrms.bins(2)   = 2600;             % number of radial bins over radial range defined by XRDIMAGE.CakePrms.sector(3) and XRDIMAGE.CakePrms.sector(4)
-XRDIMAGE.CakePrms.bins(3)   = 50;              % number of angular bins
+XRDIMAGE.CakePrms.bins(1)   = 10;               % number of azimuthal bins over angular range defined by XRDIMAGE.CakePrms.sector(1) and XRDIMAGE.CakePrms.sector(2)
+XRDIMAGE.CakePrms.bins(2)   = 2000;             % number of radial bins over radial range defined by XRDIMAGE.CakePrms.sector(3) and XRDIMAGE.CakePrms.sector(4)
+XRDIMAGE.CakePrms.bins(3)   = 40;              % number of angular bins
 
-XRDIMAGE.CakePrms.origin(1) = 2048;     % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
-XRDIMAGE.CakePrms.origin(2) = 1;        % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
-XRDIMAGE.CakePrms.origin(2) = XRDIMAGE.Instr.numpixels-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDIANTES
+if XRDIMAGE.Image.IsHydra      == 0
+    XRDIMAGE.CakePrms.origin(1) = 2548;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+    XRDIMAGE.CakePrms.origin(2) = -200;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+    XRDIMAGE.CakePrms.origin(2) = 2048-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDINATES
 
-XRDIMAGE.CakePrms.sector(1) = 180;      % start azimuth (min edge of bin) in degrees
-XRDIMAGE.CakePrms.sector(2) = 270;      % stop  azimuth (max edge of bin) in degrees
-XRDIMAGE.CakePrms.sector(3) = 200;      % start radius (min edge of bin) in pixels
-XRDIMAGE.CakePrms.sector(4) = 1500;     % stop  radius (max edge of bin) in pixels
+    XRDIMAGE.Instr.detectorsize = 409.6;    % mm
+    XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
+elseif XRDIMAGE.Image.IsHydra      == 1
+    XRDIMAGE.CakePrms.origin(1) = 1047;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+    XRDIMAGE.CakePrms.origin(2) = 221;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+    XRDIMAGE.CakePrms.origin(2) = 3365-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDINATES
+
+    XRDIMAGE.Instr.detectorsize = 3365*0.2;    % mm
+    XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
+end
+
+XRDIMAGE.CakePrms.sector(1) = 190;      % start azimuth (min edge of bin) in degrees
+XRDIMAGE.CakePrms.sector(2) = 230;      % stop  azimuth (max edge of bin) in degrees
+XRDIMAGE.CakePrms.sector(3) = 800;      % start radius (min edge of bin) in pixels
+XRDIMAGE.CakePrms.sector(4) = 2200;     % stop  radius (max edge of bin) in pixels
 
 eta_step    = (XRDIMAGE.CakePrms.sector(2) - XRDIMAGE.CakePrms.sector(1))/XRDIMAGE.CakePrms.bins(1);
 eta_ini     = XRDIMAGE.CakePrms.sector(1) + eta_step/2;
 eta_fin     = XRDIMAGE.CakePrms.sector(2) - eta_step/2;
 azim        = eta_ini:eta_step:eta_fin;
 XRDIMAGE.CakePrms.azim      = azim;
-XRDIMAGE.CakePrms.fastint   = 1;
+XRDIMAGE.CakePrms.fastint   = 0;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% MATERIAL PARAMETERS - CeO2
@@ -133,13 +146,6 @@ Analysis_Options.InstrPrmFitOptions = optimset(...
         'Display','final');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% GENERATE MESH FOR INTEGRATION 
-%%% IF POLIMG NEEDS TO BE GENERATED
-if Analysis_Options.make_polimg
-    DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels);
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% LOAD XRD IMAGES
 %%% BACKGROUND
 if XRDIMAGE.Image.corrected
@@ -179,24 +185,60 @@ if Analysis_Options.make_polimg
             imgi    = imgi - bg.*XRDIMAGE.Image.numframe;
         end
         
-        imgi    = imrotate(imgi, 62.5);
+        switch XRDIMAGE.Image.IsHydra
+            case 0
+                disp('single panel')
+                [Lx, Ly]    = size(imgi);
+
+                % imgi(1024:end,:)            = 2000;
+                % imgi(:,1024:end)            = 1000;
+                % imgi(1024:end,1024:end)     = 500;
+                % imgi(1:1024,1:1024)         = 3000;
+            case 1
+                disp('GE1')
+                imgi        = imrotate(imgi, 62.5, 'bilinear');
+                
+                [Lx, Ly]    = size(imgi);
+                imgi    = [imgi; zeros(600, Ly)];
+                [Lx, Ly]    = size(imgi);
+                imgi    = [imgi zeros(3365, 600)];
+                
+                [Lx, Ly]    = size(imgi);
+                XRDIMAGE.Instr.numpixels    = size(imgi,1);
+
+                % imgi(1324:end,:)            = 2000;
+                % imgi(:,1324:end)            = 1000;
+                % imgi(1325:end,1325:end)     = 500;
+                % imgi(1:1324,1:1324)         = 3000;
         
+            case 2
+                disp('GE2')
+            case 3
+                disp('GE3')
+            case 4
+                disp('GE4')
+            otherwise
+                disp('Unknown configuration!!')
+        end
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%% GENERATE MESH FOR INTEGRATION
+        %%% IF POLIMG NEEDS TO BE GENERATED
+        if Analysis_Options.make_polimg
+            DetectorMesh    = BuildMeshDetector(Lx, Ly);
+        end
+
         figure(1)
         hold off
         imagesc(rot90(imgi,1))
         caxis([-10 3000])
-        axis equal tight
+        axis equal
         colorbar vert
         hold on
         xlabel('X_L (pixels)')
         ylabel('Y_L (pixels)')
         title('Ensure that image matches the coordinate system')
-        text(0, 0, 'TO')
-        text(2048, 0, 'TI')
-        text(0, 0, 'TO')
-        text(0, 2048, 'BO')
-        text(2048, 2048, 'BI')
-        return
+        
         %%% POLAR REBINNING
         polimg  = PolarBinXRD(DetectorMesh, ...
             XRDIMAGE.Instr, ...
@@ -221,7 +263,7 @@ if Analysis_Options.make_polimg
         disp(' ')
     end
 end
-
+return
 if Analysis_Options.fits_spectra
     for i = 1:1:numimg
         pfname_polimage = [pfname{i,1}, '.polimg.mat'];
