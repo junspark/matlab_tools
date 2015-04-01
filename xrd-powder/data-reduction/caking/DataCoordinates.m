@@ -1,5 +1,6 @@
 function values = DataCoordinates(XY, L, mesh, Ifunc)
 % determines the intensity values of the nodal points
+
 % clear all
 % close all
 % clc
@@ -33,7 +34,9 @@ else
 end
 
 % fele;
-% fcrd;
+% fcrd
 % con(:, fele);
 fcon    = Ifunc(con(:, fele));
-values  = dot(fcon, fcrd', 1);
+
+% values  = dot(fcon, fcrd', 1);
+values  = fcrd*fcon;
