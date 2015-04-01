@@ -43,9 +43,10 @@ XRDIMAGE.DarkField.numframe = 1;
 XRDIMAGE.DarkField.numdigs  = 5;
 XRDIMAGE.DarkField.fext     = 'ge3';
 
-XRDIMAGE.Calib.pname        = '.';
+XRDIMAGE.Calib.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS';
 XRDIMAGE.Calib.fbase        = 'CeO2_1.5s_';
 XRDIMAGE.Calib.fnumber      = 336;
+XRDIMAGE.Calib.fext         = 'ge3';
 
 %%% INSTRUMENT PARAMETERS
 XRDIMAGE.Instr.energy       = 65.351;       % keV
@@ -99,7 +100,7 @@ XRDIMAGE.CakePrms.azim      = azim;
 XRDIMAGE.CakePrms.fastint   = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%% MATERIAL PARAMETERS - CeO2
+%%% MATERIAL PARAMETERS - CeO2
 XRDIMAGE.Material.num       = 1;
 XRDIMAGE.Material.lattparms = 5.411651;        % CeO2
 XRDIMAGE.Material.structure = 'fcc';
@@ -143,6 +144,7 @@ Analysis_Options.save_fits      = 1;
 Analysis_Options.find_instrpars = 1;
 Analysis_Options.save_instrpars = 1;
 Analysis_Options.find_detpars	= 1;
+Analysis_Options.generateESG    = 0;
 
 %%% PK FITTING OPTIONS
 Analysis_Options.PkFitOptions   = optimset(...

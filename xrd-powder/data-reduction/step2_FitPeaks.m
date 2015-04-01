@@ -3,17 +3,27 @@ close all
 clc
 
 %%% INPUT PARAMETERS
-XRDIMAGE.Image.pname        = '.\ge3\corrected';
-XRDIMAGE.Image.fbase        = 'DiaPac_';
-XRDIMAGE.Image.fnumber      = 80009:80050; % 4116 / 4117
-XRDIMAGE.Image.numframe     = 1;
+XRDIMAGE.Image.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS';
+XRDIMAGE.Image.fbase        = 'CeO2_1.5s_';
+XRDIMAGE.Image.fnumber      = 336; % 4116 / 4117
+XRDIMAGE.Image.numframe     = 20;
 XRDIMAGE.Image.numdigs      = 5;
-XRDIMAGE.Image.fext         = 'ge3.sum';
+XRDIMAGE.Image.fext         = 'ge3';
+XRDIMAGE.Image.corrected    = 0;
+XRDIMAGE.Image.IsHydra      = 0;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
 
-XRDIMAGE.Calib.pname        = '.\ge3\corrected';
-XRDIMAGE.Calib.fbase        = 'DiaPac_';
-XRDIMAGE.Calib.fnumber      = 80113; % 4116 / 4117
-XRDIMAGE.Calib.fext         = 'ge3.sum';
+%%% DARK FILES ONLY USED IF THE IMAGES ARE UNCORRECTED
+XRDIMAGE.DarkField.pname    = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS';
+XRDIMAGE.DarkField.fbase    = 'dark_1.5s_';
+XRDIMAGE.DarkField.fnumber  = 338;
+XRDIMAGE.DarkField.numframe = 1;
+XRDIMAGE.DarkField.numdigs  = 5;
+XRDIMAGE.DarkField.fext     = 'ge3';
+
+XRDIMAGE.Calib.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS';
+XRDIMAGE.Calib.fbase        = 'CeO2_1.5s_';
+XRDIMAGE.Calib.fnumber      = 336;
+XRDIMAGE.Calib.fext         = 'ge3';
 
 %%% INSTRUMENT PARAMETERS GETS LOADED
 Instr.energy        = 0;
@@ -27,7 +37,9 @@ Instr.gammaY        = 0;
 Instr.numpixels     = 0;
 Instr.dettype       = '2a';
 Instr.detpars       = [0 0 0 0 0 0];
+Instr.imrotation    = 0;
 pfname  = GenerateGEpfname(XRDIMAGE.Calib);
+
 for i = 1:1:length(XRDIMAGE.Calib.fnumber)
     pfname_instr    = [pfname{i,1}, '.instr.mat'];
     Instri  = load(pfname_instr);
@@ -43,6 +55,7 @@ for i = 1:1:length(XRDIMAGE.Calib.fnumber)
     Instr.gammaY        = Instr.gammaY + Instri.gammaY;
     Instr.numpixels     = Instr.numpixels + Instri.numpixels;
     Instr.detpars       = Instr.detpars + Instri.detpars;
+    Instr.imrotation    = Instr.imrotation + Instri.imrotation;
 end
 Instr.energy        = Instr.energy./length(XRDIMAGE.Calib.fnumber);
 Instr.wavelength    = Instr.wavelength./length(XRDIMAGE.Calib.fnumber);
@@ -54,6 +67,7 @@ Instr.gammaX        = Instr.gammaX./length(XRDIMAGE.Calib.fnumber);
 Instr.gammaY        = Instr.gammaY./length(XRDIMAGE.Calib.fnumber);
 Instr.numpixels     = Instr.numpixels./length(XRDIMAGE.Calib.fnumber);
 Instr.detpars       = Instr.detpars./length(XRDIMAGE.Calib.fnumber);
+Instr.imrotation    = Instr.imrotation/length(XRDIMAGE.Calib.fnumber);
 
 Instr.omega = 0;
 Instr.chi   = 0;
@@ -61,31 +75,31 @@ Instr.chi   = 0;
 XRDIMAGE.Instr  = Instr;
 
 %%% CAKE PARAMETERS
-XRDIMAGE.CakePrms.bins(1)   = 72;           % number of azimuthal bins
-XRDIMAGE.CakePrms.bins(2)   = 1500;         % number of radial bins
-XRDIMAGE.CakePrms.bins(3)   = 20;           % number of angular bins
-XRDIMAGE.CakePrms.origin(1) = 1021.744;         % x center in pixels, fit2d Y 
-XRDIMAGE.CakePrms.origin(2) = 987.765;         % y center in pixels, fit2d X
+XRDIMAGE.CakePrms.bins(1)   = 36;           % number of azimuthal bins
+XRDIMAGE.CakePrms.bins(2)   = 3000;         % number of radial bins
+XRDIMAGE.CakePrms.bins(3)   = 10;            % number of angular bins
+
+XRDIMAGE.CakePrms.origin(1) = 1036.190;     % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(2) = 1024.110;     % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(2) = XRDIMAGE.Instr.numpixels-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDIANTES
+
 XRDIMAGE.CakePrms.sector(1) = -360/XRDIMAGE.CakePrms.bins(1)/2;     % start azimuth (min edge of bin) in degrees
 XRDIMAGE.CakePrms.sector(2) = 360-360/XRDIMAGE.CakePrms.bins(1)/2;  % stop  azimuth (max edge of bin) in degrees
-XRDIMAGE.CakePrms.sector(3) = 200;  % start radius (min edge of bin) in pixels
-XRDIMAGE.CakePrms.sector(4) = 950;  % stop  radius (max edge of bin) in pixels
-XRDIMAGE.CakePrms.azim      = 0:360/XRDIMAGE.CakePrms.bins(1):XRDIMAGE.CakePrms.sector(2);
+XRDIMAGE.CakePrms.sector(3) = 150;  % start radius (min edge of bin) in pixels
+XRDIMAGE.CakePrms.sector(4) = 1000;  % stop  radius (max edge of bin) in pixels
 
-%%% MATERIAL PARAMETERS
+eta_step    = (XRDIMAGE.CakePrms.sector(2) - XRDIMAGE.CakePrms.sector(1))/XRDIMAGE.CakePrms.bins(1);
+eta_ini     = XRDIMAGE.CakePrms.sector(1) + eta_step/2;
+eta_fin     = XRDIMAGE.CakePrms.sector(2) - eta_step/2;
+azim        = eta_ini:eta_step:eta_fin;
+XRDIMAGE.CakePrms.azim      = azim;
+XRDIMAGE.CakePrms.fastint   = 1;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MATERIAL PARAMETERS - CeO2
 XRDIMAGE.Material.num       = 1;
-XRDIMAGE.Material.lattparms = 3.5668;        % CeO2
+XRDIMAGE.Material.lattparms = 5.411651;        % CeO2
 XRDIMAGE.Material.structure = 'fcc';
-XRDIMAGE.Material.numpk     = 5;
-XRDIMAGE.Material.pkidx     = {...
-    [1] [3] [4] [5] [6]
-    };
-XRDIMAGE.Material.pkrange    = [...
-    4.8295    5.5927    7.9541    9.3471    9.7682   11.2996;
-    5.0295    5.7927    8.1541    9.5471    9.9682   11.4996;
-    ];
-XRDIMAGE.Material.pkbck     = 2;
-XRDIMAGE.Material.pkfunc    = 4;
 XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
 
 %%% CALCULATE THEORETICAL TTH
@@ -93,19 +107,39 @@ XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
     'cubic', XRDIMAGE.Material.hkls', ...
     XRDIMAGE.Instr.wavelength);
 tth     = 2*th;
+d_spacing_range = 0.01;
+d_spacing_UB    = (1 + d_spacing_range)*d;
+d_spacing_LB    = (1 - d_spacing_range)*d;
+
+tth_UB  = 2.*asind(XRDIMAGE.Instr.wavelength/2)./d_spacing_LB;
+tth_LB  = 2.*asind(XRDIMAGE.Instr.wavelength/2)./d_spacing_UB;
 
 XRDIMAGE.Material.tth       = tth;
 XRDIMAGE.Material.d_spacing = d;
+XRDIMAGE.Material.numpk     = 10;
+XRDIMAGE.Material.numbounds = 10;
+XRDIMAGE.Material.pkidx     = {...
+    [1] [2] [3] [4] [5] [6] [7] [8] [9] [10]
+    };
+for i = 1:1:XRDIMAGE.Material.numbounds
+    XRDIMAGE.Material.pkrange(:,i)  = [ ...
+        min(tth_LB(XRDIMAGE.Material.pkidx{i})); ...
+        max(tth_UB(XRDIMAGE.Material.pkidx{i})); ...
+        ];
+end
+XRDIMAGE.Material.pkbck     = 2;
+XRDIMAGE.Material.pkfunc    = 4;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% DATA REDUCTION FLAGS
-Analysis_Options.make_polimg    = 1;
-Analysis_Options.save_polimg    = 1;
-Analysis_Options.generateESG	= 1;
-Analysis_Options.fits_spectra   = 0;
-Analysis_Options.save_fits      = 0;
+Analysis_Options.make_polimg    = 0;
+Analysis_Options.save_polimg    = 0;
+Analysis_Options.fits_spectra   = 1;
+Analysis_Options.save_fits      = 1;
 Analysis_Options.find_instrpars = 0;
 Analysis_Options.save_instrpars = 0;
 Analysis_Options.find_detpars	= 0;
+Analysis_Options.generateESG    = 0;
 
 %%% PK FITTING OPTIONS
 Analysis_Options.PkFitOptions   = optimset(...
