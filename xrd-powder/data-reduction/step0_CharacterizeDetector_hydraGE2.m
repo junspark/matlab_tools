@@ -2,108 +2,85 @@ clear all
 close all
 clc
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% pname   = '.\example\APS\balogh_march14';
-% fname   = 'Ceo2_calibr1_00029.ge4.sum';
-% pfname  = fullfile(pname, fname);
-% 
-% data    = ReadSUM(pfname);
-% data    = imrotate(data,  242.5);
-% data    = [zeros(size(data,1), 1040), data];
-% data    = [zeros(520, size(data,2)); data; zeros(520, size(data,2))];
-% imagesc(log(data))
-% axis equal tight
-% size(data)
-% return
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% rotation for GE2 is 62.5
-XRDIMAGE.Image.RotAngle     = 62.5;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %%% INPUT PARAMETERS
-% XRDIMAGE.Image.pname        = '.\example\APS\balogh_march14';
-XRDIMAGE.Image.pname        = '/home/beams/S1IDUSER/mnt/s1b/__eval/matlab_tools_examples';
-XRDIMAGE.Image.fbase        = 'Ceo2_calibr1_';
-XRDIMAGE.Image.fnumber      = 30;
+XRDIMAGE.Image.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS\hydra_example_meimei_aug14\';
+% XRDIMAGE.Image.pname        = '/net/s1dserv/export/s1b/__eval/meimei_maud';
+XRDIMAGE.Image.fbase        = 'ceria_';
+XRDIMAGE.Image.fnumber      = 15;
 XRDIMAGE.Image.numframe     = 1;
 XRDIMAGE.Image.numdigs      = 5;
 XRDIMAGE.Image.fext         = 'ge2.sum';
+XRDIMAGE.Image.corrected    = 1;
+XRDIMAGE.Image.IsHydra      = 1;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
+
+%%% DARK FILES ONLY USED IF THE IMAGES ARE UNCORRECTED
+XRDIMAGE.DarkField.pname    = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS';
+% XRDIMAGE.DarkField.pname    = '/net/s1dserv/export/s1b/__eval/meimei_maud';
+XRDIMAGE.DarkField.fbase    = 'dark_1.5s_';
+XRDIMAGE.DarkField.fnumber  = 338;
+XRDIMAGE.DarkField.numframe = 1;
+XRDIMAGE.DarkField.numdigs  = 5;
+XRDIMAGE.DarkField.fext     = 'ge2';
+
+XRDIMAGE.Calib.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS\hydra_example_meimei_aug14\';
+% XRDIMAGE.Calib.pname        = '/net/s1dserv/export/s1b/__eval/meimei_maud';
+XRDIMAGE.Calib.fbase        = 'ceria_';
+XRDIMAGE.Calib.fnumber      = 15;
 
 %%% INSTRUMENT PARAMETERS
-XRDIMAGE.Instr.energy       = 65.351;       % keV
+XRDIMAGE.Instr.energy       = 86;       % keV
 XRDIMAGE.Instr.wavelength   = keV2Angstrom(XRDIMAGE.Instr.energy);  % wavelength (Angstrom)
 XRDIMAGE.Instr.pixelsize    = 0.2;          % mm
-XRDIMAGE.Instr.detectorsize = 3805*XRDIMAGE.Instr.pixelsize;    % mm
-XRDIMAGE.Instr.distance     = 1884.906965;     % mm
-XRDIMAGE.Instr.centers      = [ -231.424111 , -411.514111 ]; % center offsets x & y (um)
-XRDIMAGE.Instr.gammaX       = 0.019714;     % rad
-XRDIMAGE.Instr.gammaY       = 0.007226;    % rad
+XRDIMAGE.Instr.distance     = 2716.922231;     % mm
+XRDIMAGE.Instr.centers      = [ -0.262882 , 2.962907 ]; % center offsets x & y (um)
+XRDIMAGE.Instr.gammaX       = 0.039686;    % rad
+XRDIMAGE.Instr.gammaY       = 0.037784;    % rad
+XRDIMAGE.Instr.detectorsize = 409.6;    % mm
 XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
+XRDIMAGE.Instr.imrotation   = -27.5;
 
 % RADIAL CORRECTION
 % 0 : no correction
 % 1 : constant radial offset
 % 2 : PROPOSED BY ISSN 0909-0495 LEE
-XRDIMAGE.Instr.dettype  = '2';
+XRDIMAGE.Instr.dettype  = '2a';
 
 % 0 : []
 % 1 : constant value
 % 2 : [a1 a2 n1 n2 rhod]
 XRDIMAGE.Instr.detpars  = [ ...
-     -0.000020293901802 ...
-     -0.000028321143194 ...
-     -0.025765631863080 ...
-     -0.014462281373550 ...
-     2.330900928768550 ...
-     0.000000081220556].* 1e2;
+    0.000001282337017 ...
+    -0.000031734897648 ...
+    0.013055409590039 ...
+    0.023060266336264 ...
+    5.220867896659226 ...
+    0.020828387681579 ...
+    ]*1e2;
 
 %%% CAKE PARAMETERS
-XRDIMAGE.CakePrms.bins(1)   = 10;           % number of azimuthal bins
-XRDIMAGE.CakePrms.bins(2)   = 2000;         % number of radial bins
-XRDIMAGE.CakePrms.bins(3)   = 10;           % number of angular bins
-XRDIMAGE.CakePrms.origin(1) = 2288;         % x center in pixels, 
-XRDIMAGE.CakePrms.origin(2) = 791;         % y center in pixels, 
-XRDIMAGE.CakePrms.sector(1) = 150;           % start azimuth (min edge of bin) in degrees    %% -360/XRDIMAGE.CakePrms.bins(1)/2
-XRDIMAGE.CakePrms.sector(2) = 190;          % stop  azimuth (max edge of bin) in degrees   %% 360-360/XRDIMAGE.CakePrms.bins(1)/2
-XRDIMAGE.CakePrms.sector(3) = 500;         % start radius (min edge of bin) in pixels
-XRDIMAGE.CakePrms.sector(4) = 2300;         % stop  radius (max edge of bin) in pixels
+XRDIMAGE.CakePrms.bins(1)   = 55;               % number of azimuthal bins over angular range defined by XRDIMAGE.CakePrms.sector(1) and XRDIMAGE.CakePrms.sector(2)
+XRDIMAGE.CakePrms.bins(2)   = 3000;             % number of radial bins over radial range defined by XRDIMAGE.CakePrms.sector(3) and XRDIMAGE.CakePrms.sector(4)
+XRDIMAGE.CakePrms.bins(3)   = 3;               % number of angular bins
+XRDIMAGE.CakePrms.origin(1) = 2295;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(2) = -45;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(2) = 2048-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDINATES
+XRDIMAGE.CakePrms.sector(1) = 185;      % start azimuth (min edge of bin) in degrees
+XRDIMAGE.CakePrms.sector(2) = 240;      % stop  azimuth (max edge of bin) in degrees
+XRDIMAGE.CakePrms.sector(3) = 550;      % start radius (min edge of bin) in pixels
+XRDIMAGE.CakePrms.sector(4) = 1800;     % stop  radius (max edge of bin) in pixels
 
 eta_step    = (XRDIMAGE.CakePrms.sector(2) - XRDIMAGE.CakePrms.sector(1))/XRDIMAGE.CakePrms.bins(1);
 eta_ini     = XRDIMAGE.CakePrms.sector(1) + eta_step/2;
 eta_fin     = XRDIMAGE.CakePrms.sector(2) - eta_step/2;
 azim        = eta_ini:eta_step:eta_fin;
-XRDIMAGE.CakePrms.azim  = azim;
+XRDIMAGE.CakePrms.azim      = azim;
+XRDIMAGE.CakePrms.fastint   = 0;
 
-%%% MATERIAL PARAMETERS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MATERIAL PARAMETERS - CeO2
 XRDIMAGE.Material.num       = 1;
 XRDIMAGE.Material.lattparms = 5.411651;        % CeO2
 XRDIMAGE.Material.structure = 'fcc';
-XRDIMAGE.Material.numpk     = 5;
-XRDIMAGE.Material.pkidx     = {...
-    [1] [2] [3] [4] [5]
-    };
-XRDIMAGE.Material.pkrange    = [...
-    3.3796 3.9181 5.5837 6.5657 6.8625; ...
-    3.5796 4.1181 5.7337 6.7157 7.0025; ...
-    ];
-% XRDIMAGE.Material.numpk     = 12;
-% XRDIMAGE.Material.pkidx     = {...
-%     [1] [2] [3] [4] [5] [6] [7] [8] [9] [12] [13] [16]
-%     };
-% XRDIMAGE.Material.pkrange    = [...
-%     3.3796 3.9181 5.5837 6.5657 6.8625 7.9412 8.6641 8.8922 9.7525 11.2814 11.8048 12.6301; ...
-%     3.5796 4.1181 5.7337 6.7157 7.0025 8.0912 8.8141 9.0422 9.9025 11.4314 11.9548 12.7801; ...
-%     ];
-% XRDIMAGE.Material.numpk     = 10;
-% XRDIMAGE.Material.pkidx     = {...
-%     [3] [4] [5] [6] [7] [8] [9] [12] [13] [16]
-%     };
-% XRDIMAGE.Material.pkrange    = [...
-%     5.5837 6.5657 6.8625 7.9412 8.6641 8.8922 9.7525 11.2814 11.8048 12.6301; ...
-%     5.7337 6.7157 7.0025 8.0912 8.8141 9.0422 9.9025 11.4314 11.9548 12.7801; ...
-%     ];
-XRDIMAGE.Material.pkbck     = 2;
-XRDIMAGE.Material.pkfunc    = 4;
 XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
 
 %%% CALCULATE THEORETICAL TTH
@@ -111,10 +88,51 @@ XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
     'cubic', XRDIMAGE.Material.hkls', ...
     XRDIMAGE.Instr.wavelength);
 tth     = 2*th;
+d_spacing_range = 0.01;
+d_spacing_UB    = (1 + d_spacing_range)*d;
+d_spacing_LB    = (1 - d_spacing_range)*d;
+
+tth_UB  = 2.*asind(XRDIMAGE.Instr.wavelength/2)./d_spacing_LB;
+tth_LB  = 2.*asind(XRDIMAGE.Instr.wavelength/2)./d_spacing_UB;
 
 XRDIMAGE.Material.tth       = tth;
 XRDIMAGE.Material.d_spacing = d;
 
+% XRDIMAGE.Material.numpk     = 12;
+% XRDIMAGE.Material.numbounds = 12;
+% XRDIMAGE.Material.pkidx     = {...
+%     [1] [2] [3] [4] [5] [6] [7] [8] [9] [12] [13] [16]
+%     };
+
+% XRDIMAGE.Material.numpk     = 1;
+% XRDIMAGE.Material.numbounds = 1;
+% XRDIMAGE.Material.pkidx     = {...
+%     [1]
+%     };
+
+% XRDIMAGE.Material.numpk     = 2;
+% XRDIMAGE.Material.numbounds = 2;
+% XRDIMAGE.Material.pkidx     = {...
+%     [1] [2]
+%     };
+
+XRDIMAGE.Material.numpk     = 3;
+XRDIMAGE.Material.numbounds = 3;
+XRDIMAGE.Material.pkidx     = {...
+    [1] [2] [3]
+    };
+
+for i = 1:1:XRDIMAGE.Material.numbounds
+    XRDIMAGE.Material.pkrange(:,i)  = [ ...
+        min(tth_LB(XRDIMAGE.Material.pkidx{i})); ...
+        max(tth_UB(XRDIMAGE.Material.pkidx{i})); ...
+        ];
+end
+XRDIMAGE.Material.pkbck     = 2;
+XRDIMAGE.Material.pkfunc    = 4;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% DATA REDUCTION FLAGS
 Analysis_Options.make_polimg    = 1;
 Analysis_Options.save_polimg    = 1;
@@ -122,7 +140,7 @@ Analysis_Options.fits_spectra   = 1;
 Analysis_Options.save_fits      = 1;
 Analysis_Options.find_instrpars = 1;
 Analysis_Options.save_instrpars = 1;
-Analysis_Options.find_detpars	= 1;
+Analysis_Options.find_detpars	= 0;
 
 %%% PK FITTING OPTIONS
 Analysis_Options.PkFitOptions   = optimset(...
@@ -130,11 +148,33 @@ Analysis_Options.PkFitOptions   = optimset(...
     'MaxFunEvals',3e5);
 
 Analysis_Options.InstrPrmFitOptions = optimset(...
-        'DerivativeCheck', 'off', ...
-        'MaxIter', 1e5, ...
-        'MaxFunEvals', 3e5, ...
-        'TypicalX',[100 -100 1000 0.1 0.1 XRDIMAGE.Instr.detpars], ...
-        'Display','final');
+    'DerivativeCheck', 'off', ...
+    'MaxIter', 1e5, ...
+    'MaxFunEvals', 3e5, ...
+    'TypicalX',[100 -100 1000 0.1 0.1 XRDIMAGE.Instr.detpars], ...
+    'Display','iter');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% LOAD XRD IMAGES
+%%% BACKGROUND
+if XRDIMAGE.Image.corrected
+    disp('###########################')
+    fprintf('images are already corrected for background.\n');
+    disp('###########################')
+else
+    disp('###########################')
+    fprintf('loading background file for dark.\n');
+    disp('###########################')
+    pfname  = GenerateGEpfname(XRDIMAGE.DarkField);
+    bg      = NreadGE(pfname{1,1}, 1);
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERATE MESH FOR INTEGRATION
+%%% IF POLIMG NEEDS TO BE GENERATED
+if Analysis_Options.make_polimg
+    DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels);
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% LOAD XRD IMAGES & GENERATE POLIMG
@@ -142,36 +182,37 @@ pfname  = GenerateGEpfname(XRDIMAGE.Image);
 numimg  = length(pfname);
 if Analysis_Options.make_polimg
     for i = 1:1:numimg
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%% POLAR REBINNING IF NECESSARY
         disp('###########################')
         disp(sprintf('Looking at %s', pfname{i,1}))
         disp('###########################')
         
         pfname_polimage = [pfname{i,1}, '.polimg.mat'];
         
-        imgi    = ReadSUM(pfname{i,1});
-        imgi    = imrotate(imgi, XRDIMAGE.Image.RotAngle);
-        imgi    = [zeros(size(imgi,1), 1040), imgi];
-        imgi    = [zeros(520, size(imgi,2)); imgi; zeros(520, size(imgi,2))];
+        if XRDIMAGE.Image.corrected
+            imgi    = ReadSUM(pfname{i,1});
+        else
+            imgi    = bg.*0;
+            for j = 1:1:XRDIMAGE.Image.numframe
+                imgj    = NreadGE(pfname{i,1}, j);
+                imgi    = imgi + imgj;
+            end
+            imgi    = imgi - bg.*XRDIMAGE.Image.numframe;
+        end
         
         figure(1)
         hold off
-        imagesc(log(imgi))
-        axis equal tight
+        imagesc(rot90(imgi,1))
+        caxis([-10 3000])
+        axis equal
         colorbar vert
-        xlabel('X_{L}')
-        ylabel('Y_{L}')
         hold on
-        plot(XRDIMAGE.CakePrms.origin(1), XRDIMAGE.CakePrms.origin(2), 'rh')
-        
-        %%% GENERATE MESH FOR INTEGRATION
-        %%% IF POLIMG NEEDS TO BE GENERATED
-        if Analysis_Options.make_polimg && i == 1
-            [Ly, Lx]        = size(imgi);
-            DetectorMesh    = BuildMeshDetector(Lx, Ly);
-        end
+        xlabel('X_L (pixels)')
+        ylabel('Y_L (pixels)')
+        title('Ensure that image matches the coordinate system')
         
         %%% POLAR REBINNING
-        % imgi    = rot90(fliplr(imgi), 1);
         polimg  = PolarBinXRD(DetectorMesh, ...
             XRDIMAGE.Instr, ...
             XRDIMAGE.CakePrms, ...
@@ -202,7 +243,6 @@ if Analysis_Options.fits_spectra
         pfname_pkfit    = [pfname{i,1}, '.pkfit.mat'];
         
         load(pfname_polimage)
-        
         figure(2)
         subplot(1,2,1)
         imagesc(log(polimg.intensity)), axis square tight
@@ -217,7 +257,7 @@ if Analysis_Options.fits_spectra
         disp('###########################')
         
         for j = 1:1:XRDIMAGE.CakePrms.bins(1)
-            sprintf('Looking at azimuthal bin %d of %d\n', j, XRDIMAGE.CakePrms.bins(1))
+            disp(sprintf('Looking at azimuthal bin %d of %d\n', j, XRDIMAGE.CakePrms.bins(1)))
             
             x   = polimg.radius(j,:);
             x   = Pixel2mm(x, XRDIMAGE.Instr.pixelsize);  % CONVERT TO MM FROM PIXELS
@@ -243,14 +283,14 @@ if Analysis_Options.fits_spectra
                     yr  = y(idx)';
                     
                     pr0 = [...
-                        max(yr)/1.5 ...
+                        max(yr)/5 ...
                         0.5 ...
                         0.15 ...
                         XRDIMAGE.Instr.distance*tand(tth(XRDIMAGE.Material.pkidx{k})) ...
                         0 ...
-                        100];
+                        2e2];
                 else
-                    pkrange = [pkfit.rho(j-1,k)-1.5 pkfit.rho(j-1,k)+1.5];
+                    pkrange = [pkfit.rho(j-1,k)-2.5 pkfit.rho(j-1,k)+2.5];
                     idx = find(x >= pkrange(1) & x <= pkrange(2));
                     xr  = x(idx)';
                     yr  = y(idx)';
@@ -263,14 +303,9 @@ if Analysis_Options.fits_spectra
                         pkfit.bkg{j-1,k}];
                 end
                 
-%                 LB  = [0 0 0 0 XRDIMAGE.Material.pkrange(1,k)-0.25 -inf -inf];
-%                 UB  = [inf inf inf inf XRDIMAGE.Material.pkrange(2,k)+0.25 inf inf];
-                
                 y0  = pfunc(pr0,xr);
                 [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
                     [], [], Analysis_Options.PkFitOptions);
-%                 [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
-%                     LB, UB, Analysis_Options.PkFitOptions);
                 yf  = pfunc(pr,xr);
                 
                 figure(11)
@@ -297,12 +332,10 @@ if Analysis_Options.fits_spectra
                 pkfit.rsn(j,k)  = rsn;
                 pkfit.ef(j,k)   = ef;
                 pkfit.rwp(j,k)  = ErrorRwp(yr, yf);
-%                 pause
             end
             figure(11)
             subplot(1,2,1)
             hold off
-%             return
         end
         
         if Analysis_Options.save_fits
@@ -328,7 +361,7 @@ if Analysis_Options.find_instrpars
         disp(sprintf('Looking at %s to find instrument parameters.', pfname{i,1}))
         disp('###########################')
         
-        disp(sprintf('Loading peak fits in %s\n', pfname_polimage))
+        disp(sprintf('Loading polimg in %s\n', pfname_polimage))
         polimg  = load(pfname_polimage);
         polimg  = polimg.polimg;
         
@@ -342,23 +375,41 @@ if Analysis_Options.find_instrpars
             XRDIMAGE.Instr.gammaY, ...
             XRDIMAGE.Instr.detpars];
         
-        dtth0   = ApplyGeometricModel(p0);
+        GeomModelParams.pkidx           = [XRDIMAGE.Material.pkidx{:}]';
+        GeomModelParams.tth             = XRDIMAGE.Material.tth;
+        GeomModelParams.azim            = XRDIMAGE.CakePrms.azim + XRDIMAGE.Instr.imrotation;
+        GeomModelParams.rho             = pkfit.rho';
+        GeomModelParams.dettype         = XRDIMAGE.Instr.dettype;
+        GeomModelParams.DistortParams0  = XRDIMAGE.Instr.detpars;
+        GeomModelParams.find_detpars    = Analysis_Options.find_detpars;
+        
+        Instr           = XRDIMAGE.Instr;
+        
+        dtth0   = ApplyGeometricModel(p0, GeomModelParams);
         tth0    = tth([XRDIMAGE.Material.pkidx{:}])';
         tth0    = repmat(tth0, 1, size(dtth0, 2));
         strain0 = sind(tth0)./sind(tth0 - dtth0) - 1;
         
-        p	= lsqnonlin(@ApplyGeometricModel, p0, [], [], Analysis_Options.InstrPrmFitOptions);
+        ydata   = zeros(XRDIMAGE.Material.numpk, XRDIMAGE.CakePrms.bins(1));
+        p       = lsqcurvefit(@ApplyGeometricModel, p0, GeomModelParams, ydata, [], [], Analysis_Options.InstrPrmFitOptions);
+        
+        dtth    = ApplyGeometricModel(p, GeomModelParams);
+        strain  = sind(tth0)./sind(tth0 - dtth) - 1;
+        
+        %%% ASSIGN NEW INSTRUMENT PARAMETERS USING OPTIMIZATION RESULTS
+        Instr.centers   = p(1:2);
+        Instr.distance  = p(3);
+        Instr.gammaX    = p(4);
+        Instr.gammaY    = p(5);
+        Instr.detpars   = p(6:end);
         
         disp('Instrument parameter optimization results')
-        disp('Update parameters accordingly')
-        disp(sprintf('XRDIMAGE.Instr.centers  : %f , %f', p(1), p(2)))
-        disp(sprintf('XRDIMAGE.Instr.distance : %f', p(3)))
-        disp(sprintf('XRDIMAGE.Instr.gammaX   : %f', p(4)))
-        disp(sprintf('XRDIMAGE.Instr.gammaY   : %f', p(5)))
+        disp('Update parameters in XRDIMAGE.Instr variable accordingly')
+        disp(sprintf('Instr.centers  : %f , %f', p(1), p(2)))
+        disp(sprintf('Instr.distance : %f', p(3)))
+        disp(sprintf('Instr.gammaX   : %f', p(4)))
+        disp(sprintf('Instr.gammaY   : %f', p(5)))
         disp(sprintf('Detector distortion prm : %f\n', p(6:end)))
-        
-        dtth    = ApplyGeometricModel(p);
-        strain  = sind(tth0)./sind(tth0 - dtth) - 1;
         
         figure(100)
         subplot(1,2,1)
@@ -375,44 +426,7 @@ if Analysis_Options.find_instrpars
         xlabel('hkl id')
         ylabel('azimuthal bin number')
         
-        Data    = cell(1, XRDIMAGE.CakePrms.bins(1));
-        for ii=1:1:XRDIMAGE.CakePrms.bins(1)
-            Data{ii}    = [XRDIMAGE.Instr.pixelsize*polimg.radius(ii,:)' polimg.intensity(ii,:)'];
-        end
-        
-        %%% DEPENDS ON WHICH MODEL
-        if strcmp(XRDIMAGE.Instr.dettype, '0')
-            mapped_tth  = GeometricModelXRD0(...
-                XRDIMAGE.Instr.centers./1000, ...
-                XRDIMAGE.Instr.distance, ...
-                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
-                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth)';
-        elseif strcmp(XRDIMAGE.Instr.dettype, '1')
-            mapped_tth  = GeometricModelXRD1(...
-                XRDIMAGE.Instr.centers./1000, ...
-                XRDIMAGE.Instr.distance, ...
-                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
-                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
-        elseif strcmp(XRDIMAGE.Instr.dettype, '2')
-            mapped_tth  = GeometricModelXRD2(...
-                XRDIMAGE.Instr.centers./1000, ...
-                XRDIMAGE.Instr.distance, ...
-                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
-                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
-        elseif strcmp(XRDIMAGE.Instr.dettype, '2a')
-            mapped_tth  = GeometricModelXRD2a(...
-                XRDIMAGE.Instr.centers./1000, ...
-                XRDIMAGE.Instr.distance, ...
-                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
-                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
-        elseif strcmp(XRDIMAGE.Instr.dettype, '2b')
-            mapped_tth  = GeometricModelXRD2b(...
-                XRDIMAGE.Instr.centers./1000, ...
-                XRDIMAGE.Instr.distance, ...
-                XRDIMAGE.Instr.gammaY, XRDIMAGE.Instr.gammaX, ...
-                Pixel2mm(polimg.radius', XRDIMAGE.Instr.pixelsize), polimg.azimuth, XRDIMAGE.Instr.detpars)';
-        end
-        
+        mapped_tth  = GeometricModelXRDSwitch(Instr, polimg);
         polimg.mapped_tth_for_intensity = mapped_tth;
         
         [tth_grid, intensity_in_tth_grid]   = MapIntensityToTThGrid(XRDIMAGE, polimg);
@@ -430,21 +444,13 @@ if Analysis_Options.find_instrpars
         disp(sprintf('std pseudo-strain using p0 : %f', std(strain0(:))))
         disp(sprintf('std pseudo-strain using p  : %f\n', std(strain(:))))
         
-        %%% ASSIGN NEW INSTRUMENT PARAMETERS USING OPTIMIZATION RESULTS
-        Instr   = XRDIMAGE.Instr;
-        Instr.centers   = p(1:2);
-        Instr.distance  = p(3);
-        Instr.gammaX    = p(4);
-        Instr.gammaY    = p(5);
-        Instr.detpars   = p(6:end);
-        
         if Analysis_Options.save_instrpars
             disp('###########################')
             disp(sprintf('Saving optimized innstrument parameters in %s\n', pfname_instr))
             save(pfname_instr, 'Instr')
         else
             disp('###########################')
-            disp(sprintf('NOT saving optimized innstrument parameters for %s\n', pfname{i,1}))
+            disp(sprintf('NOT saving optimized instrument parameters for %s\n', pfname{i,1}))
         end
     end
 end
