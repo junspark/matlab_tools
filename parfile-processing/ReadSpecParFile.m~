@@ -1,4 +1,4 @@
-function pardata = ReadSpecParFile(fname, varargin)
+function pardata = ReadSpecParFile(fname, numchs, varargin)
 % ReadSpecParFile - read par file generated from python
 %
 %   INPUT:
@@ -25,7 +25,6 @@ function pardata = ReadSpecParFile(fname, varargin)
 % default options
 optcell = {...
     'Version', 'none', ...
-    'NumChannels', 58, ...
     };
 
 % update option
@@ -36,9 +35,7 @@ fid     = fopen(fname, 'r','n');
 switch lower(opts.Version)
     case 'none'
         disp('user specified par file format')
-        numchs      = opts.NumChannels;
-        
-        fmtstring   = '%s %s %s %s %d %s';
+        fmtstring       = '%s %s %s %s %d %s';
         for i = 1:1:numchs
             fmtstring   = [fmtstring, ' %f'];
         end
@@ -59,8 +56,7 @@ switch lower(opts.Version)
         end
     case 'coratella_feb15'
         disp(opts.Version)
-        numchs      = opts.NumChannels;
-        
+        numchs      = 58;
         fmtstring   = '%s %s %s %s %d %s';
         for i = 1:1:numchs
             fmtstring   = [fmtstring, ' %f'];
@@ -124,26 +120,8 @@ switch lower(opts.Version)
         pardata.preamp7 = textdata{45};
         pardata.preamp8 = textdata{46};
         
-        pardata.samXE       = textdata{47};
-        pardata.samYE       = textdata{48};
-        pardata.samZE       = textdata{49};
-        pardata.samRXE      = textdata{50};
-        pardata.samRZE      = textdata{51};
-        pardata.samX2E      = textdata{52};
-        pardata.samZ2E      = textdata{53};
-        pardata.phi         = textdata{54};
+        pardata.samXE   = textdata{46};
         
-        pardata.keyence1    = textdata{55};
-        pardata.keyence2    = textdata{56};
-        pardata.cross       = textdata{57};
-        pardata.load        = textdata{58};
-        pardata.mts3        = textdata{59};
-        pardata.mts4        = textdata{60};
-        
-        pardata.temp1       = textdata{61};
-        pardata.temp2       = textdata{62};
-        pardata.temp3       = textdata{63};
-        pardata.fur_output  = textdata{64};
     otherwise
         disp('format not implemented')
 end
