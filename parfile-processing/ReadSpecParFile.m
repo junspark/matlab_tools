@@ -20,7 +20,9 @@ function pardata = ReadSpecParFile(fname, varargin)
 %   features.  Options are:
 %
 %   'Version'               version of spec metadata file (par file).
-%                           example: (coratella_feb15).
+%                           example: (coratella_feb15). default value is
+%                           'none'. 'mpe_standard' is the new MPE metadata
+%                           format for 1-BM-B EDD / 6-BM-A EDD / 1-ID data.
 
 % default options
 optcell = {...
