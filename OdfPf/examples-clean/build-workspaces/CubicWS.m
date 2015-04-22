@@ -3,10 +3,10 @@
 %
 %-------------------- User Input
 %
-fr_refine   =    4;  % refinement level on FR
-sp_refine   =   15;  % refinement level on sphere
+fr_refine   =    5;  % refinement level on FR
+sp_refine   =   3;  % refinement level on sphere
 per_fiber   = 1000;  % points per fiber
-nHarm       = 130;   % number of harmonics
+nHarm       = 23;   % number of harmonics
 %
 pf_hkls ={[1 1 1], [2 0 0], [2 2 0]};
 %
@@ -38,6 +38,6 @@ wscub = Workspace(cfr, sph, wsopts{:});
 wscub.frmesh.dh     = dh;
 wscub.frmesh.eVals  = eVals;
 
-save wscub wscub wsopts
+save wscub5x wscub wsopts
 
 PlotFR(wscub.frmesh, ones(wscub.frmesh.numind,1), 'ShowMesh', 'on')

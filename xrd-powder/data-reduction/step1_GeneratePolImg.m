@@ -69,6 +69,8 @@ Instr.numpixels     = Instr.numpixels./length(XRDIMAGE.Calib.fnumber);
 Instr.detpars       = Instr.detpars./length(XRDIMAGE.Calib.fnumber);
 Instr.imrotation    = Instr.imrotation/length(XRDIMAGE.Calib.fnumber);
 
+Instr.omega     = 0;
+Instr.chi       = 0;
 XRDIMAGE.Instr  = Instr;
 
 %%% CAKE PARAMETERS
