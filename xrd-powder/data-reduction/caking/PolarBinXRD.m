@@ -193,4 +193,5 @@ end
 % polimg.radius       = polimg.radius';
 % polimg.intensity    = polimg.intensity';
 
-% close(figure(1000))
+figure(1000)
+hold off
