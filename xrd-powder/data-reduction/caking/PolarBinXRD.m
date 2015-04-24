@@ -43,17 +43,6 @@ optcell = {...
 % update option
 opts    = OptArgs(optcell, varargin);
 
-if strcmpi(opts.PlotProgress, 'on')
-    figure(1000)
-    imagesc(log(abs(rot90(img,1))))
-    % imagesc(rot90(img,1))
-    hold on
-    axis equal
-    plot(x0plt, y0plt, 'rh')
-    xlabel('X_L (pixels)')
-    ylabel('Y_L (pixels)')
-end
-
 img     = double(img); 
 imgi    = img;
 
@@ -90,6 +79,17 @@ Rlist   = mean((R(1:end - 1,:) + R(2:end,:))./2,2);
 polimg.azimuth   = cakeParms.azim;
 polimg.radius    = zeros(numAzi, numRho);
 polimg.intensity = zeros(numAzi, numRho);
+
+if strcmpi(opts.PlotProgress, 'on')
+    figure(1000)
+    imagesc(log(abs(rot90(img,1))))
+    % imagesc(rot90(img,1))
+    hold on
+    axis equal
+    plot(x0plt, y0plt, 'rh')
+    xlabel('X_L (pixels)')
+    ylabel('Y_L (pixels)')
+end
 
 for ii = 1:1:numAzi
     fprintf('Processing sector %d of %d\n', ii, numAzi);
