@@ -156,7 +156,7 @@ Analysis_Options.InstrPrmFitOptions = optimset(...
 %%% GENERATE MESH FOR INTEGRATION 
 %%% IF POLIMG NEEDS TO BE GENERATED
 if Analysis_Options.make_polimg
-    DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels);
+    DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels, XRDIMAGE.CakePrms);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

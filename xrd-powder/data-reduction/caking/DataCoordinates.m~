@@ -33,5 +33,10 @@ else
     fcrd    = [Y2(1) Y2(2) 1-Y2(1)-Y2(2)];
 end
 
+% fele;
+% fcrd
+% con(:, fele);
 fcon    = Ifunc(con(:, fele));
+
+% values  = dot(fcon, fcrd', 1);
 values  = fcrd*fcon;

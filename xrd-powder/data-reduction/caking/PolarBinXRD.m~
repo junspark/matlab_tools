@@ -1,4 +1,4 @@
-function polimg = PolarBinXRD(mesh, instr, cakeParms, img, )
+function polimg = PolarBinXRD(mesh, instr, cakeParms, img, varargin)
 % PolarBinXRD - Polar integration of image data
 %
 %   USAGE:
@@ -35,6 +35,25 @@ function polimg = PolarBinXRD(mesh, instr, cakeParms, img, )
 % cakeParms.sector(4) = 272;
 % cakeParms.bins(2)   = 5;
 
+% default options
+optcell = {...
+    'PlotProgress', 'on', ...
+    };
+
+% update option
+opts    = OptArgs(optcell, varargin);
+
+if strcmpi(opts.PlotProgress, 'on')
+    figure(1000)
+    imagesc(log(abs(rot90(img,1))))
+    % imagesc(rot90(img,1))
+    hold on
+    axis equal
+    plot(x0plt, y0plt, 'rh')
+    xlabel('X_L (pixels)')
+    ylabel('Y_L (pixels)')
+end
+
 img     = double(img); 
 imgi    = img;
 
@@ -46,15 +65,6 @@ y0  = cakeParms.origin(2);   % in pixels
 
 x0plt   = x0;
 y0plt   = instr.numpixels - y0;
-
-figure(1000)
-imagesc(log(abs(rot90(img,1))))
-% imagesc(rot90(img,1))
-hold on
-axis equal
-plot(x0plt, y0plt, 'rh')
-xlabel('X_L (pixels)')
-ylabel('Y_L (pixels)')
 
 startAzi    = cakeParms.sector(1);
 endAzi      = cakeParms.sector(2);
@@ -98,11 +108,13 @@ for ii = 1:1:numAzi
     THplt   = repmat(-THplt, numRho + 1, 1);
     
     [xplt, yplt]    = pol2cart(deg2rad(THplt),R);
-    xplt    = x0 + xplt; yplt    = y0plt + yplt;
-
-    figure(1000)
-    title(num2str(polimg.azimuth(ii)))
-    plot(xplt, yplt, 'k.')
+    xplt    = x0plt + xplt; yplt    = y0plt + yplt;
+    
+    if strcmpi(opts.PlotProgress, 'on')
+        figure(1000)
+        title(num2str(polimg.azimuth(ii)))
+        plot(xplt, yplt, 'k.')
+    end
     
     tic
     V   = zeros(numRho + 1, numEta + 1);
@@ -118,6 +130,10 @@ for ii = 1:1:numAzi
             else
                 xy  = [x(i,j); y(i,j)];
                 V(i,j) = DataCoordinates(xy, L, mesh, imgi);
+                
+                fcrd    = mesh.
+                fcon    = imgi(con(:, fele));
+                values(i,j) = fcrd*fcon;
                 
                 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 % % SOME BENCHMARK TESTS

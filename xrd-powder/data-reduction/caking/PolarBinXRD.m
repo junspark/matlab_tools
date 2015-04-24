@@ -66,8 +66,6 @@ y0  = cakeParms.origin(2);   % in pixels
 x0plt   = x0;
 y0plt   = instr.numpixels - y0;
 
-
-
 startAzi    = cakeParms.sector(1);
 endAzi      = cakeParms.sector(2);
 
@@ -110,7 +108,7 @@ for ii = 1:1:numAzi
     THplt   = repmat(-THplt, numRho + 1, 1);
     
     [xplt, yplt]    = pol2cart(deg2rad(THplt),R);
-    xplt    = x0 + xplt; yplt    = y0plt + yplt;
+    xplt    = x0plt + xplt; yplt    = y0plt + yplt;
     
     if strcmpi(opts.PlotProgress, 'on')
         figure(1000)
@@ -130,8 +128,16 @@ for ii = 1:1:numAzi
                 V(i,j)      = nan;
                 warn_user   = 1;
             else
-                xy  = [x(i,j); y(i,j)];
-                V(i,j) = DataCoordinates(xy, L, mesh, imgi);
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                % OLD ROUTINE - INTEGRATION MESH INFORMATION IS NOT PREGENERATED
+                % xy  = [x(i,j); y(i,j)];
+                % V(i,j) = DataCoordinates(xy, L, mesh, imgi);
+                
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                % NEW ROUTINE - INTEGRATION MESH INFORMATION IS PREGENERATED
+                fcrd    = mesh.fcrd{ii,i,j};
+                fcon    = imgi(mesh.fcon{ii,i,j});
+                V(i,j)  = fcrd*fcon;
                 
                 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 % % SOME BENCHMARK TESTS
@@ -165,7 +171,6 @@ for ii = 1:1:numAzi
             end
         end
     end
-    
     if ~isfield(cakeParms, 'fastint') || ~cakeParms.fastint
         Ilist   = BuildMeshPolarXRD(R, V, mesh.qrule);
         % pause
