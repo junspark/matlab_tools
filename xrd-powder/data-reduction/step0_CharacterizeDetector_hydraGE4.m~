@@ -9,7 +9,7 @@ XRDIMAGE.Image.fbase        = 'ceria_';
 XRDIMAGE.Image.fnumber      = 15;
 XRDIMAGE.Image.numframe     = 1;
 XRDIMAGE.Image.numdigs      = 5;
-XRDIMAGE.Image.fext         = 'ge3.sum';
+XRDIMAGE.Image.fext         = 'ge4.sum';
 XRDIMAGE.Image.corrected    = 1;
 XRDIMAGE.Image.IsHydra      = 2;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
 
@@ -20,7 +20,7 @@ XRDIMAGE.DarkField.fbase    = 'dark_1.5s_';
 XRDIMAGE.DarkField.fnumber  = 338;
 XRDIMAGE.DarkField.numframe = 1;
 XRDIMAGE.DarkField.numdigs  = 5;
-XRDIMAGE.DarkField.fext     = 'ge3';
+XRDIMAGE.DarkField.fext     = 'ge4';
 
 XRDIMAGE.Calib.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS\hydra_example_meimei_aug14\';
 % XRDIMAGE.Calib.pname        = '/net/s1dserv/export/s1b/__eval/meimei_maud';
@@ -32,12 +32,12 @@ XRDIMAGE.Instr.energy       = 86;       % keV
 XRDIMAGE.Instr.wavelength   = keV2Angstrom(XRDIMAGE.Instr.energy);  % wavelength (Angstrom)
 XRDIMAGE.Instr.pixelsize    = 0.2;          % mm
 XRDIMAGE.Instr.distance     = 2724.850121;     % mm
-XRDIMAGE.Instr.centers      = [ -38.490309 , 46.567703 ]; % center offsets x & y (um)
+XRDIMAGE.Instr.centers      = [ 0 , 0 ]; % center offsets x & y (um)
 XRDIMAGE.Instr.gammaX       = -0.019894;    % rad
 XRDIMAGE.Instr.gammaY       = 0.043754;    % rad
 XRDIMAGE.Instr.detectorsize = 409.6;    % mm
 XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
-XRDIMAGE.Instr.imrotation   = -117.5;
+XRDIMAGE.Instr.imrotation   = 152.5000;
 XRDIMAGE.Instr.imrotation   = 0;
 
 % RADIAL CORRECTION
@@ -62,8 +62,8 @@ XRDIMAGE.Instr.detpars  = [ ...
 XRDIMAGE.CakePrms.bins(1)   = 10;               % number of azimuthal bins over angular range defined by XRDIMAGE.CakePrms.sector(1) and XRDIMAGE.CakePrms.sector(2)
 XRDIMAGE.CakePrms.bins(2)   = 3000;             % number of radial bins over radial range defined by XRDIMAGE.CakePrms.sector(3) and XRDIMAGE.CakePrms.sector(4)
 XRDIMAGE.CakePrms.bins(3)   = 5;               % number of angular bins
-XRDIMAGE.CakePrms.origin(1) = 2235.630100;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
-XRDIMAGE.CakePrms.origin(2) = -91.959454;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(1) = 2250.356204;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(2) = -54.672344;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
 XRDIMAGE.CakePrms.origin(2) = 2048-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDINATES
 XRDIMAGE.CakePrms.sector(1) = 190;      % start azimuth (min edge of bin) in degrees
 XRDIMAGE.CakePrms.sector(2) = 240;      % stop  azimuth (max edge of bin) in degrees

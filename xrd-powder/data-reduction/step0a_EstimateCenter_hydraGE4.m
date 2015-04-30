@@ -8,9 +8,9 @@ XRDIMAGE.Image.fbase        = 'ceria_';
 XRDIMAGE.Image.fnumber      = 15;
 XRDIMAGE.Image.numframe     = 1;
 XRDIMAGE.Image.numdigs      = 5;
-XRDIMAGE.Image.fext         = 'ge1.sum';
+XRDIMAGE.Image.fext         = 'ge4.sum';
 XRDIMAGE.Image.corrected    = 1;
-XRDIMAGE.Image.IsHydra      = 1;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
+XRDIMAGE.Image.IsHydra      = 4;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
 
 %%% DARK FILES ONLY USED IF THE IMAGES ARE UNCORRECTED
 XRDIMAGE.DarkField.pname    = '.';
@@ -18,7 +18,7 @@ XRDIMAGE.DarkField.fbase    = 'dark_';
 XRDIMAGE.DarkField.fnumber  = 571;
 XRDIMAGE.DarkField.numframe = 1;
 XRDIMAGE.DarkField.numdigs  = 5;
-XRDIMAGE.DarkField.fext     = 'ge1';
+XRDIMAGE.DarkField.fext     = 'ge4';
 
 XRDIMAGE.Calib.pname        = '.';
 XRDIMAGE.Calib.fbase        = 'CeO2_';
