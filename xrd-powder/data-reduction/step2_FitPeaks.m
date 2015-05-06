@@ -139,16 +139,18 @@ Analysis_Options.find_detpars	= 0;
 Analysis_Options.generateESG    = 0;
 
 %%% PK FITTING OPTIONS
-Analysis_Options.PkFitOptions   = optimset(...
-    'MaxIter', 5e5,...
+Analysis_Options.PkFuncOptions.pfunc_type	= 'pseudoVoigt';
+Analysis_Options.PkFuncOptions.pbkg_order	= 2;
+Analysis_Options.PkFitOptimizationOptions   = optimset(...
+    'MaxIter', 5e5, ...
     'MaxFunEvals',3e5);
 
 Analysis_Options.InstrPrmFitOptions = optimset(...
-        'DerivativeCheck', 'off', ...
-        'MaxIter', 1e5, ...
-        'MaxFunEvals', 3e5, ...
-        'TypicalX',[100 -100 1000 0.1 0.1 XRDIMAGE.Instr.detpars], ...
-        'Display','final');
+    'DerivativeCheck', 'off', ...
+    'MaxIter', 1e5, ...
+    'MaxFunEvals', 3e5, ...
+    'TypicalX',[100 -100 100 0.1 0.1 XRDIMAGE.Instr.detpars], ...
+    'Display','iter');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% LOAD XRD IMAGES
@@ -213,6 +215,7 @@ if Analysis_Options.fits_spectra
                     xr  = x(idx)';
                     yr  = y(idx)';
                     
+                    %%% NEEDS TO BE ADAPTIVE FOR PEAK FUNCTION TYPE
                     pr0 = [...
                         pkfit.amp(j-1,k) ...
                         pkfit.mix(j-1,k) ...
@@ -221,10 +224,21 @@ if Analysis_Options.fits_spectra
                         pkfit.bkg{j-1,k}];
                 end
                 
-                y0  = pfunc(pr0,xr);
-                [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
-                    [], [], Analysis_Options.PkFitOptions);
-                yf  = pfunc(pr,xr);
+                pkpars.pfunc_type   = Analysis_Options.PkFuncOptions.pfunc_type;
+                pkpars.pbkg_order   = Analysis_Options.PkFuncOptions.pbkg_order;
+                pkpars.xdata        = xr;
+                
+                [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc_switch, pr0, pkpars, yr, ...
+                    [], [], Analysis_Options.PkFitOptimizationOptions);
+                
+                % [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
+                %     [], [], Analysis_Options.PkFitOptions);
+                
+                y0	= pfunc_switch(pr0, pkpars);
+                yf	= pfunc_switch(pr, pkpars);
+                
+                % y0  = pfunc(pr0,xr);
+                % yf  = pfunc(pr,xr);
                 
                 figure(11)
                 subplot(1,2,1)
@@ -241,6 +255,9 @@ if Analysis_Options.fits_spectra
                 ylabel('intensity (arb. units)')
                 title(['peak number : ', num2str(k)])
                 hold off
+                
+                %%% MAPPING NEEDS TO BE UPDATED WITH A SWITCH
+                pro  = pkfitResultMapping(pkpars, pr);
                 
                 pkfit.amp(j,k)  = pr(1);
                 pkfit.mix(j,k)  = pr(2);

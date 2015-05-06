@@ -144,8 +144,10 @@ Analysis_Options.save_instrpars = 1;
 Analysis_Options.find_detpars	= 1;
 
 %%% PK FITTING OPTIONS
-Analysis_Options.PkFitOptions   = optimset(...
-    'MaxIter', 5e5,...
+Analysis_Options.PkFuncOptions.pfunc_type	= 'pseudoVoigt';
+Analysis_Options.PkFuncOptions.pbkg_order	= 2;
+Analysis_Options.PkFitOptimizationOptions   = optimset(...
+    'MaxIter', 5e5, ...
     'MaxFunEvals',3e5);
 
 Analysis_Options.InstrPrmFitOptions = optimset(...
@@ -273,6 +275,7 @@ if Analysis_Options.fits_spectra
             xlabel('radial distance (mm)')
             ylabel('intensity (arb. units)')
             title(['bin number : ', num2str(j)])
+            
             for k = 1:1:XRDIMAGE.Material.numpk
                 disp(sprintf('Looking at peak number %d of %d', k, XRDIMAGE.Material.numpk))
                 if j == 1
@@ -296,6 +299,7 @@ if Analysis_Options.fits_spectra
                     xr  = x(idx)';
                     yr  = y(idx)';
                     
+                    %%% NEEDS TO BE ADAPTIVE FOR PEAK FUNCTION TYPE
                     pr0 = [...
                         pkfit.amp(j-1,k) ...
                         pkfit.mix(j-1,k) ...
@@ -304,12 +308,25 @@ if Analysis_Options.fits_spectra
                         pkfit.bkg{j-1,k}];
                 end
                 
+                pkpars.pfunc_type   = Analysis_Options.PkFuncOptions.pfunc_type;
+                pkpars.pbkg_order   = Analysis_Options.PkFuncOptions.pbkg_order;
+                pkpars.xdata        = xr;
+                
+                %%% NEEDS TO BE ADAPTIVE FOR PEAK FUNCTION TYPE
                 pLB = [0 0 0 -inf -inf -inf];
                 pUB = [inf inf 1 inf inf inf];
-                y0  = pfunc(pr0,xr);
-                [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
-                    pLB, pUB, Analysis_Options.PkFitOptions);
-                yf  = pfunc(pr,xr);
+                
+                [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc_switch, pr0, pkpars, yr, ...
+                    [], [], Analysis_Options.PkFitOptimizationOptions);
+                                
+                % [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
+                %     pLB, pUB, Analysis_Options.PkFitOptions);
+                
+                y0	= pfunc_switch(pr0, pkpars);
+                yf	= pfunc_switch(pr, pkpars);
+                
+                % y0  = pfunc(pr0,xr);
+                % yf  = pfunc(pr,xr);
                 
                 figure(11)
                 subplot(1,2,1)
@@ -327,11 +344,14 @@ if Analysis_Options.fits_spectra
                 title(['peak number : ', num2str(k)])
                 hold off
                 
-                pkfit.amp(j,k)  = pr(1);
-                pkfit.mix(j,k)  = pr(2);
-                pkfit.fwhm(j,k) = pr(3);
-                pkfit.rho(j,k)  = pr(4);
-                pkfit.bkg{j,k}  = pr(5:end);
+                %%% MAPPING NEEDS TO BE UPDATED WITH A SWITCH
+                pro  = pkfitResultMapping(pkpars, pr);
+                
+                pkfit.amp(j,k)  = pro(1);
+                pkfit.mix(j,k)  = pro(2);
+                pkfit.fwhm(j,k) = pro(3);
+                pkfit.rho(j,k)  = pro(4);
+                pkfit.bkg{j,k}  = pro(5:end);
                 pkfit.rsn(j,k)  = rsn;
                 pkfit.ef(j,k)   = ef;
                 pkfit.rwp(j,k)  = ErrorRwp(yr, yf);

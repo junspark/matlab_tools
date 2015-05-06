@@ -31,13 +31,13 @@ XRDIMAGE.Calib.fnumber      = 15;
 XRDIMAGE.Instr.energy       = 86;       % keV
 XRDIMAGE.Instr.wavelength   = keV2Angstrom(XRDIMAGE.Instr.energy);  % wavelength (Angstrom)
 XRDIMAGE.Instr.pixelsize    = 0.2;          % mm
-XRDIMAGE.Instr.distance     = 2724.850121;     % mm
-XRDIMAGE.Instr.centers      = [ -38.490309 , 46.567703 ]; % center offsets x & y (um)
-XRDIMAGE.Instr.gammaX       = -0.019894;    % rad
-XRDIMAGE.Instr.gammaY       = 0.043754;    % rad
+XRDIMAGE.Instr.distance     = 2728.341557;     % mm
+XRDIMAGE.Instr.centers      = [ 991.294772 , 727.273716 ]; % center offsets x & y (um)
+XRDIMAGE.Instr.gammaX       = 0.009745;    % rad
+XRDIMAGE.Instr.gammaY       = -0.014395;    % rad
 XRDIMAGE.Instr.detectorsize = 409.6;    % mm
 XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
-XRDIMAGE.Instr.imrotation   = -117.5;
+XRDIMAGE.Instr.imrotation   = 152.5000;
 XRDIMAGE.Instr.imrotation   = 0;
 
 % RADIAL CORRECTION
@@ -50,20 +50,20 @@ XRDIMAGE.Instr.dettype  = '2a';
 % 1 : constant value
 % 2 : [a1 a2 n1 n2 rhod]
 XRDIMAGE.Instr.detpars  = [ ...
-    0.000010887355265 ...
-    0.000118096385790 ...
-   -0.003107538138623 ...
-    0.005732487771260 ...
-  505.332882771125985 ...
-   -0.035042159363132 ...
-    ]*1e2;
+    -0.000000398526907 ...
+    -0.000002074908365 ...
+    -0.000297982303215 ...
+    -0.000396656387013 ...
+    3.099498066631567 ...
+    -0.003351405448848 ...
+    ]*1e3;
 
 %%% CAKE PARAMETERS
 XRDIMAGE.CakePrms.bins(1)   = 10;               % number of azimuthal bins over angular range defined by XRDIMAGE.CakePrms.sector(1) and XRDIMAGE.CakePrms.sector(2)
 XRDIMAGE.CakePrms.bins(2)   = 3000;             % number of radial bins over radial range defined by XRDIMAGE.CakePrms.sector(3) and XRDIMAGE.CakePrms.sector(4)
 XRDIMAGE.CakePrms.bins(3)   = 5;               % number of angular bins
-XRDIMAGE.CakePrms.origin(1) = 2235.630100;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
-XRDIMAGE.CakePrms.origin(2) = -91.959454;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(1) = 2250.356204;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(2) = -54.672344;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
 XRDIMAGE.CakePrms.origin(2) = 2048-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDINATES
 XRDIMAGE.CakePrms.sector(1) = 190;      % start azimuth (min edge of bin) in degrees
 XRDIMAGE.CakePrms.sector(2) = 240;      % stop  azimuth (max edge of bin) in degrees
@@ -117,10 +117,10 @@ XRDIMAGE.Material.d_spacing = d;
 %     [1] [2]
 %     };
 
-XRDIMAGE.Material.numpk     = 5;
-XRDIMAGE.Material.numbounds = 5;
+XRDIMAGE.Material.numpk     = 3;
+XRDIMAGE.Material.numbounds = 3;
 XRDIMAGE.Material.pkidx     = {...
-    [5] [6] [7] [9] [10]
+    [7] [9] [10]
     };
 
 for i = 1:1:XRDIMAGE.Material.numbounds
@@ -144,15 +144,17 @@ Analysis_Options.save_instrpars = 1;
 Analysis_Options.find_detpars	= 1;
 
 %%% PK FITTING OPTIONS
-Analysis_Options.PkFitOptions   = optimset(...
-    'MaxIter', 5e5,...
+Analysis_Options.PkFuncOptions.pfunc_type	= 'pseudoVoigt';
+Analysis_Options.PkFuncOptions.pbkg_order	= 2;
+Analysis_Options.PkFitOptimizationOptions   = optimset(...
+    'MaxIter', 5e5, ...
     'MaxFunEvals',3e5);
 
 Analysis_Options.InstrPrmFitOptions = optimset(...
     'DerivativeCheck', 'off', ...
     'MaxIter', 1e5, ...
     'MaxFunEvals', 3e5, ...
-    'TypicalX',[100 -100 1000 0.1 0.1 XRDIMAGE.Instr.detpars], ...
+    'TypicalX',[100 -100 100 0.1 0.1 XRDIMAGE.Instr.detpars], ...
     'Display','iter');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -273,6 +275,7 @@ if Analysis_Options.fits_spectra
             xlabel('radial distance (mm)')
             ylabel('intensity (arb. units)')
             title(['bin number : ', num2str(j)])
+            
             for k = 1:1:XRDIMAGE.Material.numpk
                 disp(sprintf('Looking at peak number %d of %d', k, XRDIMAGE.Material.numpk))
                 if j == 1
@@ -296,6 +299,7 @@ if Analysis_Options.fits_spectra
                     xr  = x(idx)';
                     yr  = y(idx)';
                     
+                    %%% NEEDS TO BE ADAPTIVE FOR PEAK FUNCTION TYPE
                     pr0 = [...
                         pkfit.amp(j-1,k) ...
                         pkfit.mix(j-1,k) ...
@@ -304,12 +308,25 @@ if Analysis_Options.fits_spectra
                         pkfit.bkg{j-1,k}];
                 end
                 
+                pkpars.pfunc_type   = Analysis_Options.PkFuncOptions.pfunc_type;
+                pkpars.pbkg_order   = Analysis_Options.PkFuncOptions.pbkg_order;
+                pkpars.xdata        = xr;
+                
+                %%% NEEDS TO BE ADAPTIVE FOR PEAK FUNCTION TYPE
                 pLB = [0 0 0 -inf -inf -inf];
                 pUB = [inf inf 1 inf inf inf];
-                y0  = pfunc(pr0,xr);
-                [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
-                    pLB, pUB, Analysis_Options.PkFitOptions);
-                yf  = pfunc(pr,xr);
+                
+                [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc_switch, pr0, pkpars, yr, ...
+                    [], [], Analysis_Options.PkFitOptimizationOptions);
+                                
+                % [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
+                %     pLB, pUB, Analysis_Options.PkFitOptions);
+                
+                y0	= pfunc_switch(pr0, pkpars);
+                yf	= pfunc_switch(pr, pkpars);
+                
+                % y0  = pfunc(pr0,xr);
+                % yf  = pfunc(pr,xr);
                 
                 figure(11)
                 subplot(1,2,1)
@@ -327,11 +344,14 @@ if Analysis_Options.fits_spectra
                 title(['peak number : ', num2str(k)])
                 hold off
                 
-                pkfit.amp(j,k)  = pr(1);
-                pkfit.mix(j,k)  = pr(2);
-                pkfit.fwhm(j,k) = pr(3);
-                pkfit.rho(j,k)  = pr(4);
-                pkfit.bkg{j,k}  = pr(5:end);
+                %%% MAPPING NEEDS TO BE UPDATED WITH A SWITCH
+                pro  = pkfitResultMapping(pkpars, pr);
+                
+                pkfit.amp(j,k)  = pro(1);
+                pkfit.mix(j,k)  = pro(2);
+                pkfit.fwhm(j,k) = pro(3);
+                pkfit.rho(j,k)  = pro(4);
+                pkfit.bkg{j,k}  = pro(5:end);
                 pkfit.rsn(j,k)  = rsn;
                 pkfit.ef(j,k)   = ef;
                 pkfit.rwp(j,k)  = ErrorRwp(yr, yf);

@@ -318,14 +318,14 @@ if Analysis_Options.fits_spectra
                 pkpars.pbkg_order   = Analysis_Options.PkFuncOptions.pbkg_order;
                 pkpars.xdata        = xr;
                 
-                [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc_switch, pr0, pkpars, yr, ...
+                [pr, rsn, ~, ef]  = lsqcurvefit(@pfunc_switch, pr0, pkpars, yr, ...
                     [], [], Analysis_Options.PkFitOptimizationOptions);
                 
                 % [pr_old, rsn_old, ~, ef_old]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
                 %     [], [], Analysis_Options.PkFitOptimizationOptions);
                 
                 y0	= pfunc_switch(pr0, pkpars);
-                yf	= pfunc_switch(pr, pkpars);
+                yf	= pfunc_switch(pr_new, pkpars);
                 
                 % y0	= pfunc(pr0,xr);
                 % yf	= pfunc(pr_old,xr);
@@ -333,27 +333,30 @@ if Analysis_Options.fits_spectra
                 figure(11)
                 subplot(1,2,1)
                 plot(xr, yr, 'b.')
-                plot(xr, y0, 'r:')
-                plot(xr, yf, 'g-')
+                plot(xr, y0_old, 'r:')
+                plot(xr, yf_old, 'g-')
+                
+                plot(xr, y0_new, 'm:')
+                plot(xr, yf_new, 'k-')
                 
                 subplot(1,2,2)
                 plot(xr, yr, 'b.')
                 hold on
-                plot(xr, y0, 'r:')
-                plot(xr, yf, 'g-')
+                plot(xr, y0_old, 'r:')
+                plot(xr, yf_old, 'g-')
+                
+                plot(xr, y0_new, 'm:')
+                plot(xr, yf_new, 'k-')
                 xlabel('radial distance (mm)')
                 ylabel('intensity (arb. units)')
                 title(['peak number : ', num2str(k)])
                 hold off
                 
-                %%% MAPPING NEEDS TO BE UPDATED WITH A SWITCH
-                pro  = pkfitResultMapping(pkpars, pr);
-                
-                pkfit.amp(j,k)  = pro(1);
-                pkfit.fwhm(j,k) = pro(2);
-                pkfit.mix(j,k)  = pro(3);
-                pkfit.rho(j,k)  = pro(4);
-                pkfit.bkg{j,k}  = pro(5:end);
+                pkfit.amp(j,k)  = pr(1);
+                pkfit.mix(j,k)  = pr(2);
+                pkfit.fwhm(j,k) = pr(3);
+                pkfit.rho(j,k)  = pr(4);
+                pkfit.bkg{j,k}  = pr(5:end);
                 pkfit.rsn(j,k)  = rsn;
                 pkfit.ef(j,k)   = ef;
                 pkfit.rwp(j,k)  = ErrorRwp(yr, yf);
