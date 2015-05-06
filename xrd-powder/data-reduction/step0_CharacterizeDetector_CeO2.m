@@ -159,13 +159,6 @@ Analysis_Options.InstrPrmFitOptions = optimset(...
         'Display','final');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% GENERATE MESH FOR INTEGRATION 
-%%% IF POLIMG NEEDS TO BE GENERATED
-if Analysis_Options.make_polimg
-    DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels);
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% LOAD XRD IMAGES
 %%% BACKGROUND
 if XRDIMAGE.Image.corrected
@@ -178,6 +171,13 @@ else
     disp('###########################')
     pfname  = GenerateGEpfname(XRDIMAGE.DarkField);
     bg      = NreadGE(pfname{1,1}, 1);
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERATE MESH FOR INTEGRATION
+%%% IF POLIMG NEEDS TO BE GENERATED
+if Analysis_Options.make_polimg
+    DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels, XRDIMAGE.CakePrms);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
