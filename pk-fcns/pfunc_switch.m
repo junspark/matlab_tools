@@ -1,4 +1,4 @@
-function f = pfunc_switch(p, params)
+function y = pfunc_switch(p, params)
 % pfunc_switch - switch objective function for peak fitting
 %
 %   USAGE:
@@ -26,7 +26,7 @@ p	= p(:);
 
 xdata   = params.xdata;
 xdata   = xdata(:);
-f       = xdata.*0;
+y       = xdata.*0;
 
 pfunc_type  = params.pfunc_type;
 pbkg_order  = params.pbkg_order;
@@ -40,12 +40,12 @@ switch lower(pfunc_type)
             
             ppk = p(ji:jf);
             ypk = pksplitpseudoVoigt(ppk,xdata);
-            f   = f + ypk;
+            y   = y + ypk;
         end
         pbkg    = p((numpk*6+1):end);
         ybkg    = polyval(pbkg,xdata);
         
-        f   = f + ybkg;
+        y   = y + ybkg;
     case 'gaussian'
         numpk   = (length(p) - pbkg_order)/3;
         for i = 1:1:numpk
@@ -54,12 +54,12 @@ switch lower(pfunc_type)
             
             ppk = p(ji:jf);
             ypk = pkGaussian(ppk,xdata);
-            f   = f + ypk;
+            y   = y + ypk;
         end
-        pbkg    = p((numpk*pbkg_order+1):end);
+        pbkg    = p((numpk*3+1):end);
         ybkg    = polyval(pbkg,xdata);
         
-        f   = f + ybkg;
+        y   = y + ybkg;
     case 'lorentzian'
         numpk   = (length(p) - pbkg_order)/3;
         for i = 1:1:numpk
@@ -68,12 +68,12 @@ switch lower(pfunc_type)
             
             ppk = p(ji:jf);
             ypk = pkLorentzian(ppk,xdata);
-            f   = f + ypk;
+            y   = y + ypk;
         end
-        pbkg    = p((numpk*pbkg_order+1):end);
+        pbkg    = p((numpk*3+1):end);
         ybkg    = polyval(pbkg,xdata);
         
-        f   = f + ybkg;
+        y   = y + ybkg;
     case 'pseudovoigt'
         numpk   = (length(p) - pbkg_order)/4;
         for i = 1:1:numpk
@@ -82,12 +82,12 @@ switch lower(pfunc_type)
             
             ppk = p(ji:jf);
             ypk = pkpseudoVoigt(ppk,xdata);
-            f   = f + ypk;
+            y   = y + ypk;
         end
-        pbkg    = p((numpk*pbkg_order+1):end);
+        pbkg    = p((numpk*4+1):end);
         ybkg    = polyval(pbkg,xdata);
         
-        f   = f + ybkg;
+        y   = y + ybkg;
     otherwise
         disp('Unknown peak function!!')
 end

@@ -30,7 +30,6 @@ p0  = [ ...
 pars.pfunc_type = 'splitpseudovoigt';
 pars.pbkg_order = 2;
 pars.xdata      = xdata;
-pars.ydata      = ydata;
 
 [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc_switch, p0, pars, ydata);
 
