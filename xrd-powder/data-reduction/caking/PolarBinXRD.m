@@ -193,5 +193,7 @@ end
 % polimg.radius       = polimg.radius';
 % polimg.intensity    = polimg.intensity';
 
-figure(1000)
-hold off
+if strcmpi(opts.PlotProgress, 'on')
+    figure(1000)
+    hold off
+end
