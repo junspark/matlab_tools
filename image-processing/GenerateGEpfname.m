@@ -18,7 +18,14 @@ function pfname = GenerateGEpfname(ImagePars)
 %       cell structure with the full file names
 % 
 
-if ImagePars.iscor
+if ~isfield(ImagePars, 'iscor') || ~ImagePars.iscor
+    numimages   = length(ImagePars.fnumber);
+    
+    for i = 1:1:numimages
+        fname   = sprintf([ImagePars.fbase, '%05d.%s'], ImagePars.fnumber(i), ImagePars.fext);
+        pfname{i,1} = fullfile(ImagePars.pname, fname);
+    end
+else
     numimages   = length(ImagePars.fnumber);
     
     for i = 1:1:numimages
@@ -30,12 +37,5 @@ if ImagePars.iscor
     end
     pfname  = pfname';
     pfname  = {pfname{:}}';
-else
-    numimages   = length(ImagePars.fnumber);
-    
-    for i = 1:1:numimages
-        fname   = sprintf([ImagePars.fbase, '%05d.%s'], ImagePars.fnumber(i), ImagePars.fext);
-        pfname{i,1} = fullfile(ImagePars.pname, fname);
-    end
 end
 

@@ -80,7 +80,7 @@ XRDIMAGE.Instr.detpars  = [ ...
 
 %%% CAKE PARAMETERS
 XRDIMAGE.CakePrms.bins(1)   = 36;           % number of azimuthal bins
-XRDIMAGE.CakePrms.bins(2)   = 3000;         % number of radial bins
+XRDIMAGE.CakePrms.bins(2)   = 1000;         % number of radial bins
 XRDIMAGE.CakePrms.bins(3)   = 10;            % number of angular bins
 
 XRDIMAGE.CakePrms.origin(1) = 1036.190;     % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
@@ -135,8 +135,8 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% DATA REDUCTION FLAGS
-Analysis_Options.make_polimg    = 0;
-Analysis_Options.save_polimg    = 0;
+Analysis_Options.make_polimg    = 1;
+Analysis_Options.save_polimg    = 1;
 Analysis_Options.fits_spectra   = 1;
 Analysis_Options.save_fits      = 1;
 Analysis_Options.find_instrpars = 1;

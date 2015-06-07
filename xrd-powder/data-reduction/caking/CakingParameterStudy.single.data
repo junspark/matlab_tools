@@ -1,0 +1,51 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% CAKE PARAMETERS
+XRDIMAGE.CakePrms.bins(1)   = 36;           % number of azimuthal bins
+XRDIMAGE.CakePrms.bins(2)   = 3000;         % number of radial bins
+XRDIMAGE.CakePrms.bins(3)   = 10;            % number of angular bins
+
+mean pseudo-strain using p0 : 0.000021
+mean pseudo-strain using p  : 0.000016
+
+std pseudo-strain using p0 : 0.000025
+std pseudo-strain using p  : 0.000021
+0.13
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% CAKE PARAMETERS
+XRDIMAGE.CakePrms.bins(1)   = 36;           % number of azimuthal bins
+XRDIMAGE.CakePrms.bins(2)   = 2000;         % number of radial bins
+XRDIMAGE.CakePrms.bins(3)   = 10;            % number of angular bins
+
+mean pseudo-strain using p0 : 0.000021
+mean pseudo-strain using p  : 0.000018
+
+std pseudo-strain using p0 : 0.000025
+std pseudo-strain using p  : 0.000023
+0.1
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% CAKE PARAMETERS
+XRDIMAGE.CakePrms.bins(1)   = 36;           % number of azimuthal bins
+XRDIMAGE.CakePrms.bins(2)   = 1000;         % number of radial bins
+XRDIMAGE.CakePrms.bins(3)   = 10;            % number of angular bins
+
+mean pseudo-strain using p0 : 0.000021
+mean pseudo-strain using p  : 0.000019
+
+std pseudo-strain using p0 : 0.000025
+std pseudo-strain using p  : 0.000023
+0.05
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% CAKE PARAMETERS
+XRDIMAGE.CakePrms.bins(1)   = 36;           % number of azimuthal bins
+XRDIMAGE.CakePrms.bins(2)   = 1000;         % number of radial bins
+XRDIMAGE.CakePrms.bins(3)   = 20;            % number of angular bins
+
+mean pseudo-strain using p0 : 0.000020
+mean pseudo-strain using p  : 0.000015
+
+std pseudo-strain using p0 : 0.000023
+std pseudo-strain using p  : 0.000019
+0.1

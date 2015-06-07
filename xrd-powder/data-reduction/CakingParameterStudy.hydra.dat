@@ -1,0 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% CAKE PARAMETERS
+XRDIMAGE.CakePrms.bins(1)   = 36;           % number of azimuthal bins
+XRDIMAGE.CakePrms.bins(2)   = 3000;         % number of radial bins
+XRDIMAGE.CakePrms.bins(3)   = 10;            % number of angular bins
+
+
