@@ -91,52 +91,52 @@ switch lower(opts.Version)
         pardata.foil_pos    = textdata{12};
         pardata.atten_pos   = textdata{13};
         
-        pardata.det1_fname              = textdata{14}(1:end-1);
+        pardata.det1_fname              = textdata{14};
         pardata.det1_fnum               = textdata{15};
         pardata.det1_frames_per_file    = textdata{16};
         pardata.det1_time_per_frame     = textdata{17};
         
-        pardata.det2_fname              = textdata{18}(1:end-1);
+        pardata.det2_fname              = textdata{18};
         pardata.det2_fnum               = textdata{19};
         pardata.det2_frames_per_file    = textdata{20};
         pardata.det2_time_per_frame     = textdata{21};
         
-        pardata.det3_fname              = textdata{22}(1:end-1);
+        pardata.det3_fname              = textdata{22};
         pardata.det3_fnum               = textdata{23};
         pardata.det3_frames_per_file    = textdata{24};
         pardata.det3_time_per_frame     = textdata{25};
         
-        pardata.det4_fname              = textdata{26}(1:end-1);
+        pardata.det4_fname              = textdata{26};
         pardata.det4_fnum               = textdata{27};
         pardata.det4_frames_per_file    = textdata{28};
         pardata.det4_time_per_frame     = textdata{29};
         
-        pardata.det5_fname              = textdata{30};(1:end-1)
+        pardata.det5_fname              = textdata{30};
         pardata.det5_fnum               = textdata{31};
         pardata.det5_frames_per_file    = textdata{32};
         pardata.det5_time_per_frame     = textdata{33};
         
-        pardata.det6_fname              = textdata{34}(1:end-1);
+        pardata.det6_fname              = textdata{34};
         pardata.det6_fnum               = textdata{35};
         pardata.det6_frames_per_file    = textdata{36};
         pardata.det6_time_per_frame     = textdata{37};
         
-        pardata.det7_fname              = textdata{38}(1:end-1);
+        pardata.det7_fname              = textdata{38};
         pardata.det7_fnum               = textdata{39};
         pardata.det7_frames_per_file    = textdata{40};
         pardata.det7_time_per_frame     = textdata{41};
         
-        pardata.det8_fname              = textdata{42}(1:end-1);
+        pardata.det8_fname              = textdata{42};
         pardata.det8_fnum               = textdata{43};
         pardata.det8_frames_per_file    = textdata{44};
         pardata.det8_time_per_frame     = textdata{45};
         
-        pardata.det9_fname              = textdata{46}(1:end-1);
+        pardata.det9_fname              = textdata{46};
         pardata.det9_fnum               = textdata{47};
         pardata.det9_frames_per_file    = textdata{48};
         pardata.det9_time_per_frame     = textdata{49};
         
-        pardata.det10_fname             = textdata{50}(1:end-1);
+        pardata.det10_fname             = textdata{50};
         pardata.det10_fnum              = textdata{51};
         pardata.det10_frames_per_file   = textdata{52};
         pardata.det10_time_per_frame    = textdata{53};
