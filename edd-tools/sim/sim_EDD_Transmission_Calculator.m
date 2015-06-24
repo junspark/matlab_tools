@@ -2,13 +2,13 @@ clear all
 close all
 clc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-MaterialName    = 'Al';                         % FCC Al 
-latticeParms    = 4.050;                        % IN Angstrom
-hkls            = load('fcc.hkls');
+% MaterialName    = 'Al';                         % FCC Al 
+% latticeParms    = 4.050;                        % IN Angstrom
+% hkls            = load('fcc.hkls');
 
-% MaterialName    = 'Fe';                         % BCC Fe
-% latticeParms    = 2.87 ;                        % IN Angstrom
-% hkls            = load('bcc.hkls');
+MaterialName    = 'Fe';                         % BCC Fe
+latticeParms    = 2.87 ;                        % IN Angstrom
+hkls            = load('bcc.hkls');
 
 % MaterialName    = 'Fe';                         % FCC Fe
 % latticeParms    = 3.515;                        % IN Angstrom
@@ -23,7 +23,7 @@ hkls            = load('fcc.hkls');
 % hkls            = load('diamondcubic.hkls');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SampleThickness = 40;                          % IN cm
+SampleThickness = 2.54;                          % IN cm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 BeamLineFlux    = load('bm_flux.data');
 TakeOffAngle    = 3:0.5:10;                    % IN deg
