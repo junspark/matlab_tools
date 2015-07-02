@@ -26,9 +26,7 @@ function [csq, pixelsize] = ReadPixirad(pfname, varargin)
 %       Pixirad image file information mapped to an image with square
 %       pixels
 %
-%   pixelsize
-%       Pixel size of the square pixels in mm. When nxsq is 476, resulting
-%       pixel size of the square pixel is 0.052 mm.
+%   pi
 
 % default options
 optcell = {...
