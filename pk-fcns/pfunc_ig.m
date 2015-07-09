@@ -1,13 +1,11 @@
-function y = pfunc_switch(p, params)
-% pfunc_switch - switch objective function for peak fitting
+function [p0, pLB, pUB] = pfunc_ig(params, ydata)
+% pfunc_ig - generates initial guess for the peak fitting
 %
 %   USAGE:
 %
 %   f   = pkGaussian(p, params)
 %
 %   INPUT:
-%   p
-%       parameters for a peak appropriate for the peak function of choice
 %
 %   params
 %       structure array with the following fields
@@ -17,21 +15,31 @@ function y = pfunc_switch(p, params)
 %           gaussian, lorentzian, and pseudovoigt)
 %       pbkg_order  : back ground order
 %
+%   ydata
+%       peak intensity data corresponding to params.xdata
+%
 %   OUTPUT:
 %
-%   f
-%       value of peak function at each x
+%   p0
+%       initial guess
 %
-p	= p(:);
-
-xdata   = params.xdata;
-xdata   = xdata(:);
-y       = xdata.*0;
+%   pLB
+%       lower bound for the peak parameters
+% 
+%   pUB
+%       upper bound for the peak parameters
+%
 
 pfunc_type  = params.pfunc_type;
 pbkg_order  = params.pbkg_order;
+[A, idx]    = max(ydata);
 
-n   = pfunc_NumberOfParameters(pfunc_type);
+n       = pfunc_NumberOfParameters(pfunc_type);
+xdata	= params.xdata;
+xdata   = xdata(:);
+
+pk_position = xdata(idx);
+
 switch lower(pfunc_type)
     case 'splitpseudovoigt'
         numpk   = (length(p) - pbkg_order)/n;
