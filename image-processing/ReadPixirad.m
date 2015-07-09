@@ -18,7 +18,7 @@ function [csq, pixelsize] = ReadPixirad(pfname, varargin)
 %       square.
 %
 %   display (optional)
-%       displays the sqaure grid image for confirmation.
+%       displays the sqaure grid image for confirmation (default = off).
 %
 %   OUTPUT:
 %
@@ -28,7 +28,8 @@ function [csq, pixelsize] = ReadPixirad(pfname, varargin)
 %
 %   pixelsize
 %       Pixel size of the square pixels in mm. When nxsq is 476, resulting
-%       pixel size of the square pixel is 0.052 mm.
+%       pixel size of the square pixel is approximately 0.052 mm.
+%       Ultimately, this needs to be found from optimization.
 
 % default options
 optcell = {...
