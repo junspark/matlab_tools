@@ -59,7 +59,7 @@ sigma_hh    = E/(1 + nu)/(1 - 2*nu) * (nu * epsilon_vv + (1 - nu) * epsilon_hh);
 sigma_oo    = E/(1 + nu)/(1 - 2*nu) * (nu * epsilon_vv + nu * epsilon_hh);
 
 figure(1)
-set(gcf, 'Position', [120 560 1640 420])
+% set(gcf, 'Position', [120 560 1640 420])
 subplot(1,2,1)
 scatter3(XS, YS, ZS, 50, epsilon_vv, 'filled')
 colorbar vert
@@ -79,7 +79,7 @@ caxis([-1e-3 2e-3])
 title('epsilon_{hh}')
 
 figure(2)
-set(gcf, 'Position', [120 560 1640 420])
+% set(gcf, 'Position', [120 560 1640 420])
 subplot(1,3,1)
 scatter3(XS, YS, ZS, 50, sigma_vv, 'filled')
 colorbar vert

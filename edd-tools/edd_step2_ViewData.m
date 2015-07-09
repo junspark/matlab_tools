@@ -27,7 +27,8 @@ d_hkl           = PlaneSpacings(latticeParms, 'cubic', hkls');
 pname_pypar     = './strain-examples/';
 fname_pypar     = 'mach_feb15_TOA_7_Lap7_1.pypar';
 pfname_pypar    = fullfile(pname_pypar, fname_pypar);
-pardata         = ReadPythonParFile(pfname_pypar);
+pardata         = ReadPythonParFile(pfname_pypar, 'Version', 'feb15');
+% pardata         = ReadPythonParFile(pfname_pypar, 'Version', 'mpe_standard');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PATH WHERE DATA FILES LIVE
