@@ -24,7 +24,6 @@ AverageGrainVolume  = 100;                      % IN um^3
 hkls            = load('fcc.hkls')';
 DetectedPeaks   = [1 2 3 4];
 qsym            = CubSymmetries;
-PointsPerFiber  = 1000;
 
 % %%%%
 % fr_refine       =    5;  % refinement level on FR
@@ -61,11 +60,10 @@ PointsPerFiber  = 1000;
 % 
 % save wscub5x wscub wsopts
 % return
+ws  = load('wscub4x');
+[dh, eVals] = DiscreteHarmonics(ws.wscub4x.frmesh, 23);
 
-ws  = load('wscub5x');
-[dh, eVals] = DiscreteHarmonics(ws.wscub.frmesh, 23);
-
-odf.frmesh  = ws.wscub.frmesh;
+odf.frmesh  = ws.wscub4x.frmesh;
 % odf.field   = ones(odf.frmesh.numind,1);
 odf.field   = dh(:,3) + abs(min(dh(:,3))); odf.field   = odf.field + abs(min(odf.field));
 odf.field   = odf.field./MeanValue(odf.field, odf.frmesh.l2ip);
