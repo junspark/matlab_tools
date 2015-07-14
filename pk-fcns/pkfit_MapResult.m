@@ -42,7 +42,7 @@ switch lower(pfunc_type)
         pout(4) = nan;
         pout(5) = nan;
         pout(6) = p(3);
-        pout    = [pout; p((n+1):end)];
+        pout    = [pout'; p((n+1):end)];
     case 'lorentzian'
         pout(1) = p(1);
         pout(2) = p(2);
@@ -50,7 +50,7 @@ switch lower(pfunc_type)
         pout(4) = nan;
         pout(5) = nan;
         pout(6) = p(3);
-        pout    = [pout; p((n+1):end)];
+        pout    = [pout'; p((n+1):end)];
     case 'pseudovoigt'
         pout(1) = p(1);
         pout(2) = p(2);
@@ -58,7 +58,7 @@ switch lower(pfunc_type)
         pout(4) = p(3);
         pout(5) = p(3);
         pout(6) = p(4);
-        pout    = [pout; p((n+1):end)];
+        pout    = [pout'; p((n+1):end)];
     otherwise
         disp('Unknown peak function!!')
 end

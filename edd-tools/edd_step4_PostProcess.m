@@ -9,9 +9,6 @@ TOA     =  6.970451365881403;
 ChToEnergyConversion    = [0.092570164886107  -0.077311622210394];
 MeasurementPlane        = 'h';
 
-%%% NUMBER OF POINTS IN X,Y,Z (GET FROM PYTHON FILE)
-NX  = 15; NY  = 1; NZ  = 7;
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MATERIAL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -27,14 +24,22 @@ sqrt_hkls       = sqrt(sum(hkls(pkid_fit, :).*hkls(pkid_fit, :),2));
 % PAR FILE DESIGNATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 pname_pypar     = './strain-examples/';
-fname_pypar     = 'mach_feb15_TOA_7_Lap7.pypar';
+fname_pypar     = 'mach_feb15_TOA_7_Lap7_1.pypar';
 pfname_pypar    = fullfile(pname_pypar, fname_pypar);
 pardata         = ReadPythonParFile(pfname_pypar);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PATH WHERE DATA FILES LIVE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-pname_data  = './strain-examples/Lap7/';
+pname_data  = './strain-examples/Lap7_1/';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PEAK FITTING OPTIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+pkfitting_pars.pfunc_type   = 'splitpseudovoigt';
+pkfitting_pars.pbkg_order   = 2;
+
+determine_a0    = 0;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % END OF INPUTS
@@ -42,10 +47,6 @@ pname_data  = './strain-examples/Lap7/';
 XS  = pardata.samX;
 YS  = pardata.samY;
 ZS  = pardata.samZ;
-
-xs  = reshape(XS', NX, NY, NZ);
-ys  = reshape(YS', NX, NY, NZ);
-zs  = reshape(ZS', NX, NY, NZ);
 
 lambda_hkl  = 2.*d_hkl*sind(TOA/2);
 E_hkl       = Angstrom2keV(lambda_hkl);

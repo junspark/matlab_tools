@@ -40,7 +40,7 @@ optcell = {...
     };
 
 % update option
-opts        = OptArgs(optcell, varargin);
+opts    = OptArgs(optcell, varargin);
 
 % read in image
 imdata      = double(imread(pfname));
@@ -94,7 +94,7 @@ imdata  = imdata(:);
 F   = TriScatteredInterp(x, y, imdata);
 
 %%% GENERATE SQUARE GRID
-dx  = (max(x) - min(x))/opts.nxsq;
+dx  = (max(x) - min(x))/(opts.nxsq - 1);
 dy  = dx;
 xsq = min(x):dx:max(x);
 ysq = min(y):dy:max(y);
