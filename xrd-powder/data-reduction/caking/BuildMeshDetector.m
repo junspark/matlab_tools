@@ -1,4 +1,4 @@
-function mesh = BuildMeshDetector(Lx, cakeParms)
+function mesh = BuildMeshDetector(Lx, cakeParms, varargin)
 % BuildMeshDetector - Build mesh crd and con for an XRD image
 %   
 %   mesh = BuildMeshDetector(Lx, cakeParms)
@@ -11,6 +11,12 @@ function mesh = BuildMeshDetector(Lx, cakeParms)
 %   cakeParms
 %       caking parameters 
 %
+%   FullMesh (default = 1; optional)
+%       output mesh contains the following fields: crd, con, numel, qrule,
+%       fcon, fcrd (default = 1)
+%       output mesh contains only the following fields: qrule, fcon, fcrd
+%       (0)
+% 
 %   Output:
 %   
 %   mesh 
@@ -27,16 +33,17 @@ function mesh = BuildMeshDetector(Lx, cakeParms)
 %       number of pixels in the image in the vertical direction
 %
 
+% default options
+optcell = {...
+    'FullMesh', 'on', ...
+    };
+
+% update option
+opts    = OptArgs(optcell, varargin);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % GENERATE MESH
 %%%%%%%%%%%%%%%%%%%%%%%%%
-% if nargin == 1
-%     disp('square image')
-%     Ly = Lx;
-% elseif nargin == 2
-%     disp('rectangular image')
-% end
 Ly = Lx;
 
 numel   = (Lx - 1) * (Ly - 1) * 2;
@@ -150,3 +157,8 @@ for ii = 1:1:numAzi
 end
 mesh.fcon   = fcon;
 mesh.fcrd   = fcrd;
+
+if strcmpi(opts.FullMesh, 'off')
+    fields  = {'crd', 'con', 'numel'};
+    mesh    = rmfield(mesh, fields);
+end

@@ -91,6 +91,12 @@ if strcmpi(opts.PlotProgress, 'on')
     ylabel('Y_L (pixels)')
 end
 
+if cakeParms.fastint
+    Xgrid   = 1:1:L;
+    Ygrid   = 1:1:L;
+    [Xgrid,Ygrid]   = meshgrid(Xgrid, Ygrid);
+end
+
 for ii = 1:1:numAzi
     fprintf('Processing sector %d of %d\n', ii, numAzi);
     tic;
@@ -104,81 +110,99 @@ for ii = 1:1:numAzi
     [x, y]	= pol2cart(deg2rad(TH),R);
     x   = x0 + x; y   = y0 + y;
     
-    THplt   = azi_ini:dEta:azi_fin;
-    THplt   = repmat(-THplt, numRho + 1, 1);
-    
-    [xplt, yplt]    = pol2cart(deg2rad(THplt),R);
-    xplt    = x0plt + xplt; yplt    = y0plt + yplt;
-    
     if strcmpi(opts.PlotProgress, 'on')
+        THplt   = azi_ini:dEta:azi_fin;
+        THplt   = repmat(-THplt, numRho + 1, 1);
+        
+        [xplt, yplt]    = pol2cart(deg2rad(THplt),R);
+        xplt    = x0plt + xplt; yplt    = y0plt + yplt;
+        
         figure(1000)
         title(num2str(polimg.azimuth(ii)))
         plot(xplt, yplt, 'k.')
     end
     
     tic
-    V   = zeros(numRho + 1, numEta + 1);
-    warn_user   = 0;
-    for i = 1:1:(numRho + 1)
-        for j = 1:1:(numEta + 1)
-            % figure(1000)
-            % plot(xplt(i,j), yplt(i,j), 'r.')
-            
-            if (x(i,j) > L) || (x(i,j) < 0) || (y(i,j) > L) || (y(i,j) < 0)
-                V(i,j)      = nan;
-                warn_user   = 1;
-            else
-                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                % OLD ROUTINE - INTEGRATION MESH INFORMATION IS NOT PREGENERATED
-                % xy  = [x(i,j); y(i,j)];
-                % V(i,j) = DataCoordinates(xy, L, mesh, imgi);
-                
-                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                % NEW ROUTINE - INTEGRATION MESH INFORMATION IS PREGENERATED
-                fcrd    = mesh.fcrd{ii,i,j};
-                fcon    = imgi(mesh.fcon{ii,i,j});
-                V(i,j)  = fcrd*fcon;
-                
-                % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                % % SOME BENCHMARK TESTS
-                % gridNum     = (L - 1)*(fix(xy(2)) - 1) + fix(xy(1));
-                % elemNums    = [gridNum*2-1 gridNum*2];
-                % 
-                % P1  = mesh.crd(:, mesh.con(:,elemNums(1)));
-                % P2  = mesh.crd(:, mesh.con(:,elemNums(2)));
-                % IN1 = inpolygon(xy(1), xy(2), P1(1,:), P1(2,:));
-                % IN2 = inpolygon(xy(1), xy(2), P2(1,:), P2(2,:));
-                % if IN1
-                %     A1  = [P1(1,1)-P1(1,3) P1(1,2)-P1(1,3);P1(2,1)-P1(2,3) P1(2,2)-P1(2,3)];
-                %     B1  = [xy(1)-P1(1,3); xy(2)-P1(2,3)];
-                %     Y1  = A1\B1;
-                % 
-                %     fele    = elemNums(1);
-                %     fcrd    = [Y1(1) Y1(2) 1-Y1(1)-Y1(2)];
-                % elseif IN2
-                %     A2  = [P2(1,1)-P2(1,3) P2(1,2)-P2(1,3);P2(2,1)-P2(2,3) P2(2,2)-P2(2,3)];
-                %     B2  = [xy(1)-P2(1,3); xy(2)-P2(2,3)];
-                %     Y2  = A2\B2;
-                % 
-                %     fele    = elemNums(2);
-                %     fcrd    = [Y2(1) Y2(2) 1-Y2(1)-Y2(2)];
-                % else
-                %     fprintf('UH-OH')
-                % end
-                % fcon    = img(mesh.con(:, fele));
-                % V(i,j)  = dot(fcon, fcrd', 1);
-                % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    if ~isfield(cakeParms, 'fastint') || ~cakeParms.fastint
+        V   = zeros(numRho + 1, numEta + 1);
+        warn_user   = 0;
+        for i = 1:1:(numRho + 1)
+            for j = 1:1:(numEta + 1)
+                if (x(i,j) > L) || (x(i,j) < 0) || (y(i,j) > L) || (y(i,j) < 0)
+                    V(i,j)      = nan;
+                    warn_user   = 1;
+                else
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    % OLD ROUTINE - INTEGRATION MESH INFORMATION IS NOT PREGENERATED
+                    % xy  = [x(i,j); y(i,j)];
+                    % V(i,j) = DataCoordinates(xy, L, mesh, imgi);
+                    
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    % NEW ROUTINE - INTEGRATION MESH INFORMATION IS PREGENERATED
+                    fcrd    = mesh.fcrd{ii,i,j};
+                    fcon    = imgi(mesh.fcon{ii,i,j});
+                    V(i,j)  = fcrd*fcon;
+                    
+                    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    % % SOME BENCHMARK TESTS
+                    % gridNum     = (L - 1)*(fix(xy(2)) - 1) + fix(xy(1));
+                    % elemNums    = [gridNum*2-1 gridNum*2];
+                    %
+                    % P1  = mesh.crd(:, mesh.con(:,elemNums(1)));
+                    % P2  = mesh.crd(:, mesh.con(:,elemNums(2)));
+                    % IN1 = inpolygon(xy(1), xy(2), P1(1,:), P1(2,:));
+                    % IN2 = inpolygon(xy(1), xy(2), P2(1,:), P2(2,:));
+                    % if IN1
+                    %     A1  = [P1(1,1)-P1(1,3) P1(1,2)-P1(1,3);P1(2,1)-P1(2,3) P1(2,2)-P1(2,3)];
+                    %     B1  = [xy(1)-P1(1,3); xy(2)-P1(2,3)];
+                    %     Y1  = A1\B1;
+                    %
+                    %     fele    = elemNums(1);
+                    %     fcrd    = [Y1(1) Y1(2) 1-Y1(1)-Y1(2)];
+                    % elseif IN2
+                    %     A2  = [P2(1,1)-P2(1,3) P2(1,2)-P2(1,3);P2(2,1)-P2(2,3) P2(2,2)-P2(2,3)];
+                    %     B2  = [xy(1)-P2(1,3); xy(2)-P2(2,3)];
+                    %     Y2  = A2\B2;
+                    %
+                    %     fele    = elemNums(2);
+                    %     fcrd    = [Y2(1) Y2(2) 1-Y2(1)-Y2(2)];
+                    % else
+                    %     fprintf('UH-OH')
+                    % end
+                    % fcon    = img(mesh.con(:, fele));
+                    % V(i,j)  = dot(fcon, fcrd', 1);
+                    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                end
             end
         end
-    end
-    if ~isfield(cakeParms, 'fastint') || ~cakeParms.fastint
         Ilist   = BuildMeshPolarXRD(R, V, mesh.qrule);
-        % pause
     else
-        V       = mean(V,2);
-        V       = (V(1:end-1) + V(2:end))/2;
+        %%%% NEED TO IMPLEMENT WARNING
+        if all(x(:) < L) && all((x(:) > 0)) && all(y(:) < L) && all(y(:) > 0)
+            warn_user   = 0;
+        else
+            warn_user   = 1;
+        end
+        
+        V   = interp2(Xgrid, Ygrid, double(imgi), y, x, 'cubic');
+        V   = mean(V,2);
+        V   = (V(1:end-1) + V(2:end)) / 2;
+        
         Ilist   = V;
     end
+    
+    %%%%%%%%%%%%%%%%%%
+    % BEFORE INTERP2 IMPLEMENTATION
+    %%%%%%%%%%%%%%%%%%
+    % if ~isfield(cakeParms, 'fastint') || ~cakeParms.fastint
+    %     Ilist   = BuildMeshPolarXRD(R, V, mesh.qrule);
+    %     % pause
+    % else
+    %     V       = mean(V,2);
+    %     V       = (V(1:end-1) + V(2:end))/2;
+    %     Ilist   = V;
+    % end
+    %%%%%%%%%%%%%%%%%%
     
     polimg.radius(ii,:)    = Rlist;
     polimg.intensity(ii,:) = Ilist;
@@ -189,9 +213,6 @@ for ii = 1:1:numAzi
     end
     fprintf('Processing time for sector %d is %1.4f\n', ii, dtime);
 end
-
-% polimg.radius       = polimg.radius';
-% polimg.intensity    = polimg.intensity';
 
 if strcmpi(opts.PlotProgress, 'on')
     figure(1000)

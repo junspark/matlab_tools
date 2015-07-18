@@ -310,18 +310,29 @@ if Analysis_Options.fits_spectra
                     xr  = x(idx)';
                     yr  = y(idx)';
                     
-                    pr0 = pr(k,:);
+                    pr0 = [...
+                        pkfit.amp(j-1,k) ...
+                        pkfit.mix(j-1,k) ...
+                        pkfit.fwhm(j-1,k) ...
+                        pkfit.rho(j-1,k) ...
+                        pkfit.bkg{j-1,k}];
                 end
                 
                 pkpars.pfunc_type   = Analysis_Options.PkFuncOptions.pfunc_type;
                 pkpars.pbkg_order   = Analysis_Options.PkFuncOptions.pbkg_order;
                 pkpars.xdata        = xr;
                 
-                [pr(k,:), rsn, ~, ef]   = lsqcurvefit(@pfunc_switch, pr0, pkpars, yr, ...
+                [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc_switch, pr0, pkpars, yr, ...
                     [], [], Analysis_Options.PkFitOptimizationOptions);
                 
+                % [pr_old, rsn_old, ~, ef_old]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
+                %     [], [], Analysis_Options.PkFitOptimizationOptions);
+                
                 y0	= pfunc_switch(pr0, pkpars);
-                yf	= pfunc_switch(pr(k,:), pkpars);
+                yf	= pfunc_switch(pr, pkpars);
+                
+                % y0	= pfunc(pr0,xr);
+                % yf	= pfunc(pr_old,xr);
                 
                 figure(11)
                 subplot(1,2,1)
@@ -340,13 +351,13 @@ if Analysis_Options.fits_spectra
                 hold off
                 
                 %%% MAPPING NEEDS TO BE UPDATED WITH A SWITCH
-                pro  = pkfit_MapResult(pkpars, pr(k,:));
+                pro  = pkfit_MapResult(pkpars, pr);
                 
                 pkfit.amp(j,k)  = pro(1);
-                pkfit.fwhm{j,k} = pro(2:3);
-                pkfit.mix{j,k}  = pro(4:5);
-                pkfit.rho(j,k)  = pro(6);
-                pkfit.bkg{j,k}  = pro(7:end);
+                pkfit.fwhm(j,k) = pro(2);
+                pkfit.mix(j,k)  = pro(3);
+                pkfit.rho(j,k)  = pro(4);
+                pkfit.bkg{j,k}  = pro(5:end);
                 pkfit.rsn(j,k)  = rsn;
                 pkfit.ef(j,k)   = ef;
                 pkfit.rwp(j,k)  = ErrorRwp(yr, yf);
