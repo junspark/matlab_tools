@@ -178,7 +178,11 @@ Analysis_Options.InstrPrmFitOptions = optimset(...
 %%% GENERATE MESH FOR INTEGRATION
 %%% IF POLIMG NEEDS TO BE GENERATED
 if Analysis_Options.make_polimg
-    DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels, XRDIMAGE.CakePrms);
+    if ~XRDIMAGE.CakePrms.fastint
+        DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels, XRDIMAGE.CakePrms);
+    else
+        DetectorMesh    = 0;
+    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -197,18 +201,16 @@ else
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% LOAD XRD IMAGES & GENERATE POLIMG
+%%% LOAD XRD IMAGES & GENERATE POLIMG IF NECESSARY
 pfname  = GenerateGEpfname(XRDIMAGE.Image);
 numimg  = length(pfname);
-
 for i = 1:1:numimg
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%% POLAR REBINNING IF NECESSARY
     disp('###########################')
     disp(sprintf('Looking at %s', pfname{i,1}))
     disp('###########################')
     
     pfname_polimage = [pfname{i,1}, '.polimg.mat'];
+    pfname_esg      = [pfname{i,1}, '.esg'];
     
     if XRDIMAGE.Image.corrected
         imgi    = ReadSUM(pfname{i,1});
