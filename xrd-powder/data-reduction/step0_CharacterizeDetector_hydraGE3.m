@@ -4,18 +4,16 @@ clc
 
 %%% INPUT PARAMETERS
 XRDIMAGE.Image.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS\hydra_example_meimei_aug14\';
-% XRDIMAGE.Image.pname        = '/net/s1dserv/export/s1b/__eval/meimei_maud';
 XRDIMAGE.Image.fbase        = 'ceria_';
 XRDIMAGE.Image.fnumber      = 15;
 XRDIMAGE.Image.numframe     = 1;
 XRDIMAGE.Image.numdigs      = 5;
 XRDIMAGE.Image.fext         = 'ge3.sum';
 XRDIMAGE.Image.corrected    = 1;
-XRDIMAGE.Image.IsHydra      = 2;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
+XRDIMAGE.Image.IsHydra      = 3;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
 
 %%% DARK FILES ONLY USED IF THE IMAGES ARE UNCORRECTED
 XRDIMAGE.DarkField.pname    = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS';
-% XRDIMAGE.DarkField.pname    = '/net/s1dserv/export/s1b/__eval/meimei_maud';
 XRDIMAGE.DarkField.fbase    = 'dark_1.5s_';
 XRDIMAGE.DarkField.fnumber  = 338;
 XRDIMAGE.DarkField.numframe = 1;
@@ -23,9 +21,9 @@ XRDIMAGE.DarkField.numdigs  = 5;
 XRDIMAGE.DarkField.fext     = 'ge3';
 
 XRDIMAGE.Calib.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS\hydra_example_meimei_aug14\';
-% XRDIMAGE.Calib.pname        = '/net/s1dserv/export/s1b/__eval/meimei_maud';
 XRDIMAGE.Calib.fbase        = 'ceria_';
 XRDIMAGE.Calib.fnumber      = 15;
+XRDIMAGE.Calib.fext         = 'ge3';
 
 %%% INSTRUMENT PARAMETERS
 XRDIMAGE.Instr.energy       = 86;       % keV
@@ -37,7 +35,6 @@ XRDIMAGE.Instr.gammaX       = 0.009745;    % rad
 XRDIMAGE.Instr.gammaY       = -0.014395;    % rad
 XRDIMAGE.Instr.detectorsize = 409.6;    % mm
 XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
-XRDIMAGE.Instr.imrotation   = 152.5000;
 XRDIMAGE.Instr.imrotation   = 0;
 
 % RADIAL CORRECTION
@@ -62,9 +59,11 @@ XRDIMAGE.Instr.detpars  = [ ...
 XRDIMAGE.CakePrms.bins(1)   = 10;               % number of azimuthal bins over angular range defined by XRDIMAGE.CakePrms.sector(1) and XRDIMAGE.CakePrms.sector(2)
 XRDIMAGE.CakePrms.bins(2)   = 3000;             % number of radial bins over radial range defined by XRDIMAGE.CakePrms.sector(3) and XRDIMAGE.CakePrms.sector(4)
 XRDIMAGE.CakePrms.bins(3)   = 5;               % number of angular bins
+
 XRDIMAGE.CakePrms.origin(1) = 2250.356204;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
 XRDIMAGE.CakePrms.origin(2) = -54.672344;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
 XRDIMAGE.CakePrms.origin(2) = 2048-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDINATES
+
 XRDIMAGE.CakePrms.sector(1) = 190;      % start azimuth (min edge of bin) in degrees
 XRDIMAGE.CakePrms.sector(2) = 240;      % stop  azimuth (max edge of bin) in degrees
 XRDIMAGE.CakePrms.sector(3) = 600;      % start radius (min edge of bin) in pixels
@@ -75,7 +74,7 @@ eta_ini     = XRDIMAGE.CakePrms.sector(1) + eta_step/2;
 eta_fin     = XRDIMAGE.CakePrms.sector(2) - eta_step/2;
 azim        = eta_ini:eta_step:eta_fin;
 XRDIMAGE.CakePrms.azim      = azim;
-XRDIMAGE.CakePrms.fastint   = 0;
+XRDIMAGE.CakePrms.fastint   = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% MATERIAL PARAMETERS - CeO2
@@ -129,8 +128,6 @@ for i = 1:1:XRDIMAGE.Material.numbounds
         max(tth_UB(XRDIMAGE.Material.pkidx{i})); ...
         ];
 end
-XRDIMAGE.Material.pkbck     = 2;
-XRDIMAGE.Material.pkfunc    = 4;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,6 +139,7 @@ Analysis_Options.save_fits      = 1;
 Analysis_Options.find_instrpars = 1;
 Analysis_Options.save_instrpars = 1;
 Analysis_Options.find_detpars	= 1;
+Analysis_Options.generateESG    = 0;
 
 %%% PK FITTING OPTIONS
 Analysis_Options.PkFuncOptions.pfunc_type	= 'pseudoVoigt';
@@ -176,17 +174,19 @@ end
 %%% GENERATE MESH FOR INTEGRATION
 %%% IF POLIMG NEEDS TO BE GENERATED
 if Analysis_Options.make_polimg
-    DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels, XRDIMAGE.CakePrms);
+    if ~XRDIMAGE.CakePrms.fastint
+        DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels, XRDIMAGE.CakePrms);
+    else
+        DetectorMesh    = 0;
+    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% LOAD XRD IMAGES & GENERATE POLIMG
+%%% LOAD XRD IMAGES & GENERATE POLIMG IF NECESSARY
 pfname  = GenerateGEpfname(XRDIMAGE.Image);
 numimg  = length(pfname);
 if Analysis_Options.make_polimg
     for i = 1:1:numimg
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%% POLAR REBINNING IF NECESSARY
         disp('###########################')
         disp(sprintf('Looking at %s', pfname{i,1}))
         disp('###########################')
@@ -299,13 +299,7 @@ if Analysis_Options.fits_spectra
                     xr  = x(idx)';
                     yr  = y(idx)';
                     
-                    %%% NEEDS TO BE ADAPTIVE FOR PEAK FUNCTION TYPE
-                    pr0 = [...
-                        pkfit.amp(j-1,k) ...
-                        pkfit.mix(j-1,k) ...
-                        pkfit.fwhm(j-1,k) ...
-                        pkfit.rho(j-1,k) ...
-                        pkfit.bkg{j-1,k}];
+                    pr0 = pr(k,:);
                 end
                 
                 pkpars.pfunc_type   = Analysis_Options.PkFuncOptions.pfunc_type;
@@ -316,28 +310,22 @@ if Analysis_Options.fits_spectra
                 pLB = [0 0 0 -inf -inf -inf];
                 pUB = [inf inf 1 inf inf inf];
                 
-                [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc_switch, pr0, pkpars, yr, ...
+                [pr(k,:), rsn, ~, ef]   = lsqcurvefit(@pfunc_switch, pr0, pkpars, yr, ...
                     [], [], Analysis_Options.PkFitOptimizationOptions);
-                                
-                % [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
-                %     pLB, pUB, Analysis_Options.PkFitOptions);
                 
                 y0	= pfunc_switch(pr0, pkpars);
-                yf	= pfunc_switch(pr, pkpars);
-                
-                % y0  = pfunc(pr0,xr);
-                % yf  = pfunc(pr,xr);
+                yf	= pfunc_switch(pr(k,:), pkpars);
                 
                 figure(11)
                 subplot(1,2,1)
                 plot(xr, yr, 'b.')
-                plot(xr, y0, 'r-')
+                plot(xr, y0, 'r:')
                 plot(xr, yf, 'g-')
                 
                 subplot(1,2,2)
                 plot(xr, yr, 'b.')
                 hold on
-                plot(xr, y0, 'r-')
+                plot(xr, y0, 'r:')
                 plot(xr, yf, 'g-')
                 xlabel('radial distance (mm)')
                 ylabel('intensity (arb. units)')
@@ -345,13 +333,13 @@ if Analysis_Options.fits_spectra
                 hold off
                 
                 %%% MAPPING NEEDS TO BE UPDATED WITH A SWITCH
-                pro  = pkfitResultMapping(pkpars, pr);
+                pro  = pkfit_MapResult(pkpars, pr(k,:));
                 
                 pkfit.amp(j,k)  = pro(1);
-                pkfit.mix(j,k)  = pro(2);
-                pkfit.fwhm(j,k) = pro(3);
-                pkfit.rho(j,k)  = pro(4);
-                pkfit.bkg{j,k}  = pro(5:end);
+                pkfit.fwhm{j,k} = pro(2:3);
+                pkfit.mix{j,k}  = pro(4:5);
+                pkfit.rho(j,k)  = pro(6);
+                pkfit.bkg{j,k}  = pro(7:end);
                 pkfit.rsn(j,k)  = rsn;
                 pkfit.ef(j,k)   = ef;
                 pkfit.rwp(j,k)  = ErrorRwp(yr, yf);

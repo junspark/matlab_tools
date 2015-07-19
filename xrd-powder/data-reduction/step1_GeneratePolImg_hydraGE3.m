@@ -22,6 +22,7 @@ XRDIMAGE.Image.numframe     = 10;
 XRDIMAGE.Image.numdigs      = 5;
 XRDIMAGE.Image.fext         = 'ge3.sum';
 XRDIMAGE.Image.corrected    = 1;
+XRDIMAGE.Image.IsHydra      = 3;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
 
 XRDIMAGE.Calib.pname        = '.\example\APS';
 XRDIMAGE.Calib.fbase        = 'LaB6_';
@@ -86,30 +87,30 @@ XRDIMAGE.CakePrms.sector(3) = 200;  % start radius (min edge of bin) in pixels
 XRDIMAGE.CakePrms.sector(4) = 950;  % stop  radius (max edge of bin) in pixels
 XRDIMAGE.CakePrms.azim      = 0:360/XRDIMAGE.CakePrms.bins(1):XRDIMAGE.CakePrms.sector(2);
 
-%%% MATERIAL PARAMETERS
-XRDIMAGE.Material.num       = 1;
-XRDIMAGE.Material.lattparms = 4.1569162;        % LaB6
-XRDIMAGE.Material.structure = 'simplecubic';
-XRDIMAGE.Material.numpk     = 8;
-XRDIMAGE.Material.pkrange    = [...
-    2.7  3.8 4.7 6.1 6.7 8.2 8.7 9.1; ...
-    2.95 4.1 5.0 6.7 7.0 8.5 9.0 9.4; ...
-    ];
-XRDIMAGE.Material.pkidx     = {...
-    [1] [2] [3] [5] [6] [8] [9] [10] 
-    };
-XRDIMAGE.Material.pkbck     = 2;
-XRDIMAGE.Material.pkfunc    = 4;
-XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
-
-%%% CALCULATE THEORETICAL TTH
-[d, th] = PlaneSpacings(XRDIMAGE.Material.lattparms, ...
-    'cubic', XRDIMAGE.Material.hkls', ...
-    XRDIMAGE.Instr.wavelength);
-tth     = 2*th;
-
-XRDIMAGE.Material.tth       = tth;
-XRDIMAGE.Material.d_spacing = d;
+% %%% MATERIAL PARAMETERS
+% XRDIMAGE.Material.num       = 1;
+% XRDIMAGE.Material.lattparms = 4.1569162;        % LaB6
+% XRDIMAGE.Material.structure = 'simplecubic';
+% XRDIMAGE.Material.numpk     = 8;
+% XRDIMAGE.Material.pkrange    = [...
+%     2.7  3.8 4.7 6.1 6.7 8.2 8.7 9.1; ...
+%     2.95 4.1 5.0 6.7 7.0 8.5 9.0 9.4; ...
+%     ];
+% XRDIMAGE.Material.pkidx     = {...
+%     [1] [2] [3] [5] [6] [8] [9] [10] 
+%     };
+% XRDIMAGE.Material.pkbck     = 2;
+% XRDIMAGE.Material.pkfunc    = 4;
+% XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
+% 
+% %%% CALCULATE THEORETICAL TTH
+% [d, th] = PlaneSpacings(XRDIMAGE.Material.lattparms, ...
+%     'cubic', XRDIMAGE.Material.hkls', ...
+%     XRDIMAGE.Instr.wavelength);
+% tth     = 2*th;
+% 
+% XRDIMAGE.Material.tth       = tth;
+% XRDIMAGE.Material.d_spacing = d;
 
 %%% DATA REDUCTION FLAGS
 Analysis_Options.make_polimg    = 1;
@@ -122,31 +123,47 @@ Analysis_Options.save_instrpars = 0;
 Analysis_Options.find_detpars	= 0;
 
 %%% PK FITTING OPTIONS
-Analysis_Options.PkFitOptions   = optimset(...
-    'MaxIter', 5e5,...
+Analysis_Options.PkFuncOptions.pfunc_type	= 'pseudoVoigt';
+Analysis_Options.PkFuncOptions.pbkg_order	= 2;
+Analysis_Options.PkFitOptimizationOptions   = optimset(...
+    'MaxIter', 5e5, ...
     'MaxFunEvals',3e5);
 
 Analysis_Options.InstrPrmFitOptions = optimset(...
-        'DerivativeCheck', 'off', ...
-        'MaxIter', 1e5, ...
-        'MaxFunEvals', 3e5, ...
-        'TypicalX',[100 -100 1000 0.1 0.1 XRDIMAGE.Instr.detpars], ...
-        'Display','final');
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% GENERATE MESH FOR INTEGRATION 
-%%% IF POLIMG NEEDS TO BE GENERATED
-if Analysis_Options.make_polimg
-    DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels);
-end
+    'DerivativeCheck', 'off', ...
+    'MaxIter', 1e5, ...
+    'MaxFunEvals', 3e5, ...
+    'TypicalX',[100 -100 100 0.1 0.1 XRDIMAGE.Instr.detpars], ...
+    'Display','iter');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% LOAD XRD IMAGES
 %%% BACKGROUND
-pfname  = GenerateGEpfname(XRDIMAGE.DarkField);
-bg      = NreadGE(pfname{1,1}, 1);
+if XRDIMAGE.Image.corrected
+    disp('###########################')
+    fprintf('images are already corrected for background.\n');
+    disp('###########################')
+else
+    disp('###########################')
+    fprintf('loading background file for dark.\n');
+    disp('###########################')
+    pfname  = GenerateGEpfname(XRDIMAGE.DarkField);
+    bg      = NreadGE(pfname{1,1}, 1);
+end
 
-%%% LOAD XRD IMAGES & GENERATE POLIMG
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERATE MESH FOR INTEGRATION
+%%% IF POLIMG NEEDS TO BE GENERATED
+if Analysis_Options.make_polimg
+    if ~XRDIMAGE.CakePrms.fastint
+        DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels, XRDIMAGE.CakePrms);
+    else
+        DetectorMesh    = 0;
+    end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% LOAD XRD IMAGES & GENERATE POLIMG IF NECESSARY
 pfname  = GenerateGEpfname(XRDIMAGE.Image);
 numimg  = length(pfname);
 if Analysis_Options.make_polimg
@@ -158,8 +175,6 @@ if Analysis_Options.make_polimg
         pfname_polimage = [pfname{i,1}, '.polimg.mat'];
         pfname_esg      = [pfname{i,1}, '.esg'];
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%% POLAR REBINNING IF NECESSARY
         if XRDIMAGE.Image.corrected
             imgi    = ReadSUM(pfname{i,1});
         else
@@ -170,11 +185,7 @@ if Analysis_Options.make_polimg
             end
             imgi    = imgi - bg.*XRDIMAGE.Image.numframe;
         end
-        
-        imgi    = imrotate(imgi, XRDIMAGE.Image.RotAngle);
-        imgi    = [zeros(size(imgi,1), 1040), imgi];
-        imgi    = [zeros(520, size(imgi,2)); imgi; zeros(520, size(imgi,2))];
-        
+                
         figure(1)
         imagesc(imgi)
         axis equal tight

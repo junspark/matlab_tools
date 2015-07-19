@@ -186,13 +186,11 @@ if Analysis_Options.make_polimg
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% LOAD XRD IMAGES & GENERATE POLIMG
+%%% LOAD XRD IMAGES & GENERATE POLIMG IF NECESSARY
 pfname  = GenerateGEpfname(XRDIMAGE.Image);
 numimg  = length(pfname);
 if Analysis_Options.make_polimg
     for i = 1:1:numimg
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%% POLAR REBINNING IF NECESSARY
         disp('###########################')
         disp(sprintf('Looking at %s', pfname{i,1}))
         disp('###########################')
