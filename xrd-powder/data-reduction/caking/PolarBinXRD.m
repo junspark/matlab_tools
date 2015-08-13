@@ -89,6 +89,7 @@ if strcmpi(opts.PlotProgress, 'on')
     plot(x0plt, y0plt, 'rh')
     xlabel('X_L (pixels)')
     ylabel('Y_L (pixels)')
+    drawnow
 end
 
 if cakeParms.fastint
@@ -120,6 +121,7 @@ for ii = 1:1:numAzi
         figure(1000)
         title(num2str(polimg.azimuth(ii)))
         plot(xplt, yplt, 'k.')
+        drawnow
     end
     
     tic
@@ -203,6 +205,13 @@ for ii = 1:1:numAzi
     %     Ilist   = V;
     % end
     %%%%%%%%%%%%%%%%%%
+    
+%     idx = find(Ilist < 0);
+%     if ~isempty(idx)
+%         disp('Some pixels yielded negative numbers.')
+%         disp('Setting these to 0.')
+%         Ilist(idx)  = 0;
+%     end
     
     polimg.radius(ii,:)    = Rlist;
     polimg.intensity(ii,:) = Ilist;
