@@ -8,4 +8,4 @@ PhotonAttenuation2 Package is orginally provided by Jarek Tuszynski. Its origina
 
 vtkwrite is originally from http://www.mathworks.com/matlabcentral/fileexchange/47814-export-3d-data-to-paraview-in-vtk-legacy-file-format
 
-Tools for postprocessing Ice9 results are provided by D. Menasche at Carnegie Mellon University.
+Tools for postprocessing Near Field-High Energy Diffraction Microscopy / Ice9 results are provided by D. Menasche at Carnegie Mellon University.
