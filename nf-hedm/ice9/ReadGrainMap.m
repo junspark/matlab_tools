@@ -21,5 +21,4 @@ while ischar(tline)
     
 end
 
-fclose(fid)
-
+fclose(fid);
