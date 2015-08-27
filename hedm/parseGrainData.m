@@ -22,9 +22,9 @@ function log = parseGrainData(pfname, qsym, varargin)
 %       where each row describes a grain
 %       
 %       O[row][col] is the orientation matrix of the grain that takes crystal frame to
-%       sample frame in ESRF coordinate system. 
+%       ESRF lab coordinate system. 
 %       X,Y,Z define the center of mass coordinate of the grain in ESRF
-%       coordinate system
+%       lab coordinate system
 %       a, b, c, alpha, beta, gamma are the crystal lattice
 %       parameters of the grain (NEED TO DESCRIBE HOW THESE ARE DEFINED)
 %       Err1, Err2, Err3
@@ -39,7 +39,7 @@ function log = parseGrainData(pfname, qsym, varargin)
 %   The columns of the input file are:
 %       grain id
 %       Center of mass (x = along beam, y = OB, z = up)
-%       Average Orientation in Bunge convention that transformas a vector
+%       Average Orientation in Bunge convention that transforms a vector
 %       in crystal frame to the laboratory frame
 %       Volume 
 %       AverageConfidence (bug in the segmentation routine) 
@@ -80,7 +80,7 @@ function log = parseGrainData(pfname, qsym, varargin)
 
 % default options
 optcell = {...
-    'Technique', 'ff', ...
+    'Technique', 'ff-midas', ...
     'CrdSystem', 'APS', ...
     };
 
@@ -102,7 +102,7 @@ else
     R_ESRF2APS  = eye(3,3);
 end
 
-if strcmpi(opts.Technique, 'ff')
+if strcmpi(opts.Technique, 'ff-midas')
     disp(sprintf('parsing ff-hedm data from %s', pfname));
     
     A    = load(pfname);
@@ -113,6 +113,8 @@ if strcmpi(opts.Technique, 'ff')
         'Quat',[],'R',[],'V',[],'Esam',[],'Ecry',[],'F',[], ...
         'lattprms',[], 'COM', [], 'ReflectionTable', [], 'Completeness', [], 'CrdSys', []);
     
+    % ROTATION FROM MIDAS IS [R]{c} = {l}
+    % CONVERT [R] FROM MIDAS TO APS LAB COORDINATE SYSTEM
     for i = 1:1:nGrains
         RMat    = reshape(A(i, 2:10), 3, 3)';
         COM     = A(i, 11:13);
@@ -131,7 +133,7 @@ if strcmpi(opts.Technique, 'ff')
         log(i).Quat = Quat;
         log(i).COM  = COM(:);
         
-        %%%%%%% NEED TO CHECK THIS TO BE CONSISTENT WITH XSTAL CONVENTION
+        % NEED TO CHECK THIS TO BE CONSISTENT WITH XSTAL CONVENTION
         log(i).lattprms     = A(i, 14:19);
         
         log(i).Error        = A(i, 20:22);
