@@ -1,26 +1,10 @@
 clear all
 close all
 clc
-
-%%% FIRST RUN : startup_mtex.m IF IPF COLORBAR NEEDED
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%v
-%%% GENERATE IPF COLORMAP USING MTEX
-%%% CHECK IN ebsdColorbar.m
-% cs  = symmetry('m-3m');
-% ss  = symmetry('-1');
-% cc  = get_option('antipodal','colorcoding','ipdfHKL');
-
-% [minTheta,maxTheta,minRho,maxRho,v] = getFundamentalRegionPF(cs, 'antipodal');
-% h   = S2Grid('PLOT', 'minTheta', minTheta, 'maxTheta', maxTheta,...
-%     'minRho', minRho, 'maxRho', maxRho, 'RESTRICT2MINMAX', 'resolution', 1*degree, 'antipodal');
-% v   = vector3d(h);
-% x   = getx(v); x = x(:);
-% y   = gety(v); y = y(:);
-% z   = getz(v); z = z(:);
-% d   = orientation2color(h,cc,cs,'antipodal');
-% save('coloring_scheme.mat', 'x', 'y', 'z', 'd')
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MTEX NEEDS TO BE INSTALLED
+% GOTO '/net/s1dserv/export/s1b/__eval/mtex-3.5.0'
+% RUN startup_mtex.m
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % User Input
@@ -32,6 +16,15 @@ fname   = 'Grains_example.csv';
 % ROTATION MATRIX TAKING VECTOR IN LAB FRAME TO SAMPLE FRAME
 % NECESSARY TO GET THE ORIENTATION OF CRYSTALS WITH RESPECT TO SAMPLE FRAME
 RLab2Sam    = eye(3,3);
+
+% COLORING SCHEME
+% ColorMap = load('cubic_xstal_coloring_scheme.mat');
+
+% XSTAL SYMMETRY IN MTEX CONVENTION
+cs  = symmetry('m-3m');
+
+% SAMPLE SYMMETRY IN MTEX CONVENTION
+ss  = symmetry('-1');
 
 % FILTERS
 Thresh_Completeness = 0.7;
@@ -56,26 +49,19 @@ idx_Completeness    = [Grains.Completeness] >= Thresh_Completeness;
 idx_MeanRadius      = [Grains.MeanRadius] >= Thresh_MeanRadius;
 idx = idx_Completeness;
 
-% nGrains     = size(grains, 1);
-% for i = 1:1:nGrains
-%     RMats(:,:,i)   =  RESRF2APS*reshape(grains(i,2:10), 3, 3)';
-% end
-% qsym    = CubSymmetries; Rsym    = RMatOfQuat(qsym);
-% quat    = ToFundamentalRegionQ(QuatOfRMat(RMats), qsym);
-% rod     = RodOfQuat(quat);
-% 
-% xyz = RESRF2APS*[grains(:,11) grains(:,12) grains(:,13)]';
-% xyz = xyz';
+xyz     = [Grains(idx).COM]';
+rod     = [Grains(idx).rod];
+cidx    = [Grains(idx).Completeness];
+quat    = [Grains(idx).quat];
+meanRad = [Grains(idx).MeanRadius];
 
-% load('.\coloring_scheme.mat');
-% ori     = orientation('quaternion', quat(1,:), quat(2,:), quat(3,:), quat(3,:), cs);
-% ebsd    = EBSD(ori, cs, ss);
-% rgb     = orientation2color(ori, 'ipdfHSV');
-% 
-% plot(ebsd, 'colorcoding','ipdfHSV')
+% ASSIGN COLORS BASED ON IPDF
+ori = orientation('quaternion', quat(1,:), quat(2,:), quat(3,:), quat(4,:), cs, ss);
+hsv	= orientation2color(ori, 'ipdfHSV');
 
-xyz = [Grains(idx).COM]';
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% PLOTS IN PHYSICAL SPACE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% PLOT COM / ONE COLOR
 figure, scatter3(xyz(:,1), xyz(:,2), xyz(:,3), 30, 'filled', 'b')
 grid on; axis square
@@ -83,39 +69,51 @@ xlabel('z : +=along beam (um)'); ylabel('x : +=OB (um)'); zlabel('y : +=UP (um)'
 title('COM of found grains')
 
 %%%% PLOT COM / COMPLETENESS AS COLOR
-figure, scatter3(xyz(:,1), xyz(:,2), xyz(:,3), 30, [Grains(idx).Completeness], 'filled')
+figure, scatter3(xyz(:,1), xyz(:,2), xyz(:,3), 30, cidx, 'filled')
 grid on; axis square
 colorbar vert; caxis([0.5 1])
 xlabel('z : +=along beam (um)'); ylabel('x : +=OB (um)'); zlabel('y : +=UP (um)')
 title('COM of found grains // colors denote completeness')
 
-%%%% PLOT COM / RGB IN FUNDAMENTAL TRIANGLE AS IPDF
-% figure, scatter3(grains(:,11), grains(:,12), grains(:,13), 50, rgb, 'filled') %% COMPLETENESS
-% grid on
-% axis square
-return
-%%%% PLOT ORIENTATIONS / ONE COLOR
+%%%% PLOT COM / COMPLETENESS AS COLOR
+figure, scatter3(xyz(:,1), xyz(:,2), xyz(:,3), 30, hsv, 'filled')
+grid on; axis square; colormap jet
+xlabel('z : +=along beam (um)'); ylabel('x : +=OB (um)'); zlabel('y : +=UP (um)')
+title('COM of found grains // colors in ipdf')
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% PLOTS IN ORIENTATION SPACE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% PLOT ORIENTATIONS / ONE COLOR
 figure, PlotFRPerimeter('cubic');
 scatter3(rod(1,:), rod(2,:), rod(3,:), 50, 'filled', 'b')
 axis square tight off
+title('Orientations of found grains')
 
-%%%% PLOT ORIENTATIONS / COMPLETENESS AS COLOR
+%%% PLOT ORIENTATIONS / COMPLETENESS AS COLOR
 figure, PlotFRPerimeter('cubic');
-scatter3(rod(1,:), rod(2,:), rod(3,:), 50, grains(:,24), 'filled')
+scatter3(rod(1,:), rod(2,:), rod(3,:), 50, cidx, 'filled')
 axis square tight off
-colorbar vert
+colorbar vert; caxis([0.5 1])
+title('Orientations of found grains // colors denote completeness')
 
-% %%%% PLOT ORIENTATIONS / RGB IN FUNDAMENTAL TRIANGLE AS IPDF
-% figure, PlotFRPerimeter('cubic');
-% scatter3(rod(1,:), rod(2,:), rod(3,:), 50, rgb, 'filled')
-% axis square tight off
+%%% PLOT ORIENTATIONS / IPDF COLORS
+figure, PlotFRPerimeter('cubic');
+scatter3(rod(1,:), rod(2,:), rod(3,:), 50, hsv, 'filled') %% COMPLETENESS
+axis square tight off
+title('Orientations of found grains // colors in ipdf')
 
-%%%% HISTOGRAM OF GRAIN SIZES NORMALIZED BY MAX GRAIN SIZE
-figure, hist(grains(:,23)./max(grains(:,23)), 20)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% STATISTICAL PLOTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% HISTOGRAM OF GRAIN SIZES NORMALIZED BY MAX GRAIN SIZE
+figure, 
+hist(meanRad./max(meanRad), 20)
 xlabel('relative grain radius (-)')
 ylabel('number of grains (-)')
-title(sprintf('Max grain size : %5.0f (micron)', max(grains(:,23))))
-axis([0 1 0 80])
+title(sprintf('Max grain size : %5.0f (micron)', max(meanRad)))
+return
+
 
 figure, 
 subplot(2,3,1)

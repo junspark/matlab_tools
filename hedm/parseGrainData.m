@@ -110,7 +110,7 @@ if strcmpi(opts.Technique, 'ff-midas')
     
     % Loop over found grains
     log(nGrains) = struct(...
-        'Quat',[],'R',[],'V',[],'Esam',[],'Ecry',[],'F',[], ...
+        'quat',[],'R',[],'rod',[],'V',[],'Esam',[],'Ecry',[],'F',[], ...
         'lattprms',[], 'COM', [], 'ReflectionTable', [], 'Completeness', [], 'CrdSys', []);
     
     % ROTATION FROM MIDAS IS [R]{c} = {l}
@@ -128,9 +128,11 @@ if strcmpi(opts.Technique, 'ff-midas')
             log(i).CrdSys   = 'ESRF';
         end
         Quat    = ToFundamentalRegionQ(QuatOfRMat(RMat), qsym);
+        Rod     = RodOfQuat(Quat);
         
-        log(i).RMat = RMat;
-        log(i).Quat = Quat;
+        log(i).R    = RMat;
+        log(i).rod  = Rod;
+        log(i).quat = Quat;
         log(i).COM  = COM(:);
         
         % NEED TO CHECK THIS TO BE CONSISTENT WITH XSTAL CONVENTION
