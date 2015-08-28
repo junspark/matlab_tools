@@ -117,10 +117,10 @@ if strcmpi(opts.Technique, 'ff-midas')
         'DiffPos',[], 'DiffOme',[], 'DiffAngle',[], ...
         'GrainRadius',[], ...
         'Completeness',[], ...
-        'StrainFab',[], 'Strain',[], ...
-        'PhaseNumber',[], ...
-        'V',[],'Esam',[],'Ecry',[],'F',[], ...
-        'ReflectionTable', [],  'CrdSys', []);
+        'eFab', [], 'e
+    
+    'V',[],'Esam',[],'Ecry',[],'F',[], ...
+         'ReflectionTable', [],  'CrdSys', []);
     
     % ROTATION FROM MIDAS IS [R]{c} = {l}
     % CONVERT [R] FROM MIDAS TO APS LAB COORDINATE SYSTEM
@@ -128,7 +128,6 @@ if strcmpi(opts.Technique, 'ff-midas')
         RMat    = reshape(A(i, 2:10), 3, 3)';
         COM     = A(i, 11:13);
         
-        % COORDINATE TRANSFORMATION
         RMat    = R_ESRF2APS*RMat;
         COM     = R_ESRF2APS*COM';
         
@@ -140,7 +139,6 @@ if strcmpi(opts.Technique, 'ff-midas')
         Quat    = ToFundamentalRegionQ(QuatOfRMat(RMat), qsym);
         Rod     = RodOfQuat(Quat);
         
-        log(i).GrainID  = A(i,1);
         log(i).R    = RMat;
         log(i).rod  = Rod;
         log(i).quat = Quat;
@@ -149,19 +147,9 @@ if strcmpi(opts.Technique, 'ff-midas')
         % NEED TO CHECK THIS TO BE CONSISTENT WITH XSTAL CONVENTION
         log(i).lattprms     = A(i, 14:19)';
         
-        log(i).DiffPos      = A(i, 20);
-        log(i).DiffOme      = A(i, 21);
-        log(i).DiffAngle    = A(i, 22);
-        log(i).GrainRadius  = A(i, 23);
+        log(i).Error        = A(i, 20:22);
+        log(i).MeanRadius   = A(i, 23);
         log(i).Completeness = A(i, 24);
-        
-        % NEED TO CHECK THIS TO BE CONSISTENT WITH ROTATION OUTPUT
-        StrainFab   = A(i, 25:33);
-        Strain      = A(i, 34:42);
-        log(i).StrainFab    = StrainFab';
-        log(i).Strain       = Strain';
-        
-        log(i).PhaseNumber  = A(i, 37);
     end
 elseif strcmpi(opts.Technique, 'nf')
     disp(sprintf('parsing nf-hedm data from %s', pfname));

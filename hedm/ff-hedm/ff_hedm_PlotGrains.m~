@@ -67,27 +67,15 @@ hsv	= orientation2color(ori, 'ipdfHSV');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % IN PHYSICAL SPACE
 i   = 5;
-straini = reshape(strain(:,i), 3, 3)';
+straini = reshape(strain(:,i), 3, 3)'
+return
+straini = [ ...
+    strain(1,i) strain(2,i) strain(3,i); ...
+    strain(2,i) strain(4,i) strain(5,i); ...
+    strain(3,i) strain(5,i) strain(6,i); ...
+    ];
 PlotJack(straini, 'title', sprintf('grain number : %d', grainID(i)))
-
-figure, 
-subplot(1,2,1)
-scatter3(xyz(:,1), xyz(:,2), xyz(:,3), 30, 'b')
-grid on; axis square
-hold on
-scatter3(xyz(i,1), xyz(i,2), xyz(i,3), 30, 'filled', 'r')
-xlabel('z : +=along beam (um)'); ylabel('x : +=OB (um)'); zlabel('y : +=UP (um)')
-title('COM of found grains // Strain Jack for the red dot')
-
-%%% PLOT ORIENTATIONS / ONE COLOR
-subplot(1,2,2)
-PlotFRPerimeter('cubic');
-scatter3(rod(1,:), rod(2,:), rod(3,:), 50, 'b')
-hold on
-scatter3(rod(1,i), rod(2,i), rod(3,i), 50, 'filled', 'r')
-axis square tight off
-title('Orientations of found grains // Strain Jack for the red dot')
-
+return
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% POLE FIGURE PLOTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
