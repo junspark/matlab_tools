@@ -55,7 +55,7 @@ if opts.IDLFile
         end
     end
     fclose(fid);
-else ~opts.IDLFile
+else
     ydata   = load(pfname);
     numdata = length(ydata);
     xdata   = 1:1:numdata;
