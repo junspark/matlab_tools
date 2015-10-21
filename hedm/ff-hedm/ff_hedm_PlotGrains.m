@@ -21,10 +21,10 @@ RLab2Sam    = eye(3,3);
 % ColorMap = load('cubic_xstal_coloring_scheme.mat');
 
 % XSTAL SYMMETRY IN MTEX CONVENTION
-cs  = symmetry('m-3m');
+% cs  = symmetry('m-3m');
 
 % SAMPLE SYMMETRY IN MTEX CONVENTION
-ss  = symmetry('-1');
+% ss  = symmetry('-1');
 
 % FILTERS
 Thresh_Completeness = 0.7;
@@ -59,8 +59,8 @@ lattprm     = [Grains(idx).lattprms];
 strain      = [Grains(idx).Strain];
 
 % ASSIGN COLORS BASED ON IPDF
-ori = orientation('quaternion', quat(1,:), quat(2,:), quat(3,:), quat(4,:), cs, ss);
-hsv	= orientation2color(ori, 'ipdfHSV');
+% ori = orientation('quaternion', quat(1,:), quat(2,:), quat(3,:), quat(4,:), cs, ss);
+% hsv	= orientation2color(ori, 'ipdfHSV');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% STRAIN JACK PLOTS
@@ -69,7 +69,7 @@ hsv	= orientation2color(ori, 'ipdfHSV');
 i   = 5;
 straini = reshape(strain(:,i), 3, 3)';
 PlotJack(straini, 'title', sprintf('grain number : %d', grainID(i)))
-
+return
 figure, 
 subplot(1,2,1)
 scatter3(xyz(:,1), xyz(:,2), xyz(:,3), 30, 'b')

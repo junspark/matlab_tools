@@ -146,20 +146,18 @@ if strcmpi(opts.Technique, 'ff-midas')
         log(i).quat = Quat;
         log(i).COM  = COM(:);
         
-        % NEED TO CHECK THIS TO BE CONSISTENT WITH XSTAL CONVENTION
         log(i).lattprms     = A(i, 14:19)';
-        
         log(i).DiffPos      = A(i, 20);
         log(i).DiffOme      = A(i, 21);
         log(i).DiffAngle    = A(i, 22);
         log(i).GrainRadius  = A(i, 23);
         log(i).Completeness = A(i, 24);
         
-        % NEED TO CHECK THIS TO BE CONSISTENT WITH ROTATION OUTPUT
-        StrainFab   = A(i, 25:33);
-        Strain      = A(i, 34:42);
-        log(i).StrainFab    = StrainFab';
-        log(i).Strain       = Strain';
+        % NEED TO CHECK THIS TO BE CONSISTENT WITH OTHER OUTPUT
+        StrainFab   = reshape(A(i, 25:33), 3, 3);
+        Strain      = reshape(A(i, 34:42), 3, 3);
+        log(i).StrainFab    = StrainFab;
+        log(i).Strain       = Strain;
         
         log(i).PhaseNumber  = A(i, 37);
     end
