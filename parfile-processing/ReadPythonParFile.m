@@ -27,6 +27,87 @@ opts    = OptArgs(optcell, varargin);
 fid     = fopen(fname, 'r','n');
 header  = fgetl(fid);
 switch lower(opts.Version)
+    case 'pantleon_oct15_bpm'
+    %         Date, 
+    %         Iring, 
+    %         Kohzu DS H size (mm), 
+    %         Kohzu DS V size (mm), 
+    %         Kohzu DS H pos (mm), 
+    %         Kohzu DS V pos (mm), 
+    %         Kohzu US H size (mm), 
+    %         Kohzu US V size (mm), 
+    %         Kohzu US H pos (mm), 
+    %         Kohzu US V pos (mm), 
+    %         SR BPM H pos (mm), 
+    %         SR BPM H angle (urad), 
+    %         SR BPM V pos (mm), 
+    %         SR BPM V angle (urad), 
+    %         XBPM H pos (mm), 
+    %         XBPM H angle (urad), 
+    %         XBPM V pos (mm), 
+    %         XBPM V angle (urad), 
+    %         IC-B1 (cts), 
+    %         IC-B2 (cts), 
+    %         IC-B3 (cts), 
+    %         IC-B4 (cts), 
+    %         IC-B5 (cts), 
+    %         IC-B8 (cts), 
+    %         IC-B6 (cts), 
+    %         IC-B7 (cts),
+    %         world angle (urad), 
+    %         E_hrm (keV), 
+    %         pzt1 (um), 
+    %         pzt2 (um), 
+    %         bpm_c (mm), 
+    %         bpm_e (mm), 
+    %         IC-E3 (cts), 
+    %         IC-E5 (cts), 
+        fmtstring       = '%s %s %d %s %d, %f,  %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f';
+        textdata  = textscan(fid, fmtstring);
+        
+        pardata.hdr                 = header;
+        pardata.day                 = textdata{1};
+        pardata.month               = textdata{2};
+        pardata.date                = textdata{3};
+        pardata.time                = textdata{4};
+        pardata.year                = textdata{5};
+        pardata.Iring               = textdata{6};
+        
+        pardata.KDHSize             = textdata{7};
+        pardata.KDVSize             = textdata{8};
+        pardata.KDHPos              = textdata{9};
+        pardata.KDVPos              = textdata{10};
+        pardata.KUHSize             = textdata{11};
+        pardata.KUVSize             = textdata{12};
+        pardata.KUHPos              = textdata{13};
+        pardata.KUVPos              = textdata{14};
+        
+        pardata.SRBPMHpos           = textdata{15};
+        pardata.SRBPMHang           = textdata{16};
+        pardata.SRBPMVpos           = textdata{17};
+        pardata.SRBPMVang           = textdata{18};
+        pardata.XBPMHpos            = textdata{19};
+        pardata.XBPMHang            = textdata{20};
+        pardata.XBPMVpos            = textdata{21};
+        pardata.XBPMVang            = textdata{22};
+
+        pardata.ICB1        = textdata{23};
+        pardata.ICB2        = textdata{24};
+        pardata.ICB3        = textdata{25};
+        pardata.ICB4        = textdata{26};
+        pardata.ICB5        = textdata{27};
+        pardata.ICB8        = textdata{28};
+        pardata.ICB6        = textdata{29};
+        pardata.ICB7        = textdata{30};
+        
+        pardata.world_angle = textdata{31};
+        pardata.E_hrm       = textdata{32};
+        pardata.pzt1        = textdata{33};
+        pardata.pzt2        = textdata{34};
+        pardata.bpm_C       = textdata{35};
+        pardata.bpm_E       = textdata{36};
+        pardata.ICE3        = textdata{37};
+        pardata.ICE5        = textdata{38};
     case 'feb15'
         fmtstring       = '%s %s %d %s %d, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %s %s %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f';
         textdata  = textscan(fid, fmtstring);
