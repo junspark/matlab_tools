@@ -88,9 +88,9 @@ optcell = {...
 opts    = OptArgs(optcell, varargin);
 
 if strcmpi(opts.CrdSystem, 'APS')
-    disp('COM / orientations will be converted to APS coordinate system')
+    disp('COM / orientations / strains will be converted to the APS coordinate system')
 elseif strcmpi(opts.CrdSystem, 'ESRF')
-    disp('COM / orientations will be in ESRF coordinate system')
+    disp('COM / orientations / strains will be in the ESRF coordinate system')
 else
     disp('Unknown coordinate system')
     return
@@ -153,11 +153,10 @@ if strcmpi(opts.Technique, 'ff-midas')
         log(i).GrainRadius  = A(i, 23);
         log(i).Completeness = A(i, 24);
         
-        % NEED TO CHECK THIS TO BE CONSISTENT WITH OTHER OUTPUT
         StrainFab   = reshape(A(i, 25:33), 3, 3);
         Strain      = reshape(A(i, 34:42), 3, 3);
-        log(i).StrainFab    = StrainFab;
-        log(i).Strain       = Strain;
+        log(i).StrainFab    = R_ESRF2APS*StrainFab*R_ESRF2APS';
+        log(i).Strain       = R_ESRF2APS*Strain*R_ESRF2APS';
         
         log(i).PhaseNumber  = A(i, 37);
     end

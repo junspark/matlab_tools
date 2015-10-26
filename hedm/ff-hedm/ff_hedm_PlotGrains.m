@@ -47,7 +47,7 @@ wts     = ones(1, numpts);
 % THRESHOLDING BY COMPLETENESS
 idx_Completeness    = [Grains.Completeness] >= Thresh_Completeness;
 idx_MeanRadius      = [Grains.GrainRadius] >= Thresh_GrainRadius;
-idx = idx_Completeness;
+idx = find(idx_Completeness);
 
 grainID = [Grains(idx).GrainID]';
 xyz     = [Grains(idx).COM]';
@@ -56,35 +56,35 @@ cidx    = [Grains(idx).Completeness];
 quat    = [Grains(idx).quat];
 GrainRad    = [Grains(idx).GrainRadius];
 lattprm     = [Grains(idx).lattprms];
-strain      = [Grains(idx).Strain];
 
 % ASSIGN COLORS BASED ON IPDF
 % ori = orientation('quaternion', quat(1,:), quat(2,:), quat(3,:), quat(4,:), cs, ss);
 % hsv	= orientation2color(ori, 'ipdfHSV');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% STRAIN JACK PLOTS
+% STRAIN JACK PLOTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % IN PHYSICAL SPACE
 i   = 5;
-straini = reshape(strain(:,i), 3, 3)';
+straini = Grains(idx(i)).Strain;
 PlotJack(straini, 'title', sprintf('grain number : %d', grainID(i)))
-return
+
+% COM PLOTS
 figure, 
 subplot(1,2,1)
 scatter3(xyz(:,1), xyz(:,2), xyz(:,3), 30, 'b')
 grid on; axis square
 hold on
-scatter3(xyz(i,1), xyz(i,2), xyz(i,3), 30, 'filled', 'r')
+scatter3(xyz(idx(i),1), xyz(idx(i),2), xyz(idx(i),3), 30, 'filled', 'r')
 xlabel('z : +=along beam (um)'); ylabel('x : +=OB (um)'); zlabel('y : +=UP (um)')
 title('COM of found grains // Strain Jack for the red dot')
 
-%%% PLOT ORIENTATIONS / ONE COLOR
+% PLOT ORIENTATIONS / ONE COLOR
 subplot(1,2,2)
 PlotFRPerimeter('cubic');
 scatter3(rod(1,:), rod(2,:), rod(3,:), 50, 'b')
 hold on
-scatter3(rod(1,i), rod(2,i), rod(3,i), 50, 'filled', 'r')
+scatter3(rod(1,idx(i)), rod(2,idx(i)), rod(3,idx(i)), 50, 'filled', 'r')
 axis square tight off
 title('Orientations of found grains // Strain Jack for the red dot')
 
@@ -123,10 +123,10 @@ xlabel('z : +=along beam (um)'); ylabel('x : +=OB (um)'); zlabel('y : +=UP (um)'
 title('COM of found grains // colors denote completeness')
 
 %%%% PLOT COM / COMPLETENESS AS COLOR
-figure, scatter3(xyz(:,1), xyz(:,2), xyz(:,3), 30, hsv, 'filled')
-grid on; axis square; colormap jet
-xlabel('z : +=along beam (um)'); ylabel('x : +=OB (um)'); zlabel('y : +=UP (um)')
-title('COM of found grains // colors in ipdf')
+% figure, scatter3(xyz(:,1), xyz(:,2), xyz(:,3), 30, hsv, 'filled')
+% grid on; axis square; colormap jet
+% xlabel('z : +=along beam (um)'); ylabel('x : +=OB (um)'); zlabel('y : +=UP (um)')
+% title('COM of found grains // colors in ipdf')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% PLOTS IN ORIENTATION SPACE
@@ -145,10 +145,10 @@ colorbar vert; caxis([0.5 1])
 title('Orientations of found grains // colors denote completeness')
 
 %%% PLOT ORIENTATIONS / IPDF COLORS
-figure, PlotFRPerimeter('cubic');
-scatter3(rod(1,:), rod(2,:), rod(3,:), 50, hsv, 'filled') %% COMPLETENESS
-axis square tight off
-title('Orientations of found grains // colors in ipdf')
+% figure, PlotFRPerimeter('cubic');
+% scatter3(rod(1,:), rod(2,:), rod(3,:), 50, hsv, 'filled') %% COMPLETENESS
+% axis square tight off
+% title('Orientations of found grains // colors in ipdf')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% STATISTICAL PLOTS
