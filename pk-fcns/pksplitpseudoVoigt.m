@@ -4,7 +4,7 @@ function f = pksplitpseudoVoigt(p, x)
 %
 %   USAGE:
 %
-%   f   = pkpseudoVoigt(p, x)
+%   f   = pksplitpseudoVoigt(p, x)
 %
 %   INPUT:
 %   p
