@@ -2,8 +2,8 @@ clear all
 close all
 clc
 
-pname   = './';
-fname   = 'pixiradtest_248926.tiff';
+pname   = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\image-processing-test-images';
+fname   = 'AgBeh_013043.tif';
 
 pfname  = fullfile(pname, fname);
 
