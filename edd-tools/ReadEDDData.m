@@ -32,6 +32,7 @@ function [xdata, ydata] = ReadEDDData(pfname, varargin)
 optcell = {...
     'Channel2Energy', [1 0], ...
     'IDLFile', 0, ...
+    'SpecFile', 0, ...
     };
 
 % update option
@@ -55,6 +56,10 @@ if opts.IDLFile
         end
     end
     fclose(fid);
+elseif opts.SpecFile
+    data    = load(pfname);
+    xdata   = data(:,1);
+    ydata   = data(:,2);
 else
     ydata   = load(pfname);
     numdata = length(ydata);
@@ -62,3 +67,5 @@ else
 end
 
 xdata   = opts.Channel2Energy(1)*xdata' + opts.Channel2Energy(2);
+xdata   = xdata(:);
+ydata   = ydata(:);

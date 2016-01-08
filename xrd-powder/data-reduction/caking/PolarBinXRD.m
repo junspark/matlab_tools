@@ -38,6 +38,7 @@ function polimg = PolarBinXRD(mesh, instr, cakeParms, img, varargin)
 % default options
 optcell = {...
     'PlotProgress', 'on', ...
+    'DisplayProgress', 'on', ...
     };
 
 % update option
@@ -99,7 +100,9 @@ if cakeParms.fastint
 end
 
 for ii = 1:1:numAzi
-    fprintf('Processing sector %d of %d\n', ii, numAzi);
+    if strcmpi(opts.DisplayProgress, 'on')
+        fprintf('Processing sector %d of %d\n', ii, numAzi);
+    end
     tic;
     
     azi_ini = polimg.azimuth(ii) - dAzi/2;
@@ -220,7 +223,9 @@ for ii = 1:1:numAzi
     if warn_user
         disp('Some requested nodal points are out of grid.')
     end
-    fprintf('Processing time for sector %d is %1.4f\n', ii, dtime);
+    if strcmpi(opts.DisplayProgress, 'on')
+        fprintf('Processing time for sector %d is %1.4f\n', ii, dtime);
+    end
 end
 
 if strcmpi(opts.PlotProgress, 'on')

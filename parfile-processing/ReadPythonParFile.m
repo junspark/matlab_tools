@@ -28,6 +28,7 @@ fid     = fopen(fname, 'r', 'n');
 header  = fgetl(fid);
 switch lower(opts.Version)
     case 'sangid_nov15_bpm'
+<<<<<<< HEAD
         fmtstring       = '%s %s %d %s %d, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f';
         textdata  = textscan(fid, fmtstring);
         
@@ -90,6 +91,9 @@ switch lower(opts.Version)
         pardata.fnumGE5 = textdata{56};
         pardata.fnumtomo    = textdata{57};
         pardata.fnumdic     = textdata{58};
+=======
+        %%% TODO
+>>>>>>> origin/master
     case 'pantleon_oct15_bpm'
         fmtstring       = '%s %s %d %s %d, %f,  %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f';
         textdata  = textscan(fid, fmtstring);
