@@ -27,6 +27,8 @@ opts    = OptArgs(optcell, varargin);
 fid     = fopen(fname, 'r','n');
 header  = fgetl(fid);
 switch lower(opts.Version)
+    case 'sangid_nov15_bpm'
+        %%% TODO
     case 'pantleon_oct15_bpm'
     %         Date, 
     %         Iring, 
