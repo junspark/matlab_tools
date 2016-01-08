@@ -24,44 +24,73 @@ optcell = {...
 % update option
 opts    = OptArgs(optcell, varargin);
 
-fid     = fopen(fname, 'r','n');
+fid     = fopen(fname, 'r', 'n');
 header  = fgetl(fid);
 switch lower(opts.Version)
+    case 'sangid_nov15_bpm'
+        fmtstring       = '%s %s %d %s %d, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f';
+        textdata  = textscan(fid, fmtstring);
+        
+        pardata.hdr     = header;
+        pardata.day 	= textdata{1};
+        pardata.month	= textdata{2};
+        pardata.date	= textdata{3};
+        pardata.time	= textdata{4};
+        pardata.year	= textdata{5};
+        pardata.Iring	= textdata{6};
+        pardata.samX    = textdata{7};
+        pardata.samY	= textdata{8};
+        pardata.samZ    = textdata{9};
+        pardata.th      = textdata{10};
+        pardata.chi     = textdata{11};
+        pardata.aero    = textdata{12};
+        pardata.hydraZ  = textdata{13};
+        pardata.geX     = textdata{14};
+        pardata.L1th    = textdata{15};
+        pardata.L1y     = textdata{16};
+        pardata.L2yth   = textdata{17};
+        pardata.L2y     = textdata{18};
+        pardata.KDHS    = textdata{19};
+        pardata.KDVS    = textdata{20};
+        pardata.KDHP    = textdata{21};
+        pardata.KDVP    = textdata{22};
+        pardata.KUHS    = textdata{23};
+        pardata.KUVS    = textdata{24};
+        pardata.KUHP    = textdata{25};
+        pardata.KUVP    = textdata{26};
+        pardata.SRBPMHPos   = textdata{27};
+        pardata.SRBPMHAng   = textdata{28};
+        pardata.SRBPMVPos   = textdata{29};
+        pardata.SRBPMVAng   = textdata{30};
+        pardata.XBPMHPos    = textdata{31};
+        pardata.XBPMHAng    = textdata{32};
+        pardata.XBPMVPos    = textdata{33};
+        pardata.XBPMVAng    = textdata{34};
+        pardata.ICB1	= textdata{35};
+        pardata.ICB2	= textdata{36};
+        pardata.ICB3	= textdata{37};
+        pardata.ICB4	= textdata{38};
+        pardata.ICB5	= textdata{39};
+        pardata.ICB8	= textdata{40};
+        pardata.ICB6	= textdata{41};
+        pardata.ICB7	= textdata{42};
+        pardata.ICC1	= textdata{43};
+        pardata.ICC2	= textdata{44};
+        pardata.ICE1	= textdata{45};
+        pardata.ICE2	= textdata{46};
+        pardata.ICE3    = textdata{47};
+        pardata.ICE5    = textdata{48};
+        pardata.tension     = textdata{49};
+        pardata.LoadVolt    = textdata{50};
+        pardata.LoadEng     = textdata{51};
+        pardata.fnumGE1 = textdata{52};
+        pardata.fnumGE2 = textdata{53};
+        pardata.fnumGE3 = textdata{54};
+        pardata.fnumGE4 = textdata{55};
+        pardata.fnumGE5 = textdata{56};
+        pardata.fnumtomo    = textdata{57};
+        pardata.fnumdic     = textdata{58};
     case 'pantleon_oct15_bpm'
-    %         Date, 
-    %         Iring, 
-    %         Kohzu DS H size (mm), 
-    %         Kohzu DS V size (mm), 
-    %         Kohzu DS H pos (mm), 
-    %         Kohzu DS V pos (mm), 
-    %         Kohzu US H size (mm), 
-    %         Kohzu US V size (mm), 
-    %         Kohzu US H pos (mm), 
-    %         Kohzu US V pos (mm), 
-    %         SR BPM H pos (mm), 
-    %         SR BPM H angle (urad), 
-    %         SR BPM V pos (mm), 
-    %         SR BPM V angle (urad), 
-    %         XBPM H pos (mm), 
-    %         XBPM H angle (urad), 
-    %         XBPM V pos (mm), 
-    %         XBPM V angle (urad), 
-    %         IC-B1 (cts), 
-    %         IC-B2 (cts), 
-    %         IC-B3 (cts), 
-    %         IC-B4 (cts), 
-    %         IC-B5 (cts), 
-    %         IC-B8 (cts), 
-    %         IC-B6 (cts), 
-    %         IC-B7 (cts),
-    %         world angle (urad), 
-    %         E_hrm (keV), 
-    %         pzt1 (um), 
-    %         pzt2 (um), 
-    %         bpm_c (mm), 
-    %         bpm_e (mm), 
-    %         IC-E3 (cts), 
-    %         IC-E5 (cts), 
         fmtstring       = '%s %s %d %s %d, %f,  %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f';
         textdata  = textscan(fid, fmtstring);
         
