@@ -1,10 +1,14 @@
 clear all
-close all
+% close all
 clc
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% INPUTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 MaterialName    = 'Al';                         % FCC Al 
 latticeParms    = 4.050;                        % IN Angstrom
 hkls            = load('fcc.hkls');
+[a, b, c]       = StructureFactor(MaterialName);
 
 % MaterialName    = 'Ce';                         % BCC Fe
 % latticeParms    = 5.4114 ;                        % IN Angstrom
@@ -25,23 +29,49 @@ hkls            = load('fcc.hkls');
 % MaterialName    = 'C';                         % diamond
 % latticeParms    = 3.5668;                        % IN Angstrom
 % hkls            = load('diamondcubic.hkls');
+% [a, b, c]       = StructureFactor(MaterialName);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SampleThickness = 19;                          % IN cm
+SampleThickness = 19;                           % IN cm
+TakeOffAngle    = 3.7:0.1:7.0;                  % IN deg
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% END OF INPUTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 BeamLineFlux    = load('bm_flux.data');
-TakeOffAngle    = 3.7:0.1:7.0;                    % IN deg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 numhkls         = size(hkls,1);
 d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
+%%% STRUCTURE FACTOR CALCULATION
+f   = c;
+x   = 0.5./d_hkls;
+for i = 1:1:4
+    f   = f + a(i)*exp(-b(i)*x.*x);
+end
+
+%%% FOR FCC
+F   = 4*f';
+%%% FOR BCC
+% F   = 2*f';
+%%% FOR SIMPLE CUBIC
+% F   = f';
+
+F2	= F.^2;
+F2_normalized   = F2./max(F2);
+F2_normalized   = ones(numhkls, 1);
+
+%%% INTENSITY CALCULATION
 for j = 1:1:length(TakeOffAngle)
     wavelength      = 2*d_hkls.*sind(TakeOffAngle(j)/2);
     Energy          = Angstrom2keV(wavelength);         % IN keV
     
     [mu, ~, rho]    = PhotonAttenuation(MaterialName, Energy'./1000);       % cm^2/g
     
-    PercentTransmission(:,j)    = exp(-mu*rho*SampleThickness);
+    PercentTransmissionDS(:,j)    = exp(-mu*rho*SampleThickness);
+    PercentTransmissionUS(:,j)    = exp(-mu*rho*(SampleThickness/cosd(TakeOffAngle(j))));
     
     Flux    = zeros(length(Energy),1);
     for i = 1:1:length(Energy)
@@ -63,19 +93,20 @@ for j = 1:1:length(TakeOffAngle)
     end
     
     TransEnergy(:,j)                    = Energy';
-    PhotonTransAtNormalIncidence(:,j)   = PercentTransmission(:,j).*Flux;
+    PhotonTransAtNormalIncDS(:,j)       = PercentTransmissionDS(:,j).*F2_normalized.*Flux;
+    PhotonTransAtNormalIncUS(:,j)       = PercentTransmissionUS(:,j).*F2_normalized.*Flux;
 end
 
-figure(1)
-set(gcf, 'Position', [1007 33 902 977])
-subplot(2,2,1)
+figure,
+set(gcf, 'Position', [1000 50 900 950])
+subplot(2,3,1)
 semilogy(BeamLineFlux(:,1), BeamLineFlux(:,2), 'k.')
 xlabel('Energy (keV)')
 ylabel('Number of photons')
 title('BM Flux (photons / s / 0.1% BW)')
 grid on
 
-subplot(2,2,2)
+subplot(2,3,2)
 plot(1:1:numhkls, TransEnergy(:,1), 'b.')
 hold on
 plot(1:1:numhkls, TransEnergy(:,end), 'r.')
@@ -85,23 +116,93 @@ ylabel('Energy (keV)')
 title('Diffraction energy - First and the last TOA only')
 grid on
 
-subplot(2,2,3)
-plot(1:1:numhkls, PercentTransmission(:,1)*100, 'b.')
+subplot(2,3,3)
+plot(1:1:numhkls, F, 'k.')
+xlabel('hkl id')
+ylabel('Structure Factor (-)')
+grid on
+
+subplot(2,3,4)
+plot(1:1:numhkls, PercentTransmissionDS(:,1)*100, 'o', 'MarkerEdgeColor', 'b', 'MarkerSize', 5)
 hold on
-plot(1:1:numhkls, PercentTransmission(:,end)*100, 'r.')
+plot(1:1:numhkls, PercentTransmissionDS(:,end)*100, 'o', 'MarkerEdgeColor', 'r', 'MarkerSize', 5)
+plot(1:1:numhkls, PercentTransmissionUS(:,1)*100, 'o', 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'b', 'MarkerSize', 5)
+plot(1:1:numhkls, PercentTransmissionUS(:,end)*100, 'o', 'MarkerEdgeColor', 'r', 'MarkerFaceColor', 'r', 'MarkerSize', 5)
 % axis([1 numhkls 0 0.001])
-legend(num2str(TakeOffAngle(1)), num2str(TakeOffAngle(end)), 'Location', 'Best')
+legend(sprintf('DS 2th = %2.1f deg', TakeOffAngle(1)), ...
+    sprintf('DS 2th = %2.1f deg', TakeOffAngle(end)), ...
+    sprintf('US 2th = %2.1f deg', TakeOffAngle(1)), ...
+    sprintf('US 2th = %2.1f deg', TakeOffAngle(end)), 'Location', 'Best')
 xlabel('hkl id')
 ylabel('Percent transmission')
 grid on
 
-subplot(2,2,4)
-semilogy(1:1:numhkls, PhotonTransAtNormalIncidence(:,1), 'b.')
+subplot(2,3,5)
+semilogy(1:1:numhkls, PhotonTransAtNormalIncDS(:,1), 'o', 'MarkerEdgeColor', 'b', 'MarkerSize', 5)
 hold on
-semilogy(1:1:numhkls, PhotonTransAtNormalIncidence(:,end), 'r.')
+semilogy(1:1:numhkls, PhotonTransAtNormalIncDS(:,end), 'o', 'MarkerEdgeColor', 'r', 'MarkerSize', 5)
+semilogy(1:1:numhkls, PhotonTransAtNormalIncUS(:,1), 'o', 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'b', 'MarkerSize', 5)
+semilogy(1:1:numhkls, PhotonTransAtNormalIncUS(:,end), 'o', 'MarkerEdgeColor', 'r', 'MarkerFaceColor', 'r', 'MarkerSize', 5)
 % axis([1 numhkls 1e-7 1e14])
-legend(num2str(TakeOffAngle(1)), num2str(TakeOffAngle(end)), 'Location', 'Best')
+legend(sprintf('DS 2th = %2.1f deg', TakeOffAngle(1)), ...
+    sprintf('DS 2th = %2.1f deg', TakeOffAngle(end)), ...
+    sprintf('US 2th = %2.1f deg', TakeOffAngle(1)), ...
+    sprintf('US 2th = %2.1f deg', TakeOffAngle(end)), 'Location', 'Best')
 xlabel('hkl id')
 ylabel('Number of photons transmitted')
 grid on
+return
+figure,
+set(gcf, 'Position', [1000 50 900 950])
+subplot(2,3,1)
+semilogy(BeamLineFlux(:,1), BeamLineFlux(:,2), 'k.')
+xlabel('Energy (keV)')
+ylabel('Number of photons')
+title('BM Flux (photons / s / 0.1% BW)')
+grid on
 
+subplot(2,3,2)
+plot(d_hkls, TransEnergy(:,1), 'b.')
+hold on
+plot(d_hkls, TransEnergy(:,end), 'r.')
+legend(num2str(TakeOffAngle(1)), num2str(TakeOffAngle(end)), 'Location', 'Best')
+xlabel('d-spacing (Angstrom)')
+ylabel('Energy (keV)')
+title('Diffraction energy - First and the last TOA only')
+grid on
+
+subplot(2,3,3)
+plot(d_hkls, F(:,1), 'k.')
+xlabel('d-spacing (Angstrom)')
+ylabel('Structure Factor (-)')
+grid on
+
+subplot(2,3,4)
+plot(d_hkls, PercentTransmissionDS(:,1)*100, 'o', 'MarkerEdgeColor', 'b', 'MarkerSize', 5)
+hold on
+plot(d_hkls, PercentTransmissionDS(:,end)*100, 'o', 'MarkerEdgeColor', 'r', 'MarkerSize', 5)
+plot(d_hkls, PercentTransmissionUS(:,1)*100, 'o', 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'b', 'MarkerSize', 5)
+plot(d_hkls, PercentTransmissionUS(:,end)*100, 'o', 'MarkerEdgeColor', 'r', 'MarkerFaceColor', 'r', 'MarkerSize', 5)
+% axis([1 numhkls 0 0.001])
+legend(sprintf('DS 2th = %2.1f deg', TakeOffAngle(1)), ...
+    sprintf('DS 2th = %2.1f deg', TakeOffAngle(end)), ...
+    sprintf('US 2th = %2.1f deg', TakeOffAngle(1)), ...
+    sprintf('US 2th = %2.1f deg', TakeOffAngle(end)), 'Location', 'Best')
+xlabel('d-spacing (Angstrom)')
+ylabel('Percent transmission')
+grid on
+
+subplot(2,3,5)
+semilogy(d_hkls, PhotonTransAtNormalIncDS(:,1), 'o', 'MarkerEdgeColor', 'b', 'MarkerSize', 5)
+hold on
+semilogy(d_hkls, PhotonTransAtNormalIncDS(:,end), 'o', 'MarkerEdgeColor', 'r', 'MarkerSize', 5)
+semilogy(d_hkls, PhotonTransAtNormalIncUS(:,1), 'o', 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'b', 'MarkerSize', 5)
+semilogy(d_hkls, PhotonTransAtNormalIncUS(:,end), 'o', 'MarkerEdgeColor', 'r', 'MarkerFaceColor', 'r', 'MarkerSize', 5)
+% axis([1 numhkls 1e-7 1e14])
+legend(sprintf('DS 2th = %2.1f deg', TakeOffAngle(1)), ...
+    sprintf('DS 2th = %2.1f deg', TakeOffAngle(end)), ...
+    sprintf('US 2th = %2.1f deg', TakeOffAngle(1)), ...
+    sprintf('US 2th = %2.1f deg', TakeOffAngle(end)), 'Location', 'Best')
+xlabel('d-spacing (Angstrom)')
+ylabel('Number of photons transmitted')
+grid on

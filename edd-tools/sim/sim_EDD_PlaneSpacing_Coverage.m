@@ -21,11 +21,11 @@ xlabel('Energy (keV)')
 ylabel('d-spacing (Angstrom)')
 grid on
 
-figure(2)
-semilogy(BeamLineFlux(:,1), d_coverage(:,1), 'b.')
-hold on
-semilogy(BeamLineFlux(:,1), d_coverage(:,end), 'r.')
-legend(num2str(TakeOffAngle(1)), num2str(TakeOffAngle(end)), 'Location', 'Best')
-xlabel('Energy (keV)')
-ylabel('d-spacing (Angstrom)')
-grid on
+% figure(2)
+% semilogy(BeamLineFlux(:,1), d_coverage(:,1), 'b.')
+% hold on
+% semilogy(BeamLineFlux(:,1), d_coverage(:,end), 'r.')
+% legend(num2str(TakeOffAngle(1)), num2str(TakeOffAngle(end)), 'Location', 'Best')
+% xlabel('Energy (keV)')
+% ylabel('d-spacing (Angstrom)')
+% grid on
