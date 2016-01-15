@@ -9,31 +9,43 @@ MaterialName    = 'Al';                         % FCC Al
 latticeParms    = 4.050;                        % IN Angstrom
 hkls            = load('fcc.hkls');
 [a, b, c]       = StructureFactor(MaterialName);
+d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
 % MaterialName    = 'Ce';                         % BCC Fe
 % latticeParms    = 5.4114 ;                        % IN Angstrom
 % hkls            = load('fcc.hkls');
+% d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
 % MaterialName    = 'Fe';                         % BCC Fe
 % latticeParms    = 2.87 ;                        % IN Angstrom
 % hkls            = load('bcc.hkls');
+% d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
 % MaterialName    = 'Fe';                         % FCC Fe
 % latticeParms    = 3.515;                        % IN Angstrom
 % hkls            = load('fcc.hkls');
+% d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
 % MaterialName    = 'Ni';                         % FCC Ni
 % latticeParms    = 3.520;                        % IN Angstrom
 % hkls            = load('fcc.hkls');
+% d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
 % MaterialName    = 'C';                         % diamond
 % latticeParms    = 3.5668;                        % IN Angstrom
 % hkls            = load('diamondcubic.hkls');
 % [a, b, c]       = StructureFactor(MaterialName);
+% d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
+
+% MaterialName    = 'Ti';                         % diamond
+% latticeParms    = [2.95111 4.68433];                        % IN Angstrom
+% hkls            = load('hcp.hkls');
+% [a, b, c]       = StructureFactor(MaterialName);
+% d_hkls          = PlaneSpacings(latticeParms, 'hexagonal', hkls');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SampleThickness = 19;                           % IN cm
-TakeOffAngle    = 3.7:0.1:7.0;                  % IN deg
+SampleThickness = 100;                           % IN cm
+TakeOffAngle    = 2:0.1:7.0;                  % IN deg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% END OF INPUTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -43,7 +55,6 @@ BeamLineFlux    = load('bm_flux.data');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 numhkls         = size(hkls,1);
-d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
 %%% STRUCTURE FACTOR CALCULATION
 f   = c;
@@ -151,6 +162,7 @@ legend(sprintf('DS 2th = %2.1f deg', TakeOffAngle(1)), ...
 xlabel('hkl id')
 ylabel('Number of photons transmitted')
 grid on
+% axis([1 numhkls 10^8 10^14])
 return
 figure,
 set(gcf, 'Position', [1000 50 900 950])
