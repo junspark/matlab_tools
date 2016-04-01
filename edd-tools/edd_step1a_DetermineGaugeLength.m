@@ -31,10 +31,17 @@ peaks2use   = [2 3 4];   %%% USE 4 CeO2 PEAKS TO GET TOA
 %%%%%%%%%%%%%%%%%
 % USE Ceria diffraction data
 ngrid   = 31;
-fstem   = 'cal1_ceria_gv';
-pname	= './cal1_ceria_gv';
+ndata   = 1:1:31;
+fstem   = 'cal_27feb2016_ceria_gv';
+pname	= '/home/beams/S1IDUSER/mnt/s1b/__eval/edd_6bm_2016-1/park_feb16/cal_27feb2016_ceria_gv';
 for i = 1:1:ngrid
     fname_CeO2_spec    = sprintf('%s-%03d.xy', fstem, i);
     pfname_CeO2_spec   = fullfile(pname, fname_CeO2_spec);
-    [x, y]  = ReadEDDData(pfname_CeO2_spec, 'SpecFile', 1);
+    [x, y(:,i)]     = ReadEDDData(pfname_CeO2_spec, 'SpecFile', 1);
 end
+
+figure,
+imagesc(y')
+
+figure,
+plot(ndata, sum(y))
