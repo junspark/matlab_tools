@@ -1,14 +1,20 @@
-function Akeep = BuildSodfSpfMatrix(hkl, mesh, sym, pts, div, odf, w, S, deta, dome)
+function Akeep = BuildSodfSpfMatrix(hkl, mesh, sym, pts, div, odf, S, deta, dome)
 % BuildSodfSpfMatrix - Build ODF/PF matrix in pieces.
 %   
 %   USAGE:
 %
-%   Akeep = BuildSodfSpfMatrix(hkl, mesh, sym, pts, div, odf, w)
+%   Akeep = BuildSodfSpfMatrix(hkl, mesh, sym, pts, div, odf, w, S, deta, dome)
 %
 %   INPUT:
 %
-%   hkl, mesh, sym, pts, div, odf, w
+%   hkl, mesh, sym, pts, div, odf
 %          are the same as in `WeightedOdfPfMatrix'
+%
+%   S is the single crystal elastic compliance
+%
+%   deta is the eta sweep / azimuthal bin size in deg
+%
+%   dome is the ome sweep size in deg
 %
 %   OUTPUT:
 %
@@ -21,6 +27,7 @@ function Akeep = BuildSodfSpfMatrix(hkl, mesh, sym, pts, div, odf, w, S, deta, d
 
 %%%
 pts     = FiberTube(pts, deta, dome);
+w       = FiberTubeWeight(deta, dome);
 npts    = size(pts, 2);
 
 %
