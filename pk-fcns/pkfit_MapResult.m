@@ -29,6 +29,7 @@ function pout = pkfit_MapResult(pkpars, p)
 %   
 %   Only works for a single peak for now.
 
+p   = p(:);
 pfunc_type  = pkpars.pfunc_type;
 
 n   = pfunc_NumberOfParameters(pfunc_type);
@@ -36,29 +37,29 @@ switch lower(pfunc_type)
     case 'splitpseudovoigt'
         pout    = p;
     case 'gaussian'
-        pout(1) = p(1);
-        pout(2) = p(2);
-        pout(3) = p(2);
-        pout(4) = nan;
-        pout(5) = nan;
-        pout(6) = p(3);
-        pout    = [pout p((n+1):end)'];
+        pout(1,1)   = p(1);
+        pout(2,1)   = p(2);
+        pout(3,1)   = p(2);
+        pout(4,1)   = nan;
+        pout(5,1)   = nan;
+        pout(6,1)   = p(3);
+        pout        = [pout; p((n+1):end)];
     case 'lorentzian'
-        pout(1) = p(1);
-        pout(2) = p(2);
-        pout(3) = p(2);
-        pout(4) = nan;
-        pout(5) = nan;
-        pout(6) = p(3);
-        pout    = [pout p((n+1):end)'];
+        pout(1,1)   = p(1);
+        pout(2,1)   = p(2);
+        pout(3,1)   = p(2);
+        pout(4,1)   = nan;
+        pout(5,1)   = nan;
+        pout(6,1)   = p(3);
+        pout        = [pout; p((n+1):end)];
     case 'pseudovoigt'
-        pout(1) = p(1);
-        pout(2) = p(2);
-        pout(3) = p(2);
-        pout(4) = p(3);
-        pout(5) = p(3);
-        pout(6) = p(4);
-        pout    = [pout p((n+1):end)'];
+        pout(1,1)   = p(1);
+        pout(2,1)   = p(2);
+        pout(3,1)   = p(2);
+        pout(4,1)   = p(3);
+        pout(5,1)   = p(3);
+        pout(6,1)   = p(4);
+        pout        = [pout; p((n+1):end)];
     otherwise
         disp('Unknown peak function!!')
 end
