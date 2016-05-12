@@ -106,7 +106,7 @@ if opts.CorrectAllImages
         error('specified files do not exist');
     end
     
-    for i = 1:1:length(flist)
+    parfor i = 1:length(flist)
         fname   = flist(i).name;
         pfname  = fullfile(path_image, fname);
         
@@ -156,7 +156,7 @@ if opts.CorrectAllImages
     end
 else
     image_num   = opts.lo:1:opts.hi;
-    for i = 1:1:length(image_num)
+    parfor i = 1:length(image_num)
         fname	= [root_image, npad(1:length(npad)-length(num2str(image_num(i)))) num2str(image_num(i)), '.', ext_image];
         pfname  = fullfile(path_bkg, fname);
         
@@ -206,6 +206,7 @@ else
         title('Average over all corrected frames')
     end
 end
+delete(gcp)
 
 function PlotImage(image_data, max_range, min_range)
 figure,
