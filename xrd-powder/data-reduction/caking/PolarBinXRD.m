@@ -23,6 +23,10 @@ function polimg = PolarBinXRD(mesh, instr, cakeParms, img, varargin)
 %
 %   polimg
 %       radially integrated data organized in struct variable
+%
+%   NOTE:
+%
+%   1) this does not do retangular pixels.
 
 % save('PolarBinXRD_input.mat')
 % return
@@ -47,14 +51,17 @@ opts    = OptArgs(optcell, varargin);
 img     = double(img); 
 imgi    = img;
 
-L   = instr.detectorsize/instr.pixelsize;
+Lx  = instr.numpixelsHorz;
+Ly  = instr.numpixelsVert;
+
+% L   = instr.detectorsize/instr.pixelsize;
 
 % !!! THESE ARE IN THE CARTESIAN FRAME !!!
 x0  = cakeParms.origin(1);   % in pixels
 y0  = cakeParms.origin(2);   % in pixels
 
 x0plt   = x0;
-y0plt   = instr.numpixels - y0;
+y0plt   = instr.numpixelsVert - y0;
 
 startAzi    = cakeParms.sector(1);
 endAzi      = cakeParms.sector(2);
@@ -94,8 +101,11 @@ if strcmpi(opts.PlotProgress, 'on')
 end
 
 if cakeParms.fastint
-    Xgrid   = 1:1:L;
-    Ygrid   = 1:1:L;
+    %Xgrid   = 1:1:L;
+    %Ygrid   = 1:1:L;
+    
+    Xgrid   = 1:1:Lx;
+    Ygrid   = 1:1:Ly;
     [Xgrid,Ygrid]   = meshgrid(Xgrid, Ygrid);
 end
 
@@ -133,7 +143,8 @@ for ii = 1:1:numAzi
         warn_user   = 0;
         for i = 1:1:(numRho + 1)
             for j = 1:1:(numEta + 1)
-                if (x(i,j) > L) || (x(i,j) < 0) || (y(i,j) > L) || (y(i,j) < 0)
+                %if (x(i,j) > L) || (x(i,j) < 0) || (y(i,j) > L) || (y(i,j) < 0)
+                if (x(i,j) > Lx) || (x(i,j) < 0) || (y(i,j) > Ly) || (y(i,j) < 0)
                     V(i,j)      = nan;
                     warn_user   = 1;
                 else
@@ -183,7 +194,7 @@ for ii = 1:1:numAzi
         Ilist   = BuildMeshPolarXRD(R, V, mesh.qrule);
     else
         %%%% NEED TO IMPLEMENT WARNING
-        if all(x(:) < L) && all((x(:) > 0)) && all(y(:) < L) && all(y(:) > 0)
+        if all(x(:) < Lx) && all((x(:) > 0)) && all(y(:) < Ly) && all(y(:) > 0)
             warn_user   = 0;
         else
             warn_user   = 1;

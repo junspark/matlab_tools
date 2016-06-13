@@ -28,3 +28,5 @@ else
     iend    = [numpixVert numpixHorz 1]';
     img     = ncread(pfname, 'array_data', istart, iend);
 end
+
+img = double(img);

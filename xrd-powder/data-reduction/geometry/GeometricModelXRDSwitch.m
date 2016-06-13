@@ -24,7 +24,7 @@ gammaY      = instr.gammaY;
 detpars     = instr.detpars;
 dettype     = instr.dettype;
 
-radius      = Pixel2mm(polimg.radius', instr.pixelsize);
+radius      = Pixel2mm(polimg.radius', instr.pixelsizeHorz);
 azimuth     = polimg.azimuth;
 
 switch lower(dettype)
