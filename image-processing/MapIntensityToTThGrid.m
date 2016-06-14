@@ -8,7 +8,7 @@ function [tth_grid, d_grid, intensity_in_tth_grid] = MapIntensityToTThGrid(XRDIM
 % close all
 % clc
 % load('MapIntensityToTThGrid.mat')
-% 
+
 tth_min = max(polimg.mapped_tth_for_intensity(:,1));
 tth_max = min(polimg.mapped_tth_for_intensity(:,end));
 tth_grid    = linspace(tth_min, tth_max, XRDIMAGE.CakePrms.bins(2));

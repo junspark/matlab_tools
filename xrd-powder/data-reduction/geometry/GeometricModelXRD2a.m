@@ -1,7 +1,6 @@
 function mappedData = GeometricModelXRD2a(centTrans, D, ...
     gammaYprime, gammaXhatPrime, ...
     data, azim, DistPars)
-
 % GeometricModelXRD2 - Apply geometric model and detector distortion to the
 % raw 2theta fits
 %
