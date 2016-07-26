@@ -3,38 +3,41 @@ close all
 clc
 
 %%% INPUT PARAMETERS
-XRDIMAGE.Image.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS\hydra_example_meimei_aug14\';
-XRDIMAGE.Image.fbase        = 'ceria_';
-XRDIMAGE.Image.fnumber      = 15;
-XRDIMAGE.Image.numframe     = 1;
+XRDIMAGE.Image.pname        = 'S:\park_jul16\ge2\';
+XRDIMAGE.Image.fbase        = 'CeO2_3s_';
+XRDIMAGE.Image.fnumber      = 955;
+XRDIMAGE.Image.numframe     = 5;
 XRDIMAGE.Image.numdigs      = 5;
-XRDIMAGE.Image.fext         = 'ge4.sum';
-XRDIMAGE.Image.corrected    = 1;
-XRDIMAGE.Image.IsHydra      = 4;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
+XRDIMAGE.Image.fext         = 'ge4';
+XRDIMAGE.Image.corrected    = 0;
+XRDIMAGE.Image.IsHydra      = 1;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
 
 %%% DARK FILES ONLY USED IF THE IMAGES ARE UNCORRECTED
-XRDIMAGE.DarkField.pname    = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS';
-XRDIMAGE.DarkField.fbase    = 'dark_1.5s_';
-XRDIMAGE.DarkField.fnumber  = 338;
+XRDIMAGE.DarkField.pname    = 'S:\park_jul16\ge1\';
+XRDIMAGE.DarkField.fbase    = 'dark_3s_';
+XRDIMAGE.DarkField.fnumber  = 732;
 XRDIMAGE.DarkField.numframe = 1;
 XRDIMAGE.DarkField.numdigs  = 5;
 XRDIMAGE.DarkField.fext     = 'ge4';
 
-XRDIMAGE.Calib.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS\hydra_example_meimei_aug14\';
-XRDIMAGE.Calib.fbase        = 'ceria_';
-XRDIMAGE.Calib.fnumber      = 15;
+XRDIMAGE.Calib.pname        = 'S:\park_jul16\ge2\';
+XRDIMAGE.Calib.fbase        = 'CeO2_3s_';
+XRDIMAGE.Calib.fnumber      = 734;
 XRDIMAGE.Calib.fext         = 'ge4';
 
 %%% INSTRUMENT PARAMETERS
-XRDIMAGE.Instr.energy       = 86;       % keV
+XRDIMAGE.Instr.energy       = 71.676;       % keV
 XRDIMAGE.Instr.wavelength   = keV2Angstrom(XRDIMAGE.Instr.energy);  % wavelength (Angstrom)
-XRDIMAGE.Instr.pixelsize    = 0.2;          % mm
-XRDIMAGE.Instr.distance     = 2728.341557;     % mm
-XRDIMAGE.Instr.centers      = [ 991.294772 , 727.273716 ]; % center offsets x & y (um)
-XRDIMAGE.Instr.gammaX       = 0.009745;    % rad
-XRDIMAGE.Instr.gammaY       = -0.014395;    % rad
-XRDIMAGE.Instr.detectorsize = 409.6;    % mm
-XRDIMAGE.Instr.numpixels    = XRDIMAGE.Instr.detectorsize/XRDIMAGE.Instr.pixelsize;   % total number of rows in the full image
+XRDIMAGE.Instr.distance     = 1.89516943e+03;     % mm
+XRDIMAGE.Instr.centers      = [ 950.294775 , 720.273581 ]; % center offsets x & y (um)
+XRDIMAGE.Instr.gammaX       = -0.014297;    % rad
+XRDIMAGE.Instr.gammaY       = 0.010257;    % rad
+XRDIMAGE.Instr.detsizeHorz  = 409.6;    % mm
+XRDIMAGE.Instr.detsizeVert  = 409.6;    % mm
+XRDIMAGE.Instr.pixelsizeHorz    = 0.2;          % mm
+XRDIMAGE.Instr.pixelsizeVert    = 0.2;          % mm
+XRDIMAGE.Instr.numpixelsHorz    = XRDIMAGE.Instr.detsizeHorz/XRDIMAGE.Instr.pixelsizeHorz;   % total number of rows in the full image
+XRDIMAGE.Instr.numpixelsVert    = XRDIMAGE.Instr.detsizeVert/XRDIMAGE.Instr.pixelsizeVert;   % total number of rows in the full image
 XRDIMAGE.Instr.imrotation   = 0;
 
 % RADIAL CORRECTION
@@ -47,24 +50,26 @@ XRDIMAGE.Instr.dettype  = '2a';
 % 1 : constant value
 % 2 : [a1 a2 n1 n2 rhod]
 XRDIMAGE.Instr.detpars  = [ ...
-    -0.000000398526907 ...
-    -0.000002074908365 ...
-    -0.000297982303215 ...
-    -0.000396656387013 ...
-    3.099498066631567 ...
-    -0.003351405448848 ...
-    ]*1e3;
+    0.000440 ...
+    0.000104 ...
+    -0.454242 ...
+    -1.516900 ...
+    3099.498067 ...
+    -3.199170 ...
+    ];
 
 %%% CAKE PARAMETERS
 XRDIMAGE.CakePrms.bins(1)   = 10;               % number of azimuthal bins over angular range defined by XRDIMAGE.CakePrms.sector(1) and XRDIMAGE.CakePrms.sector(2)
 XRDIMAGE.CakePrms.bins(2)   = 3000;             % number of radial bins over radial range defined by XRDIMAGE.CakePrms.sector(3) and XRDIMAGE.CakePrms.sector(4)
 XRDIMAGE.CakePrms.bins(3)   = 5;               % number of angular bins
 
-XRDIMAGE.CakePrms.origin(1) = 2250.356204;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
-XRDIMAGE.CakePrms.origin(2) = -54.672344;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(1) = 4.90258858e+02;         % apparent X center in hexrd (mm)
+XRDIMAGE.CakePrms.origin(2) = -1.52089437e+01;        % apparent Y center in hexrd (mm)
+XRDIMAGE.CakePrms.origin(1) = XRDIMAGE.CakePrms.origin(1)/XRDIMAGE.Instr.pixelsizeHorz;         % convert to pixels
+XRDIMAGE.CakePrms.origin(2) = XRDIMAGE.CakePrms.origin(2)/XRDIMAGE.Instr.pixelsizeVert;         % convert to pixels
 XRDIMAGE.CakePrms.origin(2) = 2048-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDINATES
 
-XRDIMAGE.CakePrms.sector(1) = 190;      % start azimuth (min edge of bin) in degrees
+XRDIMAGE.CakePrms.sector(1) = 200;      % start azimuth (min edge of bin) in degrees
 XRDIMAGE.CakePrms.sector(2) = 240;      % stop  azimuth (max edge of bin) in degrees
 XRDIMAGE.CakePrms.sector(3) = 600;      % start radius (min edge of bin) in pixels
 XRDIMAGE.CakePrms.sector(4) = 2300;     % stop  radius (max edge of bin) in pixels
@@ -98,11 +103,17 @@ tth_LB  = 2.*asind(XRDIMAGE.Instr.wavelength/2)./d_spacing_UB;
 XRDIMAGE.Material.tth       = tth;
 XRDIMAGE.Material.d_spacing = d;
 
-% XRDIMAGE.Material.numpk     = 12;
-% XRDIMAGE.Material.numbounds = 12;
+% XRDIMAGE.Material.numpk     = 10;
+% XRDIMAGE.Material.numbounds = 10;
 % XRDIMAGE.Material.pkidx     = {...
-%     [1] [2] [3] [4] [5] [6] [7] [8] [9] [12] [13] [16]
+%     [3] [4] [5] [6] [7] [8] [9] [12] [13] [16]
 %     };
+
+XRDIMAGE.Material.numpk     = 5;
+XRDIMAGE.Material.numbounds = 5;
+XRDIMAGE.Material.pkidx     = {...
+    [3] [6] [9] [12] [16]
+    };
 
 % XRDIMAGE.Material.numpk     = 1;
 % XRDIMAGE.Material.numbounds = 1;
@@ -116,11 +127,11 @@ XRDIMAGE.Material.d_spacing = d;
 %     [1] [2]
 %     };
 
-XRDIMAGE.Material.numpk     = 3;
-XRDIMAGE.Material.numbounds = 3;
-XRDIMAGE.Material.pkidx     = {...
-    [7] [9] [10]
-    };
+% XRDIMAGE.Material.numpk     = 3;
+% XRDIMAGE.Material.numbounds = 3;
+% XRDIMAGE.Material.pkidx     = {...
+%     [7] [9] [10]
+%     };
 
 for i = 1:1:XRDIMAGE.Material.numbounds
     XRDIMAGE.Material.pkrange(:,i)  = [ ...
@@ -263,7 +274,7 @@ if Analysis_Options.fits_spectra
             disp(sprintf('Looking at azimuthal bin %d of %d\n', j, XRDIMAGE.CakePrms.bins(1)))
             
             x   = polimg.radius(j,:);
-            x   = Pixel2mm(x, XRDIMAGE.Instr.pixelsize);  % CONVERT TO MM FROM PIXELS
+            x   = Pixel2mm(x, XRDIMAGE.Instr.pixelsizeHorz);  % CONVERT TO MM FROM PIXELS
             y   = polimg.intensity(j,:);
             
             figure(11)
@@ -442,8 +453,9 @@ if Analysis_Options.find_instrpars
         mapped_tth  = GeometricModelXRDSwitch(Instr, polimg);
         polimg.mapped_tth_for_intensity = mapped_tth;
         
-        [tth_grid, intensity_in_tth_grid]   = MapIntensityToTThGrid(XRDIMAGE, polimg);
+        [tth_grid, d_grid, intensity_in_tth_grid]   = MapIntensityToTThGrid(XRDIMAGE, polimg);
         polimg.tth_grid                 = tth_grid;
+        polimg.d_grid                   = d_grid;
         polimg.intensity_in_tth_grid    = intensity_in_tth_grid;
         
         figure(101)
