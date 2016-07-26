@@ -88,7 +88,7 @@ XRDIMAGE.CakePrms.bins(3)   = 10;            % number of angular bins
 
 XRDIMAGE.CakePrms.origin(1) = 1036.190;     % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
 XRDIMAGE.CakePrms.origin(2) = 1024.110;     % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
-XRDIMAGE.CakePrms.origin(2) = XRDIMAGE.Instr.numpixelsVert-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDIANTES
+XRDIMAGE.CakePrms.origin(2) = XRDIMAGE.Instr.numpixels-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDIANTES
 
 XRDIMAGE.CakePrms.sector(1) = -360/XRDIMAGE.CakePrms.bins(1)/2;     % start azimuth (min edge of bin) in degrees
 XRDIMAGE.CakePrms.sector(2) = 360-360/XRDIMAGE.CakePrms.bins(1)/2;  % stop  azimuth (max edge of bin) in degrees
@@ -275,7 +275,7 @@ if Analysis_Options.fits_spectra
             disp(sprintf('Looking at azimuthal bin %d of %d\n', j, XRDIMAGE.CakePrms.bins(1)))
             
             x   = polimg.radius(j,:);
-            x   = Pixel2mm(x, XRDIMAGE.Instr.pixelsizeHorz);  % CONVERT TO MM FROM PIXELS
+            x   = Pixel2mm(x, XRDIMAGE.Instr.pixelsize);  % CONVERT TO MM FROM PIXELS
             y   = polimg.intensity(j,:);
             
             figure(11)
@@ -448,9 +448,8 @@ if Analysis_Options.find_instrpars
         mapped_tth  = GeometricModelXRDSwitch(Instr, polimg);
         polimg.mapped_tth_for_intensity = mapped_tth;
         
-        [tth_grid, d_grid, intensity_in_tth_grid]   = MapIntensityToTThGrid(XRDIMAGE, polimg);
+        [tth_grid, intensity_in_tth_grid]   = MapIntensityToTThGrid(XRDIMAGE, polimg);
         polimg.tth_grid                 = tth_grid;
-        polimg.d_grid                   = d_grid;
         polimg.intensity_in_tth_grid    = intensity_in_tth_grid;
         
         figure(101)
