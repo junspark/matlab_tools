@@ -186,7 +186,7 @@ end
 %%% IF POLIMG NEEDS TO BE GENERATED
 if Analysis_Options.make_polimg
     if ~XRDIMAGE.CakePrms.fastint
-        DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels, XRDIMAGE.CakePrms);
+        DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixelsHorz, XRDIMAGE.Instr.numpixelsVert, XRDIMAGE.CakePrms);
     else
         DetectorMesh    = 0;
     end

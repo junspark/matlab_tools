@@ -63,8 +63,10 @@ XRDIMAGE.CakePrms.bins(1)   = 10;               % number of azimuthal bins over 
 XRDIMAGE.CakePrms.bins(2)   = 3000;             % number of radial bins over radial range defined by XRDIMAGE.CakePrms.sector(3) and XRDIMAGE.CakePrms.sector(4)
 XRDIMAGE.CakePrms.bins(3)   = 5;               % number of angular bins
 
-XRDIMAGE.CakePrms.origin(1) = 2256.29;         % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
-XRDIMAGE.CakePrms.origin(2) = -152.5447185;            % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(1) = 4.51258858e+02;         % apparent X center in hexrd (mm)
+XRDIMAGE.CakePrms.origin(2) = -3.05089437e+01;        % apparent Y center in hexrd (mm)
+XRDIMAGE.CakePrms.origin(1) = XRDIMAGE.CakePrms.origin(1)/XRDIMAGE.Instr.pixelsizeHorz;         % convert to pixels
+XRDIMAGE.CakePrms.origin(2) = XRDIMAGE.CakePrms.origin(2)/XRDIMAGE.Instr.pixelsizeVert;         % convert to pixels
 XRDIMAGE.CakePrms.origin(2) = 2048-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDINATES
 
 XRDIMAGE.CakePrms.sector(1) = 200;      % start azimuth (min edge of bin) in degrees
@@ -184,7 +186,7 @@ end
 %%% IF POLIMG NEEDS TO BE GENERATED
 if Analysis_Options.make_polimg
     if ~XRDIMAGE.CakePrms.fastint
-        DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixels, XRDIMAGE.CakePrms);
+        DetectorMesh    = BuildMeshDetector(XRDIMAGE.Instr.numpixelsHorz, XRDIMAGE.Instr.numpixelsVert, XRDIMAGE.CakePrms);
     else
         DetectorMesh    = 0;
     end
