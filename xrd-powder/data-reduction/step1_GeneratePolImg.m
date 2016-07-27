@@ -104,39 +104,39 @@ XRDIMAGE.CakePrms.azim      = azim;
 XRDIMAGE.CakePrms.fastint   = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% MATERIAL PARAMETERS - CeO2
-XRDIMAGE.Material.num       = 1;
-XRDIMAGE.Material.lattparms = 5.411651;        % CeO2
-XRDIMAGE.Material.structure = 'fcc';
-XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
-
-%%% CALCULATE THEORETICAL TTH
-[d, th] = PlaneSpacings(XRDIMAGE.Material.lattparms, ...
-    'cubic', XRDIMAGE.Material.hkls', ...
-    XRDIMAGE.Instr.wavelength);
-tth     = 2*th;
-d_spacing_range = 0.01;
-d_spacing_UB    = (1 + d_spacing_range)*d;
-d_spacing_LB    = (1 - d_spacing_range)*d;
-
-tth_UB  = 2.*asind(XRDIMAGE.Instr.wavelength/2)./d_spacing_LB;
-tth_LB  = 2.*asind(XRDIMAGE.Instr.wavelength/2)./d_spacing_UB;
-
-XRDIMAGE.Material.tth       = tth;
-XRDIMAGE.Material.d_spacing = d;
-XRDIMAGE.Material.numpk     = 10;
-XRDIMAGE.Material.numbounds = 10;
-XRDIMAGE.Material.pkidx     = {...
-    [1] [2] [3] [4] [5] [6] [7] [8] [9] [10]
-    };
-for i = 1:1:XRDIMAGE.Material.numbounds
-    XRDIMAGE.Material.pkrange(:,i)  = [ ...
-        min(tth_LB(XRDIMAGE.Material.pkidx{i})); ...
-        max(tth_UB(XRDIMAGE.Material.pkidx{i})); ...
-        ];
-end
-XRDIMAGE.Material.pkbck     = 2;
-XRDIMAGE.Material.pkfunc    = 4;
+% %%% MATERIAL PARAMETERS - CeO2
+% XRDIMAGE.Material.num       = 1;
+% XRDIMAGE.Material.lattparms = 5.411651;        % CeO2
+% XRDIMAGE.Material.structure = 'fcc';
+% XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
+% 
+% %%% CALCULATE THEORETICAL TTH
+% [d, th] = PlaneSpacings(XRDIMAGE.Material.lattparms, ...
+%     'cubic', XRDIMAGE.Material.hkls', ...
+%     XRDIMAGE.Instr.wavelength);
+% tth     = 2*th;
+% d_spacing_range = 0.01;
+% d_spacing_UB    = (1 + d_spacing_range)*d;
+% d_spacing_LB    = (1 - d_spacing_range)*d;
+% 
+% tth_UB  = 2.*asind(XRDIMAGE.Instr.wavelength/2)./d_spacing_LB;
+% tth_LB  = 2.*asind(XRDIMAGE.Instr.wavelength/2)./d_spacing_UB;
+% 
+% XRDIMAGE.Material.tth       = tth;
+% XRDIMAGE.Material.d_spacing = d;
+% XRDIMAGE.Material.numpk     = 10;
+% XRDIMAGE.Material.numbounds = 10;
+% XRDIMAGE.Material.pkidx     = {...
+%     [1] [2] [3] [4] [5] [6] [7] [8] [9] [10]
+%     };
+% for i = 1:1:XRDIMAGE.Material.numbounds
+%     XRDIMAGE.Material.pkrange(:,i)  = [ ...
+%         min(tth_LB(XRDIMAGE.Material.pkidx{i})); ...
+%         max(tth_UB(XRDIMAGE.Material.pkidx{i})); ...
+%         ];
+% end
+% XRDIMAGE.Material.pkbck     = 2;
+% XRDIMAGE.Material.pkfunc    = 4;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% DATA REDUCTION FLAGS
