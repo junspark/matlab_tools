@@ -3,43 +3,45 @@ close all
 clc
 
 %%% INPUT PARAMETERS
-XRDIMAGE.Image.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS';
-XRDIMAGE.Image.fbase        = 'CeO2_1.5s_';
-XRDIMAGE.Image.fnumber      = 336; % 4116 / 4117
-XRDIMAGE.Image.numframe     = 20;
+XRDIMAGE.Image.pname        = 'O:\nx_aug16_bc';
+XRDIMAGE.Image.fbase        = 'groupAB_';
+XRDIMAGE.Image.fnumber      = 15:59; % 4116 / 4117
+XRDIMAGE.Image.numframe     = 1;
 XRDIMAGE.Image.numdigs      = 5;
-XRDIMAGE.Image.fext         = 'ge3';
-XRDIMAGE.Image.corrected    = 0;
+XRDIMAGE.Image.fext         = 'ge3.sum';
+XRDIMAGE.Image.corrected    = 1;
 XRDIMAGE.Image.IsHydra      = 0;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
 
 %%% DARK FILES ONLY USED IF THE IMAGES ARE UNCORRECTED
-XRDIMAGE.DarkField.pname    = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS';
+XRDIMAGE.DarkField.pname    = 'O:\nx_aug16_bc';
 XRDIMAGE.DarkField.fbase    = 'dark_1.5s_';
 XRDIMAGE.DarkField.fnumber  = 338;
 XRDIMAGE.DarkField.numframe = 1;
 XRDIMAGE.DarkField.numdigs  = 5;
 XRDIMAGE.DarkField.fext     = 'ge3';
 
-XRDIMAGE.Calib.pname        = 'C:\Users\parkjs\Documents\GitHub\matlab_tools_examples\xrd-powder-data-reduction-example\APS';
-XRDIMAGE.Calib.fbase        = 'CeO2_1.5s_';
-XRDIMAGE.Calib.fnumber      = 336;
-XRDIMAGE.Calib.fext         = 'ge3';
+XRDIMAGE.Calib.pname        = 'O:\nx_aug16_bc';
+XRDIMAGE.Calib.fbase        = 'CeO2_0pt3s_';
+XRDIMAGE.Calib.fnumber      = 11;
+XRDIMAGE.Calib.fext         = 'ge3.sum';
 
 %%% INSTRUMENT PARAMETERS GETS LOADED
 Instr.energy        = 0;
 Instr.wavelength	= 0;
-Instr.detectorsize	= 0;
-Instr.pixelsize     = 0;
 Instr.distance      = 0;
 Instr.centers       = [0, 0];
 Instr.gammaX        = 0;
 Instr.gammaY        = 0;
-Instr.numpixels     = 0;
+Instr.detsizeHorz	= 0;
+Instr.detsizeVert   = 0;
+Instr.pixelsizeHorz	= 0;
+Instr.pixelsizeVert	= 0;
+Instr.numpixelsHorz	= 0;
+Instr.numpixelsVert	= 0;
+Instr.imrotation    = 0;
 Instr.dettype       = '2a';
 Instr.detpars       = [0 0 0 0 0 0];
-Instr.imrotation    = 0;
 pfname  = GenerateGEpfname(XRDIMAGE.Calib);
-
 for i = 1:1:length(XRDIMAGE.Calib.fnumber)
     pfname_instr    = [pfname{i,1}, '.instr.mat'];
     Instri  = load(pfname_instr);
@@ -47,38 +49,47 @@ for i = 1:1:length(XRDIMAGE.Calib.fnumber)
     
     Instr.energy        = Instr.energy + Instri.energy;
     Instr.wavelength    = Instr.wavelength + Instri.wavelength;
-    Instr.detectorsize  = Instr.detectorsize + Instri.detectorsize;
-    Instr.pixelsize     = Instr.pixelsize + Instri.pixelsize;
     Instr.distance      = Instr.distance + Instri.distance;
     Instr.centers       = Instr.centers + Instri.centers;
     Instr.gammaX        = Instr.gammaX + Instri.gammaX;
     Instr.gammaY        = Instr.gammaY + Instri.gammaY;
-    Instr.numpixels     = Instr.numpixels + Instri.numpixels;
+    Instr.detsizeHorz   = Instr.detsizeHorz + Instri.detsizeHorz; 
+    Instr.detsizeVert   = Instr.detsizeVert + Instri.detsizeVert; 
+    Instr.pixelsizeHorz	= Instr.pixelsizeHorz + Instri.pixelsizeHorz;
+    Instr.pixelsizeVert	= Instr.pixelsizeVert + Instri.pixelsizeVert;
+    Instr.numpixelsHorz	= Instr.numpixelsHorz + Instri.numpixelsHorz;
+    Instr.numpixelsVert	= Instr.numpixelsVert + Instri.numpixelsVert;
     Instr.detpars       = Instr.detpars + Instri.detpars;
-    Instr.imrotation    = Instr.imrotation + Instri.imrotation;
+    Instr.imrotation    = 0;
+    Instr.dettype       = '2a';
 end
 Instr.energy        = Instr.energy./length(XRDIMAGE.Calib.fnumber);
 Instr.wavelength    = Instr.wavelength./length(XRDIMAGE.Calib.fnumber);
-Instr.detectorsize  = Instr.detectorsize./length(XRDIMAGE.Calib.fnumber);
-Instr.pixelsize     = Instr.pixelsize./length(XRDIMAGE.Calib.fnumber);
 Instr.distance      = Instr.distance./length(XRDIMAGE.Calib.fnumber);
 Instr.centers       = Instr.centers./length(XRDIMAGE.Calib.fnumber);
 Instr.gammaX        = Instr.gammaX./length(XRDIMAGE.Calib.fnumber);
 Instr.gammaY        = Instr.gammaY./length(XRDIMAGE.Calib.fnumber);
-Instr.numpixels     = Instr.numpixels./length(XRDIMAGE.Calib.fnumber);
+Instr.detsizeHorz   = Instr.detsizeHorz./length(XRDIMAGE.Calib.fnumber);
+Instr.detsizeVert   = Instr.detsizeVert./length(XRDIMAGE.Calib.fnumber);
+Instr.pixelsizeHorz	= Instr.pixelsizeHorz./length(XRDIMAGE.Calib.fnumber);
+Instr.pixelsizeVert	= Instr.pixelsizeVert./length(XRDIMAGE.Calib.fnumber);
+Instr.numpixelsHorz	= Instr.numpixelsHorz./length(XRDIMAGE.Calib.fnumber);
+Instr.numpixelsVert	= Instr.numpixelsVert./length(XRDIMAGE.Calib.fnumber);
 Instr.detpars       = Instr.detpars./length(XRDIMAGE.Calib.fnumber);
-Instr.imrotation    = Instr.imrotation/length(XRDIMAGE.Calib.fnumber);
+
+Instr.omega = 0;
+Instr.chi   = 0;
 
 XRDIMAGE.Instr  = Instr;
 
 %%% CAKE PARAMETERS
 XRDIMAGE.CakePrms.bins(1)   = 36;           % number of azimuthal bins
-XRDIMAGE.CakePrms.bins(2)   = 3000;         % number of radial bins
+XRDIMAGE.CakePrms.bins(2)   = 1000;         % number of radial bins
 XRDIMAGE.CakePrms.bins(3)   = 10;            % number of angular bins
 
-XRDIMAGE.CakePrms.origin(1) = 1036.190;     % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(1) = 1024.190;     % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
 XRDIMAGE.CakePrms.origin(2) = 1024.110;     % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
-XRDIMAGE.CakePrms.origin(2) = XRDIMAGE.Instr.numpixels-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDIANTES
+XRDIMAGE.CakePrms.origin(2) = XRDIMAGE.Instr.numpixelsVert-XRDIMAGE.CakePrms.origin(2); %%% CONVERT TO IMAGE COORDIANTES
 
 XRDIMAGE.CakePrms.sector(1) = -360/XRDIMAGE.CakePrms.bins(1)/2;     % start azimuth (min edge of bin) in degrees
 XRDIMAGE.CakePrms.sector(2) = 360-360/XRDIMAGE.CakePrms.bins(1)/2;  % stop  azimuth (max edge of bin) in degrees
