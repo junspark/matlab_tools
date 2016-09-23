@@ -51,4 +51,4 @@ elseif strcmp(dettype,'2b')
         rho, azim, DistortionParams);
 end
 tth     = repmat(tth,size(mapped_tth,2),1)';
-fout    = tth - mapped_tth;
+fout    = abs(tth - mapped_tth);
