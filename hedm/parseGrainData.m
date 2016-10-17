@@ -158,7 +158,8 @@ if strcmpi(opts.Technique, 'ff-midas')
         log(i).StrainFab    = R_ESRF2APS*StrainFab*R_ESRF2APS';
         log(i).Strain       = R_ESRF2APS*Strain*R_ESRF2APS';
         
-        log(i).PhaseNumber  = A(i, 37);
+        log(i).StrainRMS    = A(i, 43);
+        log(i).PhaseNumber  = A(i, 44);
     end
 elseif strcmpi(opts.Technique, 'nf')
     disp(sprintf('parsing nf-hedm data from %s', pfname));
