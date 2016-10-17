@@ -5,11 +5,11 @@ clc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% INPUTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-MaterialName    = 'Al';                         % FCC Al 
-latticeParms    = 4.050;                        % IN Angstrom
-hkls            = load('fcc.hkls');
-[a, b, c]       = StructureFactor(MaterialName);
-d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
+% MaterialName    = 'Al';                         % FCC Al 
+% latticeParms    = 4.050;                        % IN Angstrom
+% hkls            = load('fcc.hkls');
+% [a, b, c]       = StructureFactor(MaterialName);
+% d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
 % MaterialName    = 'Ce';                         % BCC Fe
 % latticeParms    = 5.4114 ;                        % IN Angstrom
@@ -37,14 +37,14 @@ d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 % [a, b, c]       = StructureFactor(MaterialName);
 % d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
-% MaterialName    = 'Ti';                         % diamond
-% latticeParms    = [2.95111 4.68433];                        % IN Angstrom
-% hkls            = load('hcp.hkls');
-% [a, b, c]       = StructureFactor(MaterialName);
-% d_hkls          = PlaneSpacings(latticeParms, 'hexagonal', hkls');
+MaterialName    = 'Ti';                         % diamond
+latticeParms    = [2.95111 4.68433];                        % IN Angstrom
+hkls            = load('hcp.hkls');
+[a, b, c]       = StructureFactor(MaterialName);
+d_hkls          = PlaneSpacings(latticeParms, 'hexagonal', hkls');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SampleThickness = 100;                           % IN cm
+SampleThickness = 5.0;                        % IN cm
 TakeOffAngle    = 2:0.1:7.0;                  % IN deg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% END OF INPUTS
