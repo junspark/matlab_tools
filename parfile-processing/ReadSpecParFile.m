@@ -441,6 +441,242 @@ switch lower(opts.Version)
         pardata.att4    = textdata{53};
         
         pardata.attenXpos   = textdata{54};
+    case 'xu_nov16'
+%%s %s %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %6s %5g %5g %4d %5g %12s %05d %05d %12f %12f %12f %12f %12f %12f %12f %12f %12f %12f %8f %8f %8f %8f %12f %12f %12f %12f %12f %12f %12f %12f %12f %12f %12f %12f %12f %12f %4f %4f %8f %8f %s %06d %15.8f %6d %6d %6d        
+%       enddate, detname6, S[SRmA]7, A[DetX], A[DetZ], A[NFYE], A[imgXE], A[imgZE], A[imgYE], A[ge_x], hydraZ, A[mtsYE]16, A[mtsX2E]17, A[mtsXE]18, A[aeroXE], A[rxe], A[rze], motname,\
+%       startpos23, endpos, OSC["nframes"]25, OSC["exposure_time"]26, imgprefix, OSC["first_frame_number"], imgnr,\
+%       S[ic1e]/icsec, S[ic2e]/icsec, S[ic3e]/icsec, S[ic5e]/icsec, S[ic6e]/icsec, S[ic8e]/icsec, S[ic5b]/icsec, S[ic8b]/icsec37,\
+%       S[fedrl], S[fedr2]39, icsec, displenc, loadcell, stress, tensionmot, S[bposC]45, S[bposE], \
+%       S[bposC], hsizeDS48, vsizeDS, hsizeUS, vsizeUS, hposDS, vposDS, hposUS54, vposUS55, \
+%       tiltX, tiltZ, foilwh58, attenwh59, attenCpos, A[bbYE], \
+%       sxprefix62, sxnum, sxtimestamp64, sxcamarraycounter, sximarraycounter, sxfilearraycounter
+        fmtstring   = ['%s %s %d %s %d %s ' ...
+            '%f %f %f %f %f %f %f %f ' ...
+            '%f %f %f %f %f %f %f ' ...
+            '%s %f %f ' ...
+            '%f %f ' ...
+            '%s %f %f ' ...
+            '%f %f %f %f %f %f %f %f ' ...
+            '%f %f %f %f %f %f %f %f %f ' ...
+            '%f %f %f %f %f %f %f %f %f ' ...
+            '%f %f %f %f %f %f ' ...
+            '%s %f %u %f %f %f'];
+        
+        %%% READ IN DATA USING FORMAT STRING
+        textdata  = textscan(fid, fmtstring);
+        
+        dummy   = size(textdata{1},1);
+        dummy   = nan(dummy,1);
+        
+        %%% PARSE DATA
+        pardata.day     = textdata{1};
+        pardata.month   = textdata{2};
+        pardata.date    = textdata{3};
+        pardata.time    = textdata{4};
+        pardata.year    = textdata{5};
+        
+        pardata.epoch_time  = textdata{64};
+        pardata.integ_time  = textdata{26};
+        pardata.Iring       = textdata{7};
+        pardata.und_gap     = dummy;
+        pardata.energy      = dummy;
+        pardata.energy_cal  = dummy;
+        pardata.foil_pos    = textdata{58};
+        pardata.atten_pos   = textdata{59};
+        
+        pardata.det1_fname              = textdata{27};
+        pardata.det1_fnum               = textdata{28};
+        pardata.det1_frames_per_file    = textdata{29};
+        pardata.det1_time_per_frame     = textdata{26};
+        
+        pardata.det2_fname              = textdata{27};
+        pardata.det2_fnum               = textdata{28};
+        pardata.det2_frames_per_file    = textdata{29};
+        pardata.det2_time_per_frame     = textdata{26};
+        
+        pardata.det3_fname              = textdata{27};
+        pardata.det3_fnum               = textdata{28};
+        pardata.det3_frames_per_file    = textdata{29};
+        pardata.det3_time_per_frame     = textdata{26};
+        
+        pardata.det4_fname              = textdata{27};
+        pardata.det4_fnum               = textdata{28};
+        pardata.det4_frames_per_file    = textdata{29};
+        pardata.det4_time_per_frame     = textdata{26};
+        
+        pardata.det5_fname              = textdata{62};
+        pardata.det5_fnum               = textdata{63};
+        pardata.det5_frames_per_file    = 1;
+        pardata.det5_time_per_frame     = textdata{26};
+        
+        pardata.det6_fname              = dummy;
+        pardata.det6_fnum               = dummy;
+        pardata.det6_frames_per_file    = dummy;
+        pardata.det6_time_per_frame     = dummy;
+        
+        pardata.det7_fname              = dummy;
+        pardata.det7_fnum               = dummy;
+        pardata.det7_frames_per_file    = dummy;
+        pardata.det7_time_per_frame     = dummy;
+        
+        pardata.det8_fname              = dummy;
+        pardata.det8_fnum               = dummy;
+        pardata.det8_frames_per_file    = dummy;
+        pardata.det8_time_per_frame     = dummy;
+        
+        pardata.det9_fname              = dummy;
+        pardata.det9_fnum               = dummy;
+        pardata.det9_frames_per_file    = dummy;
+        pardata.det9_time_per_frame     = dummy;
+        
+        pardata.det10_fname             = dummy;
+        pardata.det10_fnum              = dummy;
+        pardata.det10_frames_per_file   = dummy;
+        pardata.det10_time_per_frame    = dummy;
+        
+        pardata.scaler1_val     = textdata{30};
+        pardata.scaler1_units   = dummy;
+        pardata.scaler2_val     = textdata{31};
+        pardata.scaler2_units   = dummy;
+        pardata.scaler3_val     = textdata{32};
+        pardata.scaler3_units   = dummy;
+        pardata.scaler4_val     = dummy;
+        pardata.scaler4_units   = dummy;
+        pardata.scaler5_val     = textdata{33};
+        pardata.scaler5_units   = dummy;
+        pardata.scaler6_val     = textdata{34};
+        pardata.scaler6_units   = dummy;
+        pardata.scaler7_val     = dummy;
+        pardata.scaler7_units   = dummy;
+        pardata.scaler8_val     = textdata{35};
+        pardata.scaler8_units   = dummy;
+        pardata.scaler9_val     = textdata{36};
+        pardata.scaler9_units   = dummy;
+        pardata.scaler10_val    = textdata{37};
+        pardata.scaler10_units  = dummy;
+        
+        pardata.samX        = textdata{16};
+        pardata.samY        = textdata{17};
+        pardata.samZ        = textdata{18};
+        pardata.aX          = textdata{19};
+        pardata.aY          = textdata{20};
+        pardata.aZ          = textdata{21};
+        pardata.samX2       = textdata{23};
+        pardata.samY2       = dummy;
+        pardata.samZ2       = dummy;
+        pardata.samOther    = textdata{24};
+        
+        pardata.det1_pos1   = textdata{14};
+        pardata.det1_pos2   = dummy;
+        pardata.det1_pos3   = textdata{15};
+        
+        pardata.det2_pos1   = textdata{14};
+        pardata.det2_pos2   = dummy;
+        pardata.det2_pos3   = textdata{15};
+        
+        pardata.det3_pos1   = textdata{14};
+        pardata.det3_pos2   = dummy;
+        pardata.det3_pos3   = textdata{15};
+        
+        pardata.det4_pos1   = textdata{14};
+        pardata.det4_pos2   = dummy;
+        pardata.det4_pos3   = textdata{15};
+        
+        pardata.det5_pos1   = dummy;
+        pardata.det5_pos2   = dummy;
+        pardata.det5_pos3   = dummy;
+        
+        pardata.det6_pos1   = dummy;
+        pardata.det6_pos2   = dummy;
+        pardata.det6_pos3   = dummy;
+       
+        pardata.det7_pos1   = dummy;
+        pardata.det7_pos2   = dummy;
+        pardata.det7_pos3   = dummy;
+        
+        pardata.det8_pos1   = dummy;
+        pardata.det8_pos2   = dummy;
+        pardata.det8_pos3   = dummy;
+        
+        pardata.det9_pos1   = dummy;
+        pardata.det9_pos2   = dummy;
+        pardata.det9_pos3   = dummy;
+        
+        pardata.det10_pos1  = dummy;
+        pardata.det10_pos2  = dummy;
+        pardata.det10_pos3  = dummy;
+        
+        pardata.hex_pos1    = dummy;
+        pardata.hex_pos2    = dummy;
+        pardata.hex_pos3    = dummy;
+        pardata.hex_pos4    = dummy;
+        pardata.hex_pos5    = dummy;
+        pardata.hex_pos6    = dummy;
+        pardata.hex_pos7    = dummy;
+        
+        pardata.slit1_V_size    = textdata{51};
+        pardata.slit1_V_pos     = textdata{55};
+        pardata.slit1_H_size    = textdata{50};
+        pardata.slit1_H_pos     = textdata{54};
+        
+        pardata.slit2_V_size    = textdata{49};
+        pardata.slit2_V_pos     = textdata{53};
+        pardata.slit2_H_size    = textdata{48};
+        pardata.slit2_H_pos     = textdata{52};
+        
+        pardata.slit3_V_size    = dummy;
+        pardata.slit3_V_pos     = dummy;
+        pardata.slit3_H_size    = dummy;
+        pardata.slit3_H_pos     = dummy;
+        
+        pardata.slit4_V_size    = dummy;
+        pardata.slit4_V_pos     = dummy;
+        pardata.slit4_H_size    = dummy;
+        pardata.slit4_H_pos     = dummy;
+        
+        pardata.slit5_V_size    = dummy;
+        pardata.slit5_V_pos     = dummy;
+        pardata.slit5_H_size    = dummy;
+        pardata.slit5_H_pos     = dummy;
+        
+        pardata.slit6_V_size    = dummy;
+        pardata.slit6_V_pos     = dummy;
+        pardata.slit6_H_size    = dummy;
+        pardata.slit6_H_pos     = dummy;
+        
+        pardata.lens1_pos1  = dummy;
+        pardata.lens1_pos2  = dummy;
+        
+        pardata.lens2_pos1  = dummy;
+        pardata.lens2_pos2  = dummy;
+        
+        pardata.lens3_pos1  = dummy;
+        pardata.lens3_pos2  = dummy;
+        
+        pardata.lens4_pos1  = dummy;
+        pardata.lens4_pos2  = dummy;
+        
+        pardata.encoder1    = textdata{57};
+        pardata.encoder2    = textdata{56};
+        pardata.encoder3    = textdata{47};
+        pardata.encoder4    = textdata{46};
+        pardata.encoder5    = textdata{45};
+        pardata.encoder6    = textdata{39};
+        pardata.encoder7    = textdata{38};
+        pardata.encoder8    = dummy;
+        pardata.encoder9    = dummy;
+        pardata.encoder10   = dummy;
+        
+        pardata.ev1     = textdata{41};
+        pardata.ev2     = textdata{42};
+        pardata.ev3     = textdata{43};
+        pardata.ev4     = textdata{44};
+        pardata.ev5     = dummy;
+        pardata.ev6     = dummy;
+        pardata.ev7     = dummy;
+        pardata.ev8     = dummy;
+        pardata.ev9     = dummy;
+        pardata.ev10    = dummy;
     otherwise
         disp('format not implemented')
 end
