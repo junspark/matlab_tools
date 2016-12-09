@@ -1,0 +1,6 @@
+% http://www.nucleide.org/DDEP_WG/Nuclides/Co-57_tables.pdf
+% E (keV) I (%) 
+% gamma decay only / assignment
+14.4129531 9.1517
+122.0606512 85.516
+136.4736529 10.7115

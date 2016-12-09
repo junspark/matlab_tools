@@ -44,8 +44,8 @@ hkls            = load('hcp.hkls');
 d_hkls          = PlaneSpacings(latticeParms, 'hexagonal', hkls');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SampleThickness = 5.0;                        % IN cm
-TakeOffAngle    = 2:0.1:7.0;                  % IN deg
+SampleThickness = 3.75;                        % IN cm
+TakeOffAngle    = 2:0.1:5.0;                  % IN deg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% END OF INPUTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
