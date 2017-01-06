@@ -55,7 +55,7 @@ d_hkls          = PlaneSpacings(latticeParms, 'hexagonal', hkls');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SampleThickness = 1;                        % IN cm
-TakeOffAngle    = 2:0.5:4;                  % IN deg
+TakeOffAngle    = 4:0.5:7.0;                  % IN deg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% END OF INPUTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,7 +148,6 @@ end
 
 figure,
 set(gcf, 'Position', [1000 50 900 950])
-
 subplot(2,3,1)
 semilogy(BeamLineFlux(:,1), BeamLineFlux(:,2), 'k.')
 xlabel('Energy (keV)')
@@ -163,8 +162,6 @@ plot(1:1:numhkls, TransEnergy(:,end), 'r.')
 legend(num2str(TakeOffAngle(1)), num2str(TakeOffAngle(end)), 'Location', 'Best')
 xlabel('hkl id')
 ylabel('Energy (keV)')
-line([0 numhkls], [max(BeamLineFlux(:,1)) max(BeamLineFlux(:,1))], ...
-    'LineStyle', '--', 'Color', 'r', 'LineWidth', 2)
 title('Diffraction energy - First and the last TOA only')
 grid on
 
@@ -186,9 +183,8 @@ legend(sprintf('DS 2th = %2.1f deg', TakeOffAngle(1)), ...
     sprintf('US 2th = %2.1f deg', TakeOffAngle(1)), ...
     sprintf('US 2th = %2.1f deg', TakeOffAngle(end)), 'Location', 'Best')
 xlabel('hkl id')
-ylabel('transmission through sample (%)')
+ylabel('Percent transmission')
 grid on
-axis([1 numhkls 0 100])
 
 subplot(2,3,5)
 plot(1:1:numhkls, PercentAbsorptionGe(:,1)*100, 'b.')
@@ -198,7 +194,7 @@ legend(num2str(TakeOffAngle(1)), num2str(TakeOffAngle(end)), 'Location', 'Best')
 xlabel('hkl id')
 ylabel('nominal detector efficiency (%)')
 grid on
-axis([1 numhkls 0 100])
+axis([1 numhkls 0 1])
 
 subplot(2,3,6)
 semilogy(1:1:numhkls, PhotonTransAtNormalIncDS(:,1), 'o', 'MarkerEdgeColor', 'b', 'MarkerSize', 5)
@@ -212,7 +208,7 @@ legend(sprintf('DS 2th = %2.1f deg', TakeOffAngle(1)), ...
     sprintf('US 2th = %2.1f deg', TakeOffAngle(1)), ...
     sprintf('US 2th = %2.1f deg', TakeOffAngle(end)), 'Location', 'Best')
 xlabel('hkl id')
-ylabel('number of photons detected (-)')
+ylabel('Number of photons transmitted')
 grid on
 
 return
