@@ -54,8 +54,8 @@ multiplicity    = load('hcp.ms');
 d_hkls          = PlaneSpacings(latticeParms, 'hexagonal', hkls');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SampleThickness = 1;                        % IN cm
-TakeOffAngle    = 2:0.5:4;                  % IN deg
+SampleThickness = 3;                        % IN cm
+TakeOffAngle    = 2:0.5:6;                  % IN deg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% END OF INPUTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,7 +67,7 @@ GeThickness     = 1;    % ASSUME GE XSTAL THICKNESS 10 mm = 1 cm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 numhkls = size(hkls,1);
-P       = 0.1; % POLARIZATION FACTOR (NO MONO; 1 FOR VERTICAL DETECTOR; ESSENTIALLY 1 AS BRAGG ANGLE SMALL)
+P       = 1; % POLARIZATION FACTOR (NO MONO; 1 FOR VERTICAL DETECTOR; ESSENTIALLY 1 AS BRAGG ANGLE SMALL)
 L       = LorentzFactor(TakeOffAngle./2);
 f       = AtomicScatteringFactor(MaterialName, d_hkls);
 
