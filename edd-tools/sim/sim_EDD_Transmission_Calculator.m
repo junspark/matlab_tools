@@ -17,11 +17,11 @@ clc
 % multiplicity    = load('fcc.ms');
 % d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
-% MaterialName    = 'Ce';                         % FCC Ce
-% latticeParms    = 5.4114 ;                        % IN Angstrom
-% hkls            = load('fcc.hkls');
-% multiplicity    = load('fcc.ms');
-% d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
+MaterialName    = 'Ce';                         % FCC Ce
+latticeParms    = 5.4114 ;                        % IN Angstrom
+hkls            = load('fcc.hkls');
+multiplicity    = load('fcc.ms');
+d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
 % MaterialName    = 'Fe';                         % BCC Fe
 % latticeParms    = 2.87 ;                        % IN Angstrom
@@ -47,15 +47,15 @@ clc
 % multiplicity    = load('diamondcubic.ms');
 % d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
-MaterialName    = 'Ti';                         % diamond
-latticeParms    = [2.95111 4.68433];                        % IN Angstrom
-hkls            = load('hcp.hkls');
-multiplicity    = load('hcp.ms');
-d_hkls          = PlaneSpacings(latticeParms, 'hexagonal', hkls');
+% MaterialName    = 'Ti';                         % diamond
+% latticeParms    = [2.95111 4.68433];                        % IN Angstrom
+% hkls            = load('hcp.hkls');
+% multiplicity    = load('hcp.ms');
+% d_hkls          = PlaneSpacings(latticeParms, 'hexagonal', hkls');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SampleThickness = 3;                        % IN cm
-TakeOffAngle    = 2:0.5:6;                  % IN deg
+SampleThickness = 0.05;                        % IN cm
+TakeOffAngle    = 5.67318;                  % IN deg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% END OF INPUTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,32 +75,32 @@ f       = AtomicScatteringFactor(MaterialName, d_hkls);
 %%% STRUCTURE FACTOR CALCULATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% FOR FCC
-% F   = 4*f';
+F   = 4*f';
 %%% FOR BCC
 % F   = 2*f';
 %%% FOR SIMPLE CUBIC
 % F   = f';
 %%% FOR HCP
-for i = 1:1:numhkls
-    h   = hkls(i,1);
-    k   = hkls(i,2);
-    l   = hkls(i,3);
-    h2k = h + 2*k;
-    
-    if mod(l,2) == 0
-        if mod(h2k,3) == 0
-            F(i,1)  = 2*f(i);
-        else
-            F(i,1)  = f(i);
-        end
-    else
-        if mod(h2k,3) == 0
-            F(i,1)  = 0;
-        else
-            F(i,1)  = sqrt(3)*f(i);
-        end
-    end
-end
+% for i = 1:1:numhkls
+%     h   = hkls(i,1);
+%     k   = hkls(i,2);
+%     l   = hkls(i,3);
+%     h2k = h + 2*k;
+%     
+%     if mod(l,2) == 0
+%         if mod(h2k,3) == 0
+%             F(i,1)  = 2*f(i);
+%         else
+%             F(i,1)  = f(i);
+%         end
+%     else
+%         if mod(h2k,3) == 0
+%             F(i,1)  = 0;
+%         else
+%             F(i,1)  = sqrt(3)*f(i);
+%         end
+%     end
+% end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
