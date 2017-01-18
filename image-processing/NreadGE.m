@@ -29,3 +29,5 @@ fseek(fp,offset,'bof');
 img     = fread(fp,[2048 2048],'*uint16');
 
 fclose(fp);
+
+img = double(img);

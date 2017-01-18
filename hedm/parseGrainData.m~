@@ -178,12 +178,12 @@ if strcmpi(opts.Technique, 'ff-midas')
             %%% FAB
             StrainFab_vec       = VecOfStressStrainInVM(log(i).StrainFab);
             StressFab_vec       = C*StrainFab_vec;
-            log(i).StressFab    = MatrixOfStressStrainInVM(StressFab_vec);
+            log(i).StressFab    = MatrixOfStressStrainInVM(StressFab_vec)
             
             %%% PK
-            Strain_vec      = VecOfStressStrainInVM(log(i).Strain);
-            Stress_vec      = C*Strain_vec;
-            log(i).Stress   = MatrixOfStressStrainInVM(Stress_vec);
+            StrainFab_vec       = VecOfStressStrainInVM(log(i).Strain);
+            StressFab_vec       = C*StrainFab_vec;
+            log(i).StressFab    = MatrixOfStressStrainInVM(StressFab_vec)
         end
         log(i).StrainRMS    = A(i, 43);
         
