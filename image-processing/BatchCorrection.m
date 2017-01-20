@@ -87,6 +87,10 @@ for i = 1:1:length(bkg_num)
     pfname  = fullfile(path_bkg, fname);
     
     flist       = dir(pfname);
+    if isempty(flist)
+        disp(sprintf('check if %s exists', pfname))
+        return
+    end
     num_frame   = CalcNumFrames(flist.bytes, buffer_size, frame_size);
     
     for j = 1:1:num_frame
@@ -207,64 +211,3 @@ else
     end
 end
 delete(gcp)
-
-function PlotImage(image_data, max_range, min_range)
-figure,
-clf
-%%% CHANGE RANGE AS DESIRED
-imagesc(image_data, [min_range max_range])
-colorbar vert
-axis square tight
-
-function num_frame = CalcNumFrames(bytes, buffer_size, frame_size)
-num_frame   = (bytes - buffer_size)/frame_size;
-return
-
-function BadPixelData = LoadBadPixelData(genum)
-%%% *.IMG FILES ARE DIFFERENT FOR EACH GE
-if genum == 1
-    fname   = '/home/beams/S1IDUSER/mnt/s1a/misc/DetectorData/EF43522-3/Full/EF43522-3Full_BadPixel.img';
-elseif genum == 2
-    fname   = '/home/beams/S1IDUSER/mnt/s1a/misc/DetectorData/EF44064-6/Full/EF44064-6Full_BadPixel.img';
-elseif genum == 3
-    fname   = '/home/beams/S1IDUSER/mnt/s1a/misc/DetectorData/EF43089-5/Full/EF43089-5Full_BadPixel.img';
-elseif genum == 4
-    fname   = '/home/beams/S1IDUSER/mnt/s1a/misc/DetectorData/EF44066-7/Full/EF44066-7Full_BadPixel.img';
-else
-    error('bad pixel data does not exist. check ge number ...')
-end
-BadPixelData    = NreadGE(fname, 1);
-BadPixelData    = find(BadPixelData ~= 0);
-return
-
-function CorrectedImageData = CorrectBadPixels(ImageData, BadPixelData)
-CorrectedImageData  = ImageData;
-nbr1    = BadPixelData - 2048 - 1;
-nbr2	= BadPixelData - 2048 + 1;
-nbr3    = BadPixelData + 2048 - 1;
-nbr4    = BadPixelData + 2048 + 1;
-
-n   = length(BadPixelData);
-for i = 1:1:n
-    ct  = 0; p1  = 0; p2  = 0; p3  = 0; p4  = 0;
-    if nbr1(i) <= 2048*2048 && nbr1(i) >= 1
-        p1  = ImageData(nbr1(i));
-        ct  = ct + 1;
-    end
-    if nbr2(i) <= 2048*2048 && nbr2(i) >= 1
-        p2  = ImageData(nbr2(i));
-        ct  = ct + 1;
-    end
-    if nbr3(i) <= 2048*2048 && nbr3(i) >= 1
-        p3  = ImageData(nbr3(i));
-        ct  = ct + 1;
-    end
-    if nbr4(i) <= 2048*2048 && nbr4(i) >= 1
-        p4  = ImageData(nbr4(i));
-        ct  = ct + 1;
-    end
-    p   = (p1 + p2 + p3 + p4)/ct;
-    
-    CorrectedImageData(BadPixelData(i)) = p;
-end
-return
