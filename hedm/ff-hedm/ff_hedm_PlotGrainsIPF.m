@@ -1,3 +1,21 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% POLE FIGURE PLOTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% c   = [1 1 1]';
+% cu  = UnitVector(c);
+% for i = 1:1:size(ws.frmesh.symmetries,2)
+%     R   = RMatOfQuat(ws.frmesh.symmetries(:,i));
+%     ci(:,i) = R*cu;
+% end
+% 
+% s   = [];
+% for i = 1:1:size(quat,2)
+%     R   = RMatOfQuat(quat(:,i));
+%     s   = [s RLab2Sam*R*ci];
+% end
+% 
+% PlotSPF(s', ones(size(s,2),1), 'Title', sprintf('{ %d%d%d } in sample frame', c(1), c(2), c(3)))
+
 clear all
 close all
 clc
