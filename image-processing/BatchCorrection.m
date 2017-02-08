@@ -127,7 +127,7 @@ if opts.CorrectAllImages
                 
                 fname_out   = [flist(i).name, '.frame.', num2str(j), '.cor'];
                 pfname_out  = fullfile(path_output, fname_out);
-                NwriteGE(pfname_out, frame_data);
+                WriteSUM(pfname_out, frame_data);
             end
             sum_data    = sum_data + frame_data;
             
@@ -146,7 +146,7 @@ if opts.CorrectAllImages
         end        
         fname_out   = [flist(i).name, '.sum'];
         pfname_out  = fullfile(path_output, fname_out);
-        NwriteGE(pfname_out, sum_data);
+        WriteSUM(pfname_out, sum_data);
         PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
         title('Sum over all corrected frames')
         
@@ -154,7 +154,7 @@ if opts.CorrectAllImages
         ave_data    = sum_data./num_frame;
         fname_out   = [flist(i).name, '.ave'];
         pfname_out  = fullfile(path_output, fname_out);
-        NwriteGE(pfname_out, ave_data);
+        WriteSUM(pfname_out, ave_data);
         PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
         title('Average over all corrected frames')
     end
@@ -178,7 +178,7 @@ else
                 
                 fname_out   = [flist.name, '.frame.', num2str(j), '.cor'];
                 pfname_out  = fullfile(path_output, fname_out);
-                NwriteGE(pfname_out, frame_data);
+                WriteSUM(pfname_out, frame_data);
             end
             sum_data    = sum_data + frame_data;
             
@@ -197,7 +197,7 @@ else
         end
         fname_out   = [flist.name, '.sum'];
         pfname_out  = fullfile(path_output, fname_out);
-        NwriteGE(pfname_out, sum_data);
+        WriteSUM(pfname_out, sum_data);
         PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
         title('Sum over all corrected frames')
         
@@ -205,7 +205,7 @@ else
         ave_data    = sum_data./num_frame;
         fname_out   = [flist.name, '.ave'];
         pfname_out  = fullfile(path_output, fname_out);
-        NwriteGE(pfname_out, ave_data);
+        WriteSUM(pfname_out, ave_data);
         PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
         title('Average over all corrected frames')
     end
