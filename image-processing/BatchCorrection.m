@@ -55,6 +55,9 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 %       correction is slightly different)
 %
 
+% %%% START GCP
+% delete(gcp); parpool(12);
+
 %%% DEFAULT PARAMETERS
 npad        = '00000';
 buffer_size = 8192;
@@ -88,7 +91,7 @@ for i = 1:1:length(bkg_num)
     
     flist       = dir(pfname);
     if isempty(flist)
-        disp(sprintf('check if %s exists', pfname))
+        disp(sprintf('check if %s exists', pfname));
         return
     end
     num_frame   = CalcNumFrames(flist.bytes, buffer_size, frame_size);
@@ -210,4 +213,4 @@ else
         title('Average over all corrected frames')
     end
 end
-delete(gcp)
+delete(gcp);
