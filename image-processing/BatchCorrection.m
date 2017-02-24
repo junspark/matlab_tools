@@ -45,6 +45,8 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 %
 %   OutAllFrames        output all corrected frames in a fastsweep file
 %
+%   NumDigits           number of digits in the file name (default = 6)
+%
 %   OUTPUT:             
 %                   
 %   (possibly) many files
@@ -59,7 +61,7 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 % delete(gcp); parpool(12);
 
 %%% DEFAULT PARAMETERS
-npad        = '00000';
+% npad        = '00000';
 buffer_size = 8192;
 frame_size  = 2048*2048*2;
 
@@ -70,6 +72,7 @@ optcell = {...
     'lo', -1, ...
     'OutAllFrames', false, ...
     'DisplayFrames', false, ...
+    'NumDigits', 6, ...
     };
 
 % UPDATE OPTION
@@ -79,14 +82,21 @@ opts    = OptArgs(optcell, varargin);
 ext_bkg     = ['ge', num2str(genum)];
 ext_image   = ext_bkg;
 
+%%% SETUP FILE NAME PATTERN
+fname_fmt   = sprintf('%%s%%0%dd.%%s', opts.NumDigits);
+
 %%% BAD PIXEL CORRECTION    %%% NOT YET IMPLEMENTED
 BadPixelData    = LoadBadPixelData(genum);
+
+%%% CREATE OUTPUT PATH
+mkdir(path_output)
 
 %%% CONSTRUCT BACKGROUND IMAGE
 im_bkg  = zeros(2048,2048);
 ct  = 0;
 for i = 1:1:length(bkg_num)
-    fname	= [root_bkg, npad(1:length(npad)-length(num2str(bkg_num(i)))) num2str(bkg_num(i)), '.', ext_bkg];
+    fname   = sprintf(fname_fmt, root_bkg, bkg_num(i), ext_bkg);
+    % fname	= [root_bkg, npad(1:length(npad)-length(num2str(bkg_num(i)))) num2str(bkg_num(i)), '.', ext_bkg];
     pfname  = fullfile(path_bkg, fname);
     
     flist       = dir(pfname);
@@ -164,12 +174,13 @@ if opts.CorrectAllImages
 else
     image_num   = opts.lo:1:opts.hi;
     parfor i = 1:length(image_num)
-        fname	= [root_image, npad(1:length(npad)-length(num2str(image_num(i)))) num2str(image_num(i)), '.', ext_image];
+        fname   = sprintf(fname_fmt, root_image, image_num(i), ext_bkg);
+        % fname	= [root_image, npad(1:length(npad)-length(num2str(image_num(i)))) num2str(image_num(i)), '.', ext_image];
         pfname  = fullfile(path_bkg, fname);
         
         flist       = dir(pfname);
         num_frame   = CalcNumFrames(flist.bytes, buffer_size, frame_size);
-        disp(fname)
+        disp(fname);
         
         sum_data    = zeros(2048,2048);
         for j = 1:1:num_frame
