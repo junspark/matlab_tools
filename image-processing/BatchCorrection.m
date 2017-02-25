@@ -58,7 +58,7 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 %
 
 % %%% START GCP
-% delete(gcp); parpool(12);
+delete(gcp); parpool(12);
 
 %%% DEFAULT PARAMETERS
 % npad        = '00000';
@@ -123,7 +123,7 @@ if opts.CorrectAllImages
         error('specified files do not exist');
     end
     
-    parfor i = 1:length(flist)
+    for i = 1:length(flist)
         fname   = flist(i).name;
         pfname  = fullfile(path_image, fname);
         
@@ -160,16 +160,21 @@ if opts.CorrectAllImages
         fname_out   = [flist(i).name, '.sum'];
         pfname_out  = fullfile(path_output, fname_out);
         WriteSUM(pfname_out, sum_data);
-        PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
-        title('Sum over all corrected frames')
+        if opts.DisplayFrames
+            PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
+            title('Sum over all corrected frames')
+        end
         
         %%% WRITE OUT AVE FILE
         ave_data    = sum_data./num_frame;
         fname_out   = [flist(i).name, '.ave'];
         pfname_out  = fullfile(path_output, fname_out);
         WriteSUM(pfname_out, ave_data);
-        PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
-        title('Average over all corrected frames')
+        
+        if opts.DisplayFrames
+            PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
+            title('Average over all corrected frames')
+        end
     end
 else
     image_num   = opts.lo:1:opts.hi;
@@ -212,16 +217,20 @@ else
         fname_out   = [flist.name, '.sum'];
         pfname_out  = fullfile(path_output, fname_out);
         WriteSUM(pfname_out, sum_data);
-        PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
-        title('Sum over all corrected frames')
+        if opts.DisplayFrames
+            PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
+            title('Sum over all corrected frames')
+        end
         
         %%% WRITE OUT AVE FILE
         ave_data    = sum_data./num_frame;
         fname_out   = [flist.name, '.ave'];
         pfname_out  = fullfile(path_output, fname_out);
         WriteSUM(pfname_out, ave_data);
-        PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
-        title('Average over all corrected frames')
+        if opts.DisplayFrames
+            PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
+            title('Average over all corrected frames')
+        end
     end
 end
 delete(gcp);
