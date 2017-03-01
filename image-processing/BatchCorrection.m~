@@ -131,7 +131,7 @@ if opts.CorrectAllImages
         disp(fname)
         
         sum_data    = zeros(2048,2048);
-        for j = 1:1:num_frame
+        parfor j = 1:1:num_frame
             disp('background subtraction in progress ...')
             frame_data  = NreadGE(pfname, j);
             if opts.OutAllFrames

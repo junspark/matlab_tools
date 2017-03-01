@@ -6,19 +6,34 @@ function [csq, pixelsize] = ReadPixirad(pfname, varargin)
 %   pfname
 %       name of the Pixirad image file.
 %
-%   nc (optional)
+%   version
+%       pixirad version. 'pixi1' is for 1 panel pixirad from the APS
+%       detector pool. 'pixi2' is for 2 panel pixirad at APS 1-ID beamline.
+%       In the case of 'pixi1', it is assumed that the images are saved with
+%       correction already applied. In the case of 'pixi2', it is assumed
+%       that the images are saved without the correction and the correction
+%       is applied in this code. Only the 1 color mode correction is
+%       implemented.
+%
+%   nc (optional - pixi1)
 %       number of horizontal nodes (default = 476).
 %
-%   nr (optional)
+%   nr (optional - pixi1)
 %       number of vertical nodes (default = 512).
 %
-%   nxsq (optional)
+%   nxsq (optional - pixi1)
 %       number of pixels along x in the output square grid data. number of
 %       pixels along y is computed based on this number to make the pixel
 %       square.
 %
-%   display (optional)
+%   display (optional - pixi1)
 %       displays the sqaure grid image for confirmation (default = off).
+%
+%   pfname_ct (optional - pixi2)
+%       full path and file name of the correction table. If not provided,
+%       correction table located in
+%       s1a/misc/pixirad2/usb.after_repair/Calibrations/2010_crrm.tif is
+%       loaded.
 %
 %   OUTPUT:
 %
@@ -38,6 +53,7 @@ optcell = {...
     'nr', 512, ...
     'nxsq', 476, ...
     'display', 'off', ...
+    'pfname_ct', '/home/beams/S1IDUSER/mnt/s1a/misc/pixirad2/usb.after_repair/Calibrations/2010_crrm.tif', ...
     };
 
 % update option
@@ -133,7 +149,7 @@ elseif strcmpi(opts.version, 'pixi2')
     % ct  = reshape(ct, 1024, 402);
     
     %%% CORRECTION TABLE PROVIDED MARK RIVERS
-    ct  = double(imread('/home/beams/S1IDUSER/mnt/s1a/misc/pixirad2/usb.after_repair/Calibrations/2010_crrm.tif'));
+    ct  = double(imread(opts.pfname_ct));
     
     csq = ct.*csq;
     idx = csq < 0;
