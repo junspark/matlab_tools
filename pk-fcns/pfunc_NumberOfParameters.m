@@ -10,7 +10,7 @@ function NumberOfParameters = pfunc_NumberOfParameters(pfunc_type)
 %
 %   pfunc_type
 %       peak profile function name (string). Options are splitpseudovoigt,
-%       gaussian, lorentzian, and pseudovoigt.
+%       gaussian, lorentzian, lognormal, and pseudovoigt.
 % 
 %   OUTPUT:
 %
@@ -26,6 +26,8 @@ switch lower(pfunc_type)
     case 'gaussian'
         NumberOfParameters   = 3;
     case 'lorentzian'
+        NumberOfParameters   = 3;
+    case 'lognormal'
         NumberOfParameters   = 3;
     otherwise
         disp('Unknown peak function!!')

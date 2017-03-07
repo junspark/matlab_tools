@@ -35,6 +35,9 @@ function [csq, pixelsize] = ReadPixirad(pfname, varargin)
 %       s1a/misc/pixirad2/usb.after_repair/Calibrations/2010_crrm.tif is
 %       loaded.
 %
+%   apply_ct (optional - pixi2)
+%       applies correction table if 1.
+%
 %   OUTPUT:
 %
 %   csq
@@ -54,6 +57,7 @@ optcell = {...
     'nxsq', 476, ...
     'display', 'off', ...
     'pfname_ct', '/home/beams/S1IDUSER/mnt/s1a/misc/pixirad2/usb.after_repair/Calibrations/2010_crrm.tif', ...
+    'apply_ct', 1, ...
     };
 
 % update option
@@ -149,10 +153,10 @@ elseif strcmpi(opts.version, 'pixi2')
     % ct  = reshape(ct, 1024, 402);
     
     %%% CORRECTION TABLE PROVIDED MARK RIVERS
-    ct  = double(imread(opts.pfname_ct));
-    
-    csq = ct.*csq;
-    idx = csq < 0;
-    
-    csq(idx)    = 0;
+    if opts.apply_ct
+        ct  = double(imread(opts.pfname_ct));
+        csq = ct.*csq;
+        idx = csq < 0;
+        csq(idx)    = 0;
+    end 
 end

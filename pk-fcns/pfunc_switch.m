@@ -89,6 +89,20 @@ switch lower(pfunc_type)
         ybkg    = polyval(pbkg,xdata);
         
         y   = y + ybkg;
+    case 'lognormal'
+        numpk   = (length(p) - pbkg_order)/n;
+        for i = 1:1:numpk
+            ji  = n*(i - 1) + 1;
+            jf  = n*i;
+            
+            ppk = p(ji:jf);
+            ypk = pkLognormal(ppk,xdata);
+            y   = y + ypk;
+        end
+        pbkg    = p((numpk*n+1):end);
+        ybkg    = polyval(pbkg,xdata);
+        
+        y   = y + ybkg;
     otherwise
         disp('Unknown peak function!!')
 end
