@@ -2,22 +2,34 @@ clear all
 close all
 clc
 
+proot   = '/home/s1b/__eval/projects_parkjs/edd_6bm_2017-1/startup_mar17';
+
 format long
+
 %%%%%%%%%%%%%%%%%
 % INPUT
 %%%%%%%%%%%%%%%%%
 % USE Cd109 decay data
-pname_Cd109_spec    = '/home/s1b/__eval/edd_mach_dec16/cal_Co57_20161207/';
-fname_Cd109_spec    = 'cal_Co57_20161207-001-hv.xy';
+%%% DET1
+pname_Co57_spec    = 'det1_Co57_300s';
+fname_Co57_spec    = 'det1_Co57_300s-001-hv.xy';
+det_id  = 1;
 
-pfname_Cd109_spec   = fullfile(pname_Cd109_spec, fname_Cd109_spec);
-data    = load(pfname_Cd109_spec);
+%%% DET2
+% pname_Co57_spec    = 'det2_Co57_300s';
+% fname_Co57_spec    = 'det2_Co57_300s-001-hv.xy';
+% det_id  = 2;
+%%%%%
+
+pfname_Co57_spec   = fullfile(proot, pname_Co57_spec, fname_Co57_spec);
+data    = load(pfname_Co57_spec);
+
 x   = 1:1:8192;
-yv  = data(:,1);
-yh  = data(:,2);
-
-y   = yv; % ChToEnergyConversion    = [0.0347817 0.0201449]; v
-y   = yh; % ChToEnergyConversion    = [0.034798 0.0112459];; h
+if det_id == 1
+    y   = data(:,1); %%% ChToEnergyConversion    = [0.0347612 0.0375123];
+elseif det_id == 2
+    y   = data(:,2); %%% ChToEnergyConversion    = [0.0341563 -0.00480304];
+end
 
 %%%%%%%%%%%%%%%
 % Cd109 radioactive decay data (keV) - lbl.gov
@@ -27,7 +39,11 @@ Co57_energy     = load('Co57.decay.data');
 
 %%%%%%%%%%%%%%%%%
 % INITIAL GUESS FOR DECAY PEAKS
-x0  = [413; 3509; 3924;];  % v
+if det_id == 1
+    x0  = [413; 3509; 3924;];  % v
+elseif det_id == 2
+    x0  = [413; 3574; 3999;];  % v
+end
 y0  = [5000; 90570; 7000;].*10;
 g0  = ones(length(x0), 1).*10;
 n0  = ones(length(x0), 1).*0.5;

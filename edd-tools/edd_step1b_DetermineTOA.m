@@ -1,15 +1,28 @@
 clear all
 close all
 clc
+
+proot   = '/home/s1b/__eval/projects_parkjs/edd_6bm_2017-1/startup_mar17';
+
+format long
+
 %%%%%%%%%%%%%%%%%
 % INPUT
 % CHANNEL TO ENERGY CONVERSION RESULT FROM PREVIOUS STEP USING Cd109
 %%%%%%%%%%%%%%%%%
-ChToEnergyConversion    = [0.0925699 -0.0754175];
+%%%
+det_id  = 1;
+ChToEnergyConversion    =  [0.0347612 0.0375124]; % det1
+TOA  = 5.51399;
+%%%
+% det_id  = 2;
+% ChToEnergyConversion    = [0.0341563 -0.00480304]; % det2
+% TOA  = 5.24072;
+%%%
 
 %%%%%%%%%%%%%%%
-% Nominal Experimental Geometry
-TOA0    = 7;
+% Nominal ExperimentalTOA  = 5.95939; Geometry
+TOA0    = 5.5;
 
 %%%%%%%%%%%%%%%
 % X-ray emission lines (eV) - XRAY ORANGE BOOK
@@ -26,14 +39,26 @@ hkls        = load('fcc.hkls')';
 d_hkl       = PlaneSpacings(LattParms, 'cubic', hkls);
 lambda_hkl0 = 2.*d_hkl*sind(TOA0/2);
 E_hkl0      = Angstrom2keV(lambda_hkl0);
-peaks2use   = [3 6 9 10];   %%% USE 4 CeO2 PEAKS TO GET TOA
+peaks2use   = [2 3 4 5 6 7 9];   %%% USE 4 CeO2 PEAKS TO GET TOA
 
 %%%%%%%%%%%%%%%%%
 % USE Ceria diffraction data
-pname_CeO2_spec    = './calibration-examples/mach_feb15_calibration/horizontal';
-fname_CeO2_spec    = 'ceria_calH_40kV_300s_feb13';
-pfname_CeO2_spec   = fullfile(pname_CeO2_spec, fname_CeO2_spec);
-[x, y]  = ReadEDDData(pfname_CeO2_spec, 'IDLFile', 1);
+pname   = 'CeO2_hv_gv_20170314';
+froot   = pname;
+
+fname   = sprintf('%s-%03d-hv.xy', froot, 50);
+pfname  = fullfile(proot, pname, fname);
+
+data    = load(pfname);
+
+x   = 1:1:8192;
+x   = 1:1:8192;
+if det_id == 1
+    y   = data(:,1); %%% ChToEnergyConversion    = [0.0347612 0.0375123];
+elseif det_id == 2
+    y   = data(:,2); %%% ChToEnergyConversion    = [0.0341563 -0.00480304];
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 E_grid  = ChToEnergyConversion(1)*x + ChToEnergyConversion(2);
@@ -50,8 +75,8 @@ ylabel('counts')
 for i = 1:1:length(peaks2use)
     E0  = E_hkl0(peaks2use(i));
 
-    idx1    = find(E_grid < (E0 - 2.75));
-    idx2    = find(E_grid < (E0 + 2.75));
+    idx1    = find(E_grid < (E0 - 1.5));
+    idx2    = find(E_grid < (E0 + 1.5));
     idx1    = idx1(end);
     idx2    = idx2(end);
     
@@ -72,6 +97,8 @@ for i = 1:1:length(peaks2use)
     
     p   = lsqcurvefit(@pfunc, p0, xdata, ydata, pLB, pUB);
     
+    A(i)    = p(1);
+    
     yfit0   = pfunc(p0, xdata);
     yfit    = pfunc(p, xdata);
     
@@ -83,9 +110,10 @@ for i = 1:1:length(peaks2use)
 end
 lambda_fit  = keV2Angstrom(E_fit);
 
-TOA         = lsqcurvefit(@funcBragg, TOA0, d_hkl(peaks2use), lambda_fit);
-lambda_hkl  = 2.*d_hkl*sind(TOA/2);
-E_hkl       = Angstrom2keV(lambda_hkl);
+TOA             = lsqcurvefit(@funcBragg, TOA0, d_hkl(peaks2use), lambda_fit);
+lambda_hkl      = 2.*d_hkl*sind(TOA/2);
+E_hkl           = Angstrom2keV(lambda_hkl);
+pseudo_strain   = E_fit./E_hkl(peaks2use) - 1;
 
 figure(1)
 plot(E_hkl, ones(length(E_hkl), 1), 'k^')
@@ -99,6 +127,11 @@ ylabel('lambda (Andstrom)')
 legend('data points', 'Bragg func fit')
 
 figure(3)
+plot(2.*d_hkl(peaks2use), pseudo_strain, 'ko')
+xlabel('2*d_{hkl} (Angstrom)')
+ylabel('pseudo-strain (-)')
+
+figure(4)
 plot(x, log(y), 'b.-');
 hold on
 plot((CeO2_emission_energy(1,:)-ChToEnergyConversion(2))/ChToEnergyConversion(1), log(CeO2_emission_energy(2,:)), 'g^')

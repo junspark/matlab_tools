@@ -3,9 +3,9 @@ close all
 clc
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-TakeOffAngle    = 2:0.5:5.0;                    % IN deg
-IncSlitSizeRad  = 0.1;                          % IN mm
-OutSlitSizeRad  = 0.1;                          % IN mm
+TakeOffAngle    = 5.0:0.1:5.5;                    % IN deg
+IncSlitSizeRad  = 0.2;                          % IN mm
+OutSlitSizeRad  = 0.2;                          % IN mm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 GaugeLengthZUS  = IncSlitSizeRad*cosd(TakeOffAngle./2)./sind(TakeOffAngle);

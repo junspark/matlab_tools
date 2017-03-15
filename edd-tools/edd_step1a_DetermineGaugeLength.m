@@ -1,47 +1,122 @@
+%%% CAN BE USED TO LOOK AT MOTOR_CAM STACK FOR ALIGNMENT
+
 clear all
 close all
 clc
+
+%%% BASED ON SIMULATION WE SHOULD HAVE 4.17 mm ALONG Z
+% vertical center   : 1.619024
+% vertical fwhm     : 3.188952 
+% horizontal center : 1.612883
+% horizontal fwhm   : 4.181930
+% 50th point to use for TOA calculation
+
+proot   = '/home/s1b/__eval/projects_parkjs/edd_6bm_2017-1/startup_mar17';
+
+format long
+
 %%%%%%%%%%%%%%%%%
 % INPUT
-% CHANNEL TO ENERGY CONVERSION RESULT FROM PREVIOUS STEP USING Cd109
 %%%%%%%%%%%%%%%%%
-ChToEnergyConversion    = [0.03928 0.0754175];
+pname     = 'CeO2_hv_gv_20170314';
 
-%%%%%%%%%%%%%%%
-% Nominal Experimental Geometry
-TOA0    = 5.468202;
+pt_ini  = -3.3;
+pt_fin  = 6.7;
+npts    = 101;
+%%%%%
 
-%%%%%%%%%%%%%%%
-% X-ray emission lines (eV) - XRAY ORANGE BOOK
-% Ce Ka1     Ka2     Kb1     La1    La2    Lb1    Lb2    Lg1  Ma1
-CeO2_emission_energy        = load('Ce.emission.data');
-CeO2_emission_energy(1,:)   = CeO2_emission_energy(1,:)/1000;
+pts_grid    = linspace(pt_ini, pt_fin, npts);
+froot       = pname;
 
-%%%%%%%%%%%%%%%
-% CeO2 lattice constant
-% 5.411651
-% fcc
-LattParms   = 5.411651;
-hkls        = load('fcc.hkls')';
-d_hkl       = PlaneSpacings(LattParms, 'cubic', hkls);
-lambda_hkl0 = 2.*d_hkl*sind(TOA0/2);
-E_hkl0      = Angstrom2keV(lambda_hkl0);
-peaks2use   = [2 3 4];   %%% USE 4 CeO2 PEAKS TO GET TOA
+data_v  = zeros(8192,npts);
+data_h  = zeros(8192,npts);
 
-%%%%%%%%%%%%%%%%%
-% USE Ceria diffraction data
-ngrid   = 31;
-ndata   = 1:1:31;
-fstem   = 'cal_27feb2016_ceria_gv';
-pname	= '/home/beams/S1IDUSER/mnt/s1b/__eval/edd_6bm_2016-1/park_feb16/cal_27feb2016_ceria_gv';
-for i = 1:1:ngrid
-    fname_CeO2_spec    = sprintf('%s-%03d.xy', fstem, i);
-    pfname_CeO2_spec   = fullfile(pname, fname_CeO2_spec);
-    [x, y(:,i)]     = ReadEDDData(pfname_CeO2_spec, 'SpecFile', 1);
+data_v_sum = zeros(npts,1);
+data_h_sum = zeros(npts,1);
+
+roi_v   = 1:8192;
+roi_h   = roi_v;
+
+for i = 1:1:npts
+    fname   = sprintf('%s-%03d-hv.xy', froot, i);
+    pfname  = fullfile(proot, pname, fname);
+    while (exist(pfname) ~= 2)
+        disp(sprintf('waiting for %s', fname))
+        pause(2)
+    end
+    disp(fname);
+    
+    data    = load(pfname);
+    data_v(:,i) = data(:,1);
+    data_h(:,i) = data(:,2);
+    
+    data_v_sum(i)   = sum(data(roi_v,1));
+    data_h_sum(i)   = sum(data(roi_h,2));
 end
 
-figure,
-imagesc(y')
+pkfitting_pars.pfunc_type   = 'pseudovoigt';
+pkfitting_pars.pbkg_order   = 2;
+
+%%% V FIT
+p0  = [ max(data_v_sum); std(pts_grid);   0.5; mean(pts_grid); 0; mean(data_v_sum); ];
+pLB = [          0;   0;    0;    min(pts_grid); -inf; -inf; ];
+pUB = [        inf; inf;    1;    max(pts_grid);  inf;  inf; ];
+pkfitting_pars.xdata    = pts_grid;
+
+[pv, rnv, ~, efv]    = lsqcurvefit(@pfunc_switch, ...
+    p0, pkfitting_pars, data_v_sum, pLB, pUB);
+vfit0   = pfunc_switch(p0, pkfitting_pars);
+vfit    = pfunc_switch(pv, pkfitting_pars);
+disp(sprintf('vertical center   : %f', pv(4)));
+disp(sprintf('vertical fwhm     : %f', pv(2)));
+ 
+%%% H FIT
+p0  = [ max(data_h_sum); std(pts_grid);   0.5;   mean(pts_grid); 0; mean(data_h_sum); ];
+pLB = [          0;   0;    0;    min(pts_grid); -inf; -inf; ];
+pUB = [        inf; inf;    1;    max(pts_grid);  inf;  inf; ];
+pkfitting_pars.xdata    = pts_grid;
+
+[ph, rnh, ~, efh]    = lsqcurvefit(@pfunc_switch, ...
+    p0, pkfitting_pars, data_h_sum, pLB, pUB);
+hfit0   = pfunc_switch(p0, pkfitting_pars);
+hfit    = pfunc_switch(ph, pkfitting_pars);
+disp(sprintf('horizontal center : %f', ph(4)));
+disp(sprintf('horizontal fwhm   : %f', ph(2)));
 
 figure,
-plot(ndata, sum(y))
+subplot(2,1,1);
+imagesc(log(data_v'))
+title(sprintf('%s-v', pname), 'interpreter', 'none')
+xlabel('chan number')
+ylabel('scan number')
+colorbar vert
+colormap jet
+% caxis([0 100])
+
+subplot(2,1,2);
+imagesc((data_h'))
+title(sprintf('%s-h', pname), 'interpreter', 'none')
+xlabel('chan number')
+ylabel('scan number')
+colorbar vert
+colormap jet
+% caxis([0 100])
+
+figure,
+subplot(1,2,1);
+plot(pts_grid, data_v_sum, 'b+')
+hold on
+plot(pts_grid, vfit0, 'r:')
+plot(pts_grid, vfit, 'g-')
+title(sprintf('%s-v', pname), 'interpreter', 'none')
+xlabel('grid (phys units)')
+ylabel('cts')
+
+subplot(1,2,2);
+plot(pts_grid, data_h_sum, 'b+')
+hold on
+plot(pts_grid, hfit0, 'r:')
+plot(pts_grid, hfit, 'g-')
+title(sprintf('%s-h', pname), 'interpreter', 'none')
+xlabel('grid (phys units)')
+ylabel('cts')
