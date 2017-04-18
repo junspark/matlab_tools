@@ -21,6 +21,7 @@ function C = BuildElasticityMatrix(c, varargin)
 % default options
 optcell = {...
     'Symmetry', 'Cubic', ...
+    'Order', '11-22-33-23-13-12', ...
     };
 
 % update option
@@ -31,14 +32,28 @@ if strcmpi(lower(opts.Symmetry), 'cubic')
     c12 = c(2);
     c44 = c(3);
     
-    C   = [...
-        c11 c12 c12 0   0   0;
-        c12 c11 c12 0   0   0;
-        c12 c12 c11 0   0   0;
-        0   0   0   c44 0   0;
-        0   0   0   0   c44 0;
-        0   0   0   0   0   c44;
-        ];
+    if strcmp(opts.Order, '11-22-33-23-13-12')
+        C   = [...
+            c11 c12 c12 0   0   0;
+            c12 c11 c12 0   0   0;
+            c12 c12 c11 0   0   0;
+            0   0   0   c44 0   0;
+            0   0   0   0   c44 0;
+            0   0   0   0   0   c44;
+            ];
+    elseif strcmp(opts.Order, '11-22-33-12-13-23')
+        C   = [...
+            c11 c12 c12 0   0   0;
+            c12 c11 c12 0   0   0;
+            c12 c12 c11 0   0   0;
+            0   0   0   c44 0   0;
+            0   0   0   0   c44 0;
+            0   0   0   0   0   c44;
+            ];
+    else
+        disp('order not supported');
+        return
+    end
 elseif strcmpi(lower(opts.Symmetry), 'hexagonal')
     c11 = c(1);
     c33 = c(2);
@@ -47,14 +62,28 @@ elseif strcmpi(lower(opts.Symmetry), 'hexagonal')
     c44 = c(5);
     c66 = (c11 - c12);
     
-    C   = [...
-        c11 c12 c13 0   0   0;
-        c12 c11 c13 0   0   0;
-        c13 c13 c33 0   0   0;
-        0   0   0   c66 0   0;
-        0   0   0   0   c44 0;
-        0   0   0   0   0   c44;
-        ];
+    if strcmp(opts.Order, '11-22-33-23-13-12')
+        C   = [...
+            c11 c12 c13 0   0   0;
+            c12 c11 c13 0   0   0;
+            c13 c13 c33 0   0   0;
+            0   0   0   c66 0   0;
+            0   0   0   0   c44 0;
+            0   0   0   0   0   c44;
+            ];
+    elseif strcmp(opts.Order, '11-22-33-12-13-23')
+        C   = [...
+            c11 c12 c12 0   0   0;
+            c12 c11 c12 0   0   0;
+            c12 c12 c11 0   0   0;
+            0   0   0   c44 0   0;
+            0   0   0   0   c44 0;
+            0   0   0   0   0   c66;
+            ];
+    else
+        disp('order not supported');
+        return
+    end
 else
     disp('symmetry group not supported')
 end

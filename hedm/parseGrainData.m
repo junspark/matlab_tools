@@ -200,6 +200,7 @@ if strcmpi(opts.Technique, 'ff-midas')
             
             StrainFab   = reshape(A(i, 25:33), 3, 3);
             Strain      = reshape(A(i, 34:42), 3, 3);
+            
             % CONVERT MICRO-STRAIN TO STRAIN
             log(ct).StrainFab   = RLab2Sam*R_ESRF2APS*StrainFab*R_ESRF2APS'*RLab2Sam'./1000000;
             log(ct).Strain      = RLab2Sam*R_ESRF2APS*Strain*R_ESRF2APS'*RLab2Sam'./1000000;
@@ -244,6 +245,7 @@ if strcmpi(opts.Technique, 'ff-midas')
                 log(ct).Stress_vm   = VMStressStrain(Stress_vec);
             end
             log(ct).StrainRMS   = A(i, 43);
+            log(ct).C_xstal     = opts.C_xstal;
             
             %%% THIS IS FOR NEWER VERSION OF THE GRAINS OUTPUT
             if nCols > 43
