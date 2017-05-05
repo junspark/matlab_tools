@@ -63,7 +63,12 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 %
 
 %%% START GCP
-delete(gcp); parpool(12);
+if license('test', 'Parallel_Computing_Toolbox')
+    disp(sprintf('parallel computing toolbox available'));
+    delete(gcp); parpool(12);
+else
+    disp(sprintf('parallel computing toolbox unavailable'));
+end
 
 %%% DEFAULT PARAMETERS
 buffer_size = 8192;
@@ -223,6 +228,11 @@ else
     %%% SELECTIVELY CORRECT IMAGES
     image_num   = opts.lo:1:opts.hi;
     
+    if image_num == -1
+        disp(sprintf('correction did not run'))
+        disp(sprintf('need to specify image numbers'))
+        return
+    end
     parfor i = 1:length(image_num)
         fname   = sprintf(fname_fmt, root_image, image_num(i), ext_image);
         pfname  = fullfile(path_bkg, fname);
@@ -230,7 +240,7 @@ else
         flist       = dir(pfname);
         
         %%% DETERMINE NUMBER OF FRAMES IN THIS STACK
-        num_frame   = CalcNumFrames(flist(i).bytes, buffer_size, frame_size);
+        num_frame   = CalcNumFrames(flist(1).bytes, buffer_size, frame_size);
         %%% CHECK IF THE FRAMES TO SKIP MAKES SENSE
         if max(FramesToIgnore) > num_frame
             %%% SKIP IF MAX FRAME NUMBER TO IGNORE IS LARGER THAN THE TOTAL
@@ -295,4 +305,10 @@ else
         end
     end
 end
-delete(gcp);
+
+if license('test', 'Parallel_Computing_Toolbox')
+    disp(sprintf('parallel computing toolbox available'));
+    delete(gcp);
+else
+    disp(sprintf('parallel computing toolbox unavailable'));
+end
