@@ -10,6 +10,6 @@ vtkwrite is originally from http://www.mathworks.com/matlabcentral/fileexchange/
 
 Tools for postprocessing Near Field-High Energy Diffraction Microscopy / Ice9 results are provided by D. Menasche at Carnegie Mellon University.
 
-This package was developed while JSP was associated with the following institutions - Cornell University / Republic of Korea Army / Argonne National Laboratory.
+This package was developed while JSP was associated with the following institutions - Cornell University / Republic of Korea Army / Argonne National Laboratory. It was also funded by various entities including the National Science Foundation (US), Department of Energy (US), and Department of Defense (US).
 
 This package is distributed as is and no guarantees are made on the correctness of the results.
