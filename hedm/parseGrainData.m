@@ -185,7 +185,7 @@ if strcmpi(opts.Technique, 'ff-midas')
             Quat    = ToFundamentalRegionQ(QuatOfRMat(RMat), qsym);
             Rod     = RodOfQuat(Quat);
             
-            log(ct).GrainID = A(i,1);
+            log(ct).GrainID = A(i,1) + 1e7*iii; %% 1e7*iii gives each layer 10M grains
             log(ct).R       = RMat;
             log(ct).rod     = Rod;
             log(ct).quat    = Quat;
