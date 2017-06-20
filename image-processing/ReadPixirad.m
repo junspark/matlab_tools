@@ -155,7 +155,7 @@ elseif strcmpi(opts.version, 'pixi2')
     %%% CORRECTION TABLE PROVIDED MARK RIVERS
     if opts.apply_ct
         ct  = double(imread(opts.pfname_ct));
-        csq = ct.*csq;
+        csq = ct./csq;
         idx = csq < 0;
         csq(idx)    = 0;
     end 
