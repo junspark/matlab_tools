@@ -145,16 +145,15 @@ elseif strcmpi(opts.version, 'pixi2')
     csq = double(imread(pfname));
     
     % ONLY CRRM MODE (PIXEL MODE) SUPPORTED
-    % fid = fopen('/home/beams/S1IDUSER/mnt/s1a/misc/pixirad2/usb.after_repair/Calibrations/2010.crrm', 'r');
-    % ct  = fread(fid, 'float');
-    % fclose(fid);
+%     fid = fopen('/home/beams/S1IDUSER/mnt/s1a/misc/pixirad2/usb.after_repair/Calibrations/2010.crrm', 'r');
+%     ct  = fread(fid, 'float');
+%     fclose(fid);
     
     %%% NEED TO CHECK ORDERING
     % ct  = reshape(ct, 1024, 402);
     
     %%% CORRECTION TABLE PROVIDED MARK RIVERS
     if opts.apply_ct
-        ct  = double(imread(opts.pfname_ct));
         csq = ct.*csq;
         idx = csq < 0;
         csq(idx)    = 0;

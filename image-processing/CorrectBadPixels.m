@@ -1,4 +1,25 @@
 function CorrectedImageData = CorrectBadPixels(ImageData, BadPixelData)
+% CorrectedImageData - output corrected image based on baspixel data for GE
+% images
+%
+%   INPUT:
+%
+%   ImageData
+%       raw image data
+%
+%   BadPixelData
+%       list of bad pixel number
+%
+%   OUTPUT:
+%
+%   CorrectedImageData
+%       Corrected image
+%
+%   For a given bad pixel, the four neighboring pixels are averged and the
+%   average is assigned. If the bad pixel is an edge pixel, only the pixels
+%   inside the image are avearged.
+
+
 CorrectedImageData  = ImageData;
 nbr1    = BadPixelData - 2048 - 1;
 nbr2	= BadPixelData - 2048 + 1;
