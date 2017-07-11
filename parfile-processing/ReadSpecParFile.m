@@ -284,6 +284,233 @@ switch lower(opts.Version)
         pardata.ev8     = textdata{170};
         pardata.ev9     = textdata{171};
         pardata.ev10    = textdata{172};
+    case 'mpe_ff_standard'
+        fmtstring   = ['%s %s %d %s %d ' ...
+            '%s %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f ' ...
+            '%s %f %f %f %f ' ...
+            '%s %f %f %f %f %f %f %f %f %f'];
+        
+        %%% READ IN DATA USING FORMAT STRING
+        textdata  = textscan(fid, fmtstring);
+        
+        %%% PARSE DATA
+        pardata.day     = textdata{1};
+        pardata.month   = textdata{2};
+        pardata.date    = textdata{3};
+        pardata.time    = textdata{4};
+        pardata.year    = textdata{5};
+        
+        % pardata.scanmtr = textdata{26};
+        % pardata.scanini = textdata{27};
+        % pardata.scanfin = textdata{28};
+        % pardata.scanpos = textdata{29};
+        
+        % pardata.framefin    = textdata{33};
+        
+        pardata.epoch_time  = textdata{37};
+        pardata.integ_time  = textdata{38};
+        pardata.Iring       = nan;
+        pardata.und_gap     = nan;
+        pardata.energy      = nan;
+        pardata.energy_cal  = nan;
+        pardata.foil_pos    = nan;
+        pardata.atten_pos   = nan;
+        
+        pardata.det1_fname              = textdata{31};
+        pardata.det1_fnum               = textdata{32};
+        pardata.det1_frames_per_file    = nan;
+        pardata.det1_time_per_frame     = textdata{30};
+        
+        pardata.det2_fname              = nan;
+        pardata.det2_fnum               = nan;
+        pardata.det2_frames_per_file    = nan;
+        pardata.det2_time_per_frame     = nan;
+        
+        pardata.det3_fname              = nan;
+        pardata.det3_fnum               = nan;
+        pardata.det3_frames_per_file    = nan;
+        pardata.det3_time_per_frame     = nan;
+        
+        pardata.det4_fname              = nan;
+        pardata.det4_fnum               = nan;
+        pardata.det4_frames_per_file    = nan;
+        pardata.det4_time_per_frame     = nan;
+        
+        pardata.det5_fname              = nan;
+        pardata.det5_fnum               = nan;
+        pardata.det5_frames_per_file    = nan;
+        pardata.det5_time_per_frame     = nan;
+        
+        pardata.det6_fname              = nan;
+        pardata.det6_fnum               = nan;
+        pardata.det6_frames_per_file    = nan;
+        pardata.det6_time_per_frame     = nan;
+        
+        pardata.det7_fname              = nan;
+        pardata.det7_fnum               = nan;
+        pardata.det7_frames_per_file    = nan;
+        pardata.det7_time_per_frame     = nan;
+        
+        pardata.det8_fname              = nan;
+        pardata.det8_fnum               = nan;
+        pardata.det8_frames_per_file    = nan;
+        pardata.det8_time_per_frame     = nan;
+        
+        pardata.det9_fname              = nan;
+        pardata.det9_fnum               = nan;
+        pardata.det9_frames_per_file    = nan;
+        pardata.det9_time_per_frame     = nan;
+        
+        pardata.det10_fname             = nan;
+        pardata.det10_fnum              = nan;
+        pardata.det10_frames_per_file   = nan;
+        pardata.det10_time_per_frame    = nan;
+        
+        pardata.scaler1_val     = textdata{34};
+        pardata.scaler1_units   = nan;
+        pardata.scaler2_val     = textdata{35};
+        pardata.scaler2_units   = nan;
+        pardata.scaler3_val     = textdata{36};
+        pardata.scaler3_units   = nan;
+        pardata.scaler4_val     = textdata{37};
+        pardata.scaler4_units   = nan;
+        pardata.scaler5_val     = nan;
+        pardata.scaler5_units   = nan;
+        pardata.scaler6_val     = nan;
+        pardata.scaler6_units   = nan;
+        pardata.scaler7_val     = nan;
+        pardata.scaler7_units   = nan;
+        pardata.scaler8_val     = nan;
+        pardata.scaler8_units   = nan;
+        pardata.scaler9_val     = nan;
+        pardata.scaler9_units   = nan;
+        pardata.scaler10_val    = nan;
+        pardata.scaler10_units  = nan;
+        
+        pardata.samX        = textdata{24};
+        pardata.samY        = nan;
+        pardata.samZ        = textdata{25};
+        
+        pardata.aX          = textdata{17};
+        pardata.aY          = textdata{23};
+        pardata.aZ          = textdata{18};
+        
+        pardata.samX2       = textdata{16};
+        pardata.samY2       = textdata{21};
+        pardata.samZ2       = nan;
+        pardata.samOther    = textdata{22};
+        
+        pardata.det1_pos1   = textdata{11};
+        pardata.det1_pos2   = nan;
+        pardata.det1_pos3   = textdata{12};
+        
+        pardata.det2_pos1   = textdata{13};
+        pardata.det2_pos2   = textdata{15};
+        pardata.det2_pos3   = textdata{14};
+        
+        pardata.det3_pos1   = textdata{10};
+        pardata.det3_pos2   = nan;
+        pardata.det3_pos3   = nan;
+        
+        pardata.det4_pos1   = textdata{7};
+        pardata.det4_pos2   = textdata{9};
+        pardata.det4_pos3   = textdata{8};
+        
+        pardata.det5_pos1   = nan;
+        pardata.det5_pos2   = nan;
+        pardata.det5_pos3   = nan;
+        
+        pardata.det6_pos1   = nan;
+        pardata.det6_pos2   = nan;
+        pardata.det6_pos3   = nan;
+       
+        pardata.det7_pos1   = nan;
+        pardata.det7_pos2   = nan;
+        pardata.det7_pos3   = nan;
+        
+        pardata.det8_pos1   = nan;
+        pardata.det8_pos2   = nan;
+        pardata.det8_pos3   = nan;
+        
+        pardata.det9_pos1   = nan;
+        pardata.det9_pos2   = nan;
+        pardata.det9_pos3   = nan;
+        
+        pardata.det10_pos1  = nan;
+        pardata.det10_pos2  = nan;
+        pardata.det10_pos3  = nan;
+        
+        pardata.hex_pos1    = nan;
+        pardata.hex_pos2    = nan;
+        pardata.hex_pos3    = nan;
+        pardata.hex_pos4    = nan;
+        pardata.hex_pos5    = nan;
+        pardata.hex_pos6    = nan;
+        pardata.hex_pos7    = nan;
+        
+        pardata.slit1_V_size    = nan;
+        pardata.slit1_V_pos     = nan;
+        pardata.slit1_H_size    = nan;
+        pardata.slit1_H_pos     = nan;
+        
+        pardata.slit2_V_size    = nan;
+        pardata.slit2_V_pos     = nan;
+        pardata.slit2_H_size    = nan;
+        pardata.slit2_H_pos     = nan;
+        
+        pardata.slit3_V_size    = nan;
+        pardata.slit3_V_pos     = nan;
+        pardata.slit3_H_size    = nan;
+        pardata.slit3_H_pos     = nan;
+        
+        pardata.slit4_V_size    = nan;
+        pardata.slit4_V_pos     = nan;
+        pardata.slit4_H_size    = nan;
+        pardata.slit4_H_pos     = nan;
+        
+        pardata.slit5_V_size    = nan;
+        pardata.slit5_V_pos     = nan;
+        pardata.slit5_H_size    = nan;
+        pardata.slit5_H_pos     = nan;
+        
+        pardata.slit6_V_size    = nan;
+        pardata.slit6_V_pos     = nan;
+        pardata.slit6_H_size    = nan;
+        pardata.slit6_H_pos     = nan;
+        
+        pardata.lens1_pos1  = nan;
+        pardata.lens1_pos2  = nan;
+        
+        pardata.lens2_pos1  = nan;
+        pardata.lens2_pos2  = nan;
+        
+        pardata.lens3_pos1  = nan;
+        pardata.lens3_pos2  = nan;
+        
+        pardata.lens4_pos1  = nan;
+        pardata.lens4_pos2  = nan;
+        
+        pardata.encoder1    = textdata{19};
+        pardata.encoder2    = textdata{20};
+        pardata.encoder3    = nan;
+        pardata.encoder4    = nan;
+        pardata.encoder5    = nan;
+        pardata.encoder6    = nan;
+        pardata.encoder7    = nan;
+        pardata.encoder8    = nan;
+        pardata.encoder9    = nan;
+        pardata.encoder10   = nan;
+        
+        pardata.ev1     = nan;
+        pardata.ev2     = nan;
+        pardata.ev3     = nan;
+        pardata.ev4     = nan;
+        pardata.ev5     = nan;
+        pardata.ev6     = nan;
+        pardata.ev7     = nan;
+        pardata.ev8     = nan;
+        pardata.ev9     = nan;
+        pardata.ev10    = nan;
     case 'coratella_feb15'
         disp(opts.Version)
         numchs      = 58;

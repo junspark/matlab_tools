@@ -146,7 +146,7 @@ end
 if opts.CorrectAllImages
     %%% CORRECT ALL IMAGES
     %%% GET A LIST OF ALL IMAGES MATCHING THE PATTERN
-    cmd = ['flist = dir(''', path_image, filesep, '*.', ext_image, ''');'];
+    cmd = ['flist = dir(''', path_image, filesep, root_image, '*.', ext_image, ''');'];
     eval(cmd)
     if isempty(flist)
         error('specified files do not exist');

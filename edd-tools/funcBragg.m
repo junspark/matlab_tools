@@ -1,5 +1,5 @@
 function lambda = funcBragg(tth, d_hkl)
-% funcBragg - Bragg function to determine the take off angle in EDD setup
+% funcBragg - Bragg function to determine the 2 theta angle in EDD setup
 %
 %   USAGE:
 %
