@@ -317,8 +317,8 @@ switch lower(opts.Version)
         pardata.atten_pos   = nan;
         
         pardata.det1_fname              = textdata{31};
-        pardata.det1_fnum               = textdata{32};
-        pardata.det1_frames_per_file    = nan;
+        pardata.det1_fnum               = textdata{33};%32
+        pardata.det1_frames_per_file    = textdata{34};
         pardata.det1_time_per_frame     = textdata{30};
         
         pardata.det2_fname              = nan;
@@ -366,13 +366,13 @@ switch lower(opts.Version)
         pardata.det10_frames_per_file   = nan;
         pardata.det10_time_per_frame    = nan;
         
-        pardata.scaler1_val     = textdata{34};
+        pardata.scaler1_val     = textdata{35}; %34
         pardata.scaler1_units   = nan;
-        pardata.scaler2_val     = textdata{35};
+        pardata.scaler2_val     = textdata{36}; %35
         pardata.scaler2_units   = nan;
-        pardata.scaler3_val     = textdata{36};
+        pardata.scaler3_val     = textdata{37}; %36
         pardata.scaler3_units   = nan;
-        pardata.scaler4_val     = textdata{37};
+        pardata.scaler4_val     = textdata{38}; %37
         pardata.scaler4_units   = nan;
         pardata.scaler5_val     = nan;
         pardata.scaler5_units   = nan;

@@ -29,8 +29,12 @@ d_grid      = (XRDIMAGE.Instr.wavelength/2)./sind(tth_grid./2);
 %         intensity_in_tth_grid(i,j)  = (dR*polimg.intensity(i,idx1) + dL*polimg.intensity(i,idx2))/(dL + dR);
 %     end
 % end
+% keyboard
+
 for i = 1:1:XRDIMAGE.CakePrms.bins(1)
     intensity_in_tth_grid2(i,:) = interp1(polimg.mapped_tth_for_intensity(i,:), polimg.intensity(i,:), tth_grid, 'nearest');
 end
 intensity_in_tth_grid   = intensity_in_tth_grid2;
+
+
 % imagesc(intensity_in_tth_grid'-intensity_in_tth_grid2')
