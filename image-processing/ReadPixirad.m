@@ -32,11 +32,20 @@ function [csq, pixelsize] = ReadPixirad(pfname, varargin)
 %   pfname_ct (optional - pixi2)
 %       full path and file name of the correction table. If not provided,
 %       correction table located in
-%       s1a/misc/pixirad2/usb.after_repair/Calibrations/2010_crrm.tif is
+%       /home/beams/S1IDUSER/mnt/s1b/__eval/matlab_tools/image-processing is
 %       loaded.
 %
 %   apply_ct (optional - pixi2)
 %       applies correction table if 1.
+%
+%   pfname_bpt (optional - pixi2)
+%       full path and file name of the bad pixel table. If not provided,
+%       correction table located in
+%       /home/beams/S1IDUSER/mnt/s1b/__eval/matlab_tools/image-processing is
+%       loaded.
+%
+%   apply_bpt (optional - pixi2)
+%       applies bad pixel table if 1.
 %
 %   OUTPUT:
 %
@@ -56,8 +65,10 @@ optcell = {...
     'nr', 512, ...
     'nxsq', 476, ...
     'display', 'off', ...
-    'pfname_ct', '/home/beams/S1IDUSER/mnt/s1a/misc/pixirad2/usb.after_repair/Calibrations/2010_crrm.tif', ...
-    'apply_ct', 1, ...
+    'pfname_ct', '/home/beams/S1IDUSER/mnt/s1b/__eval/matlab_tools/image-processing/correction_map.mat', ...
+    'apply_ct', 0, ...
+    'pfname_bpt', '/home/beams/S1IDUSER/mnt/s1b/__eval/matlab_tools/image-processing/badpixel_map.tif', ...
+    'apply_bpt', 0, ...
     };
 
 % update option
@@ -144,19 +155,19 @@ elseif strcmpi(opts.version, 'pixi2')
     % read in image
     csq = double(imread(pfname));
     
-    % ONLY CRRM MODE (PIXEL MODE) SUPPORTED
-    % fid = fopen('/home/beams/S1IDUSER/mnt/s1a/misc/pixirad2/usb.after_repair/Calibrations/2010.crrm', 'r');
-    % ct  = fread(fid, 'float');
-    % fclose(fid);
+    % ONLY CRRM MODE (PIXEL MODE) SUPPORTED - THIS IS GENERATED BASED ON pixirad_jul17 DATA
+    ct  = load(opts.pfname_ct);
+    ct  = ct.correction_map;
+    bpt = imread(opts.pfname_bpt);
     
-    %%% NEED TO CHECK ORDERING
-    % ct  = reshape(ct, 1024, 402);
-    
-    %%% CORRECTION TABLE PROVIDED MARK RIVERS
     if opts.apply_ct
-        ct  = double(imread(opts.pfname_ct));
-        csq = ct.*csq;
-        idx = csq < 0;
-        csq(idx)    = 0;
+        csq = csq./ct;
     end 
+    if opts.apply_bpt
+        [x_bpt, y_bpt]      = find(bpt == 1);
+        Vq                  = interp2(csq, x_bpt, y_bpt);
+        for i = 1:1:length(x_bpt)
+            csq(x_bpt(i), y_bpt(i))   = Vq(i);
+        end
+    end
 end
