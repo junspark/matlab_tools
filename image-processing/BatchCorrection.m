@@ -63,9 +63,14 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 %
 
 %%% START GCP
-if license('test', 'Parallel_Computing_Toolbox')
+if license('test', 'distrib_computing_toolbox')
     disp(sprintf('parallel computing toolbox available'));
-    delete(gcp); parpool(12);
+%     delete(gcp); 
+%     parpool(12);
+    
+    pc  = parcluster('local');
+    pc.JobStorageLocation = '/home/beams12/S1IDUSER/.matlab/local_cluster_jobs/R2016b/batchcorr_jobs';
+    parpool(pc);
 else
     disp(sprintf('parallel computing toolbox unavailable'));
 end
@@ -306,7 +311,8 @@ else
     end
 end
 
-if license('test', 'Parallel_Computing_Toolbox')
+if license('test', 'distrib_computing_toolbox')
+    pause(2)
     disp(sprintf('parallel computing toolbox available'));
     delete(gcp);
 else
