@@ -312,7 +312,6 @@ else
 end
 
 if license('test', 'distrib_computing_toolbox')
-    pause(2)
     disp(sprintf('parallel computing toolbox available'));
     delete(gcp);
 else

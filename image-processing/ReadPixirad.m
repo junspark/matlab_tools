@@ -156,12 +156,20 @@ elseif strcmpi(opts.version, 'pixi2')
     csq = double(imread(pfname));
     
     % ONLY CRRM MODE (PIXEL MODE) SUPPORTED - THIS IS GENERATED BASED ON pixirad_jul17 DATA
-    ct  = load(opts.pfname_ct);
-    ct  = ct.correction_map;
+    % ct  = load(opts.pfname_ct);
+    % ct  = ct.correction_map;
+    % ct  = fliplr(ct);
+    
+    % ONLY CRRM MODE (PIXEL MODE) SUPPORTED - THIS IS FROM THE VENDOR
+    ct  = imread('/home/beams/S1IDUSER/mnt/s1a/misc/pixirad2/usb.after_repair/Calibrations/2010_crrm.tif');
+    ct  = fliplr(ct');
+    
     bpt = imread(opts.pfname_bpt);
+    % bpt = fliplr(bpt);
     
     if opts.apply_ct
-        csq = csq./ct;
+        % csq = csq./ct;
+        csq = csq.*ct;
     end 
     if opts.apply_bpt
         [x_bpt, y_bpt]      = find(bpt == 1);
