@@ -185,46 +185,42 @@ elseif strcmpi(opts.version, 'pixi2')
     if opts.apply_bpt
         [n, m]  = size(csq);
         
-        there_are_zeros = true;
-        ct  = 0;
-        while there_are_zeros && (ct < 100)
-            disp(sprintf('removing bad pixels - %d bad pixels exist', sum(bpt(:))))
-            [x_bpt, y_bpt]      = find(bpt == 1);
-            
-            %%% GET NEIGHBOR PIXEL VALUES
-            for i = 1:1:length(x_bpt)
-                if (x_bpt(i)-1) >= 1
-                    if (y_bpt(i)-1) >= 1
-                        pv(1)   = csq(x_bpt(i)-1, y_bpt(i)-1); % nw
-                    end
-                    if (y_bpt(i)+1) <= m
-                        pv(2)   = csq(x_bpt(i)-1, y_bpt(i)+1); % ne
-                    end
-                    pv(3)   = csq(x_bpt(i)-1, y_bpt(i)); % n
-                end
-                if (x_bpt(i)+1) <= n
-                    if (y_bpt(i)-1) >= 1
-                        pv(4)   = csq(x_bpt(i)+1, y_bpt(i)-1); % sw
-                    end
-                    if (y_bpt(i)+1) <= m
-                        pv(5)   = csq(x_bpt(i)+1, y_bpt(i)+1); % se
-                    end
-                    pv(6)   = csq(x_bpt(i)+1, y_bpt(i)); % s
-                end
-                
-                if (y_bpt(i)+1) <= m
-                    pv(7)   = csq(x_bpt(i), y_bpt(i)+1); % e
-                end
+        disp(sprintf('removing bad pixels - %d bad pixels exist', sum(bpt(:))))
+        [x_bpt, y_bpt]      = find(bpt == 1);
+        
+        %%% GET NEIGHBOR PIXEL VALUES
+        for i = 1:1:length(x_bpt)
+            if (x_bpt(i)-1) >= 1
                 if (y_bpt(i)-1) >= 1
-                    pv(8)   = csq(x_bpt(i), y_bpt(i)-1); % w
+                    pv(1)   = csq(x_bpt(i)-1, y_bpt(i)-1); % nw
                 end
-                csq(x_bpt(i), y_bpt(i)) = mean(pv, 'omitnan');
+                if (y_bpt(i)+1) <= m
+                    pv(2)   = csq(x_bpt(i)-1, y_bpt(i)+1); % ne
+                end
+                pv(3)   = csq(x_bpt(i)-1, y_bpt(i)); % n
             end
-            bpt = (csq == 0);
-            there_are_zeros = ~isempty(find(bpt == 1));
+            if (x_bpt(i)+1) <= n
+                if (y_bpt(i)-1) >= 1
+                    pv(4)   = csq(x_bpt(i)+1, y_bpt(i)-1); % sw
+                end
+                if (y_bpt(i)+1) <= m
+                    pv(5)   = csq(x_bpt(i)+1, y_bpt(i)+1); % se
+                end
+                pv(6)   = csq(x_bpt(i)+1, y_bpt(i)); % s
+            end
             
-            ct  = ct + 1;
-            disp(sprintf('removing bad pixels - pass number %d', ct))
+            if (y_bpt(i)+1) <= m
+                pv(7)   = csq(x_bpt(i), y_bpt(i)+1); % e
+            end
+            if (y_bpt(i)-1) >= 1
+                pv(8)   = csq(x_bpt(i), y_bpt(i)-1); % w
+            end
+            csq(x_bpt(i), y_bpt(i)) = mean(pv, 'omitnan');
+            
+            %%% UPDATE BAD PIXEL TABLE
+            if csq(x_bpt(i), y_bpt(i))  == 0 
+            else
+                enbpt(x_bpt(i), y_bpt(i)) = 0;
         end
     end
 end

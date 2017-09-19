@@ -115,8 +115,9 @@ for i = 1:1:length(bkg_num)
     
     flist       = dir(pfname);
     if isempty(flist)
-        fprintf('check if %s exists\n', pfname);
-        return
+        %fprintf('check if %s exists\n', pfname);
+        %return
+        error('check if %s exists\n', pfname); % edited by CH 7/31/17
     end
     num_frame   = CalcNumFrames(flist.bytes, buffer_size, frame_size);
     
@@ -142,9 +143,10 @@ else
     FramesToIgnore  = unique(FramesToIgnore);
     idx = FramesToIgnore <= 0;
     if sum(idx) > 0
-        disp('check frame numbers to ingore ...');
-        disp('positive integers only ...');
-        return
+        %disp('check frame numbers to ingore ...');
+        %disp('positive integers only ...');
+        %return
+        error('check frame numbers to ingore ...\npositive integers only ...\n'); % edited by CH 7/31/17
     end
 end
 
@@ -234,9 +236,10 @@ else
     image_num   = opts.lo:1:opts.hi;
     
     if image_num == -1
-        disp(sprintf('correction did not run'))
-        disp(sprintf('need to specify image numbers'))
-        return
+        %disp(sprintf('correction did not run'))
+        %disp(sprintf('need to specify image numbers'))
+        %return
+        error('correction did not run\nneed to specify image numbers\n'); % edited by CH 7/31/17
     end
     parfor i = 1:length(image_num)
         fname   = sprintf(fname_fmt, root_image, image_num(i), ext_image);

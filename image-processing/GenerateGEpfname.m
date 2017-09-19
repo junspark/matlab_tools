@@ -33,7 +33,8 @@ else
         % fname_base  = sprintf([ImagePars.fbase, '%05d.%s'], ImagePars.fnumber(i), ImagePars.fext);
         fname_base  = sprintf([ImagePars.fbase, '%0', num2str(ImagePars.numdigs), 'd.%s'], ImagePars.fnumber(i), ImagePars.fext);
         for j = 1:1:ImagePars.numframe
-            fname   = sprintf([fname_base, '.frame%d.cor'], j);
+            %fname   = sprintf([fname_base, '.frame%d.cor'], j);
+            fname   = sprintf([fname_base, '.frame.%d.cor'], j); % edited by CH on 8/3 to reflect format of batchcorr output by adding a '.'
             pfname{i,j} = fullfile(ImagePars.pname, fname);
         end
     end
