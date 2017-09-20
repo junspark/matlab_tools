@@ -72,7 +72,6 @@ optcell = {...
     'pfname_ct', '/home/beams/S1IDUSER/mnt/s1b/__eval/matlab_tools/image-processing/sensitivity_map_Pb.mat', ...
     'apply_bpt', 0, ...
     'pfname_bpt', '/home/beams/S1IDUSER/mnt/s1b/__eval/matlab_tools/image-processing/bad_pixel_map_Pb.mat', ...
-    'apply_zero_removal', 0, ...
     };
 
 % update option
@@ -173,12 +172,13 @@ elseif strcmpi(opts.version, 'pixi2')
     
     bpt = load(opts.pfname_bpt);
     bpt = bpt.bpt;
+    % bpt = bpt | isnan(ct);
     
     %%% SENSITIVITY CORRECTOIN
     if opts.apply_ct
         % csq = csq./ct;
         csq = csq.*ct;
-    end 
+    end
     
     %%% BAD PIXEL CORRECTION
     %%% MULTIPLE PASSES TO REMOVE ALL THE ZEROS
@@ -186,8 +186,8 @@ elseif strcmpi(opts.version, 'pixi2')
         [n, m]  = size(csq);
         
         there_are_zeros = true;
-        ct  = 0;
-        while there_are_zeros && (ct < 100)
+        counter = 0;
+        while there_are_zeros && (counter < 5)
             disp(sprintf('removing bad pixels - %d bad pixels exist', sum(bpt(:))))
             [x_bpt, y_bpt]      = find(bpt == 1);
             
@@ -223,8 +223,8 @@ elseif strcmpi(opts.version, 'pixi2')
             bpt = (csq == 0);
             there_are_zeros = ~isempty(find(bpt == 1));
             
-            ct  = ct + 1;
-            disp(sprintf('removing bad pixels - pass number %d', ct))
+            counter = counter + 1;
+            disp(sprintf('removing bad pixels - pass number %d', counter))
         end
     end
 end
