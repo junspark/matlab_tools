@@ -1,5 +1,5 @@
-function t = MatrixOfStressStrainInVM(v, varargin)
-% MatrixOfStressStrainInVM - Converts vectorized stress (strain) to a
+function t = MatrixOfStressStrainVectorInVM(v, varargin)
+% MatrixOfStressStrainVectorInVM - Converts vectorized stress (strain) to a
 % matrix
 %
 %   USAGE:
@@ -13,8 +13,15 @@ function t = MatrixOfStressStrainInVM(v, varargin)
 %       13, 23] order. Shears are expected to have factor of sqrt(2)
 %       multiplied to them already.
 %
+%   OUTPUT:
+%
 %   t
 %       stress (strain) matrix.
+%
+%   NOTE:
+%       This method of vectorizing and associated rotation works as long 
+%       as the shear components do not contribute to the normal components
+%       and vice versa.
 
 % default options
 optcell = {...

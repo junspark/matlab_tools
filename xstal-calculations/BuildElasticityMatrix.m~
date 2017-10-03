@@ -16,10 +16,7 @@ function C = BuildElasticityMatrix(c, varargin)
 %
 %   C   = (6 x 6) matrix with properly placed components
 %
-%   NOTE:
-%       This method of vectorizing and associated rotation works as long 
-%       as the shear components do not contribute to the normal components
-%       and vice versa.
+
 
 % default options
 optcell = {...
@@ -49,9 +46,9 @@ if strcmpi(lower(opts.Symmetry), 'cubic')
             c11 c12 c12 0   0   0;
             c12 c11 c12 0   0   0;
             c12 c12 c11 0   0   0;
-            0   0   0   2*c44 0   0;
-            0   0   0   0   2*c44 0;
-            0   0   0   0   0   2*c44;
+            0   0   0   c44 0   0;
+            0   0   0   0   c44 0;
+            0   0   0   0   0   c44;
             ];
     else
         disp('order not supported');
@@ -63,25 +60,25 @@ elseif strcmpi(lower(opts.Symmetry), 'hexagonal')
     c12 = c(3);
     c13 = c(4);
     c44 = c(5);
-    c66 = (c11 - c12)/2;
+    c66 = (c11 - c12);
     
     if strcmp(opts.Order, '11-22-33-23-13-12')
         C   = [...
             c11 c12 c13 0   0   0;
             c12 c11 c13 0   0   0;
             c13 c13 c33 0   0   0;
-            0   0   0   2*c66 0   0;
-            0   0   0   0   2*c44 0;
-            0   0   0   0   0   2*c44;
+            0   0   0   c66 0   0;
+            0   0   0   0   c44 0;
+            0   0   0   0   0   c44;
             ];
     elseif strcmp(opts.Order, '11-22-33-12-13-23')
         C   = [...
             c11 c12 c12 0   0   0;
             c12 c11 c12 0   0   0;
             c12 c12 c11 0   0   0;
-            0   0   0   2*c44 0   0;
-            0   0   0   0   2*c44 0;
-            0   0   0   0   0   2*c66;
+            0   0   0   c44 0   0;
+            0   0   0   0   c44 0;
+            0   0   0   0   0   c66;
             ];
     else
         disp('order not supported');
