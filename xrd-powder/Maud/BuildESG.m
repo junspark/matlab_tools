@@ -1,9 +1,9 @@
-function BuildESG(pfname, polImg, instr, cakeParms)
+function BuildESG(pfname, polImg, distance, wavelength, omega, chi, cakeParms)
 % BuildESG - builds ESG file for MAUD input
 %
 %   USAGE:
 %
-%   BuildESG(pfname, polImg, instr, cakeParms)
+%   BuildESG(pfname, polImg, distance, wavelength, omega, chi, cakeParms)
 %
 %   INPUT:
 %
@@ -13,8 +13,17 @@ function BuildESG(pfname, polImg, instr, cakeParms)
 %   polImg
 %           is the caked data generated using instr and cakeParms
 % 
-%   instr
-%           is the structure array that defines the x-ray instrument
+%   distance
+%           is the sample to detector distance
+%
+%   wavelength
+%           is the sample to detector distance
+%
+%   omega
+%           is the rotation about the Y axis in APS
+%
+%   chi
+%           is the rotation about the Z axis in APS (rarely used)
 %
 %   cakeParms
 %           is the structure array that defines the caking parameters
@@ -23,6 +32,11 @@ function BuildESG(pfname, polImg, instr, cakeParms)
 %           
 %           none
 %
+
+instr.distance      = distance;
+instr.wavelength    = wavelength;
+instr.omega         = omega;
+instr.chi           = chi;
 
 r   = tand(polImg.tth_grid).*instr.distance;
 I   = polImg.intensity_in_tth_grid;

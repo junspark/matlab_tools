@@ -230,7 +230,7 @@ if strcmpi(opts.Technique, 'ff-midas')
                 StrainFab_vec       = VectorOfStressStrainMatrixInVM(log(i).StrainFab);
                 StressFab_vec       = C*StrainFab_vec;
                 log(ct).StressFab   	= StressFab_vec;
-                log(ct).StressFab_mtx   = MatrixOfStressStrainInVM(StressFab_vec);
+                log(ct).StressFab_mtx   = MatrixOfStressStrainVectorInVM(StressFab_vec);
                 log(ct).StressFab_h     = VolumetricStressStrain(StressFab_vec);
                 log(ct).StressFab_d     = DeviatoricStressStrain(StressFab_vec);
                 log(ct).StressFab_vm    = VMStressStrain(StressFab_vec);
@@ -239,7 +239,7 @@ if strcmpi(opts.Technique, 'ff-midas')
                 Strain_vec          = VectorOfStressStrainMatrixInVM(log(i).Strain);
                 Stress_vec          = C*Strain_vec;
                 log(ct).Stress    	= Stress_vec;
-                log(ct).Stress_mtx  = MatrixOfStressStrainInVM(Stress_vec);
+                log(ct).Stress_mtx  = MatrixOfStressStrainVectorInVM(Stress_vec);
                 log(ct).Stress_h    = VolumetricStressStrain(Stress_vec);
                 log(ct).Stress_d    = DeviatoricStressStrain(Stress_vec);
                 log(ct).Stress_vm   = VMStressStrain(Stress_vec);
