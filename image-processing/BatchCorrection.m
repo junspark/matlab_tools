@@ -63,7 +63,7 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 %
 
 %%% START GCP
-if license('test', 'distrib_computing_toolbox')
+if license('test', 'distrib_computing_toolbox') && isunix
     disp(sprintf('parallel computing toolbox available'));
 %     delete(gcp); 
 %     parpool(12);
@@ -117,7 +117,7 @@ for i = 1:1:length(bkg_num)
     if isempty(flist)
         %fprintf('check if %s exists\n', pfname);
         %return
-        error('check if %s exists\n', pfname); % edited by CH 7/31/17
+        error('check if %s exists\n', pfname); % edited by Connor Horn 7/31/17
     end
     num_frame   = CalcNumFrames(flist.bytes, buffer_size, frame_size);
     
@@ -146,7 +146,7 @@ else
         %disp('check frame numbers to ingore ...');
         %disp('positive integers only ...');
         %return
-        error('check frame numbers to ingore ...\npositive integers only ...\n'); % edited by CH 7/31/17
+        error('check frame numbers to ingore ...\npositive integers only ...\n'); % edited by Connor Horn 7/31/17
     end
 end
 
@@ -314,7 +314,7 @@ else
     end
 end
 
-if license('test', 'distrib_computing_toolbox')
+if license('test', 'distrib_computing_toolbox') && isunix
     disp(sprintf('parallel computing toolbox available'));
     delete(gcp);
 else
