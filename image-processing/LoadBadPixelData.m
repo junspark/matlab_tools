@@ -15,6 +15,24 @@ function BadPixelData = LoadBadPixelData(genum)
 %   NOTE:
 %       only works for GE 1-4. Returns an empty array for other GEs.
 
+%%% CHECK IF RUNNING AT APS SITE
+if ispc
+    [~, w]   = dos('HOSTNAME');
+    if (isempty(strfind(w, 'kerner')) & isempty(strfind(w, 'riesling')) & isempty(strfind(w, 'sec1parkjs')))
+        disp('bad pixel data does not exist at this location.')
+        disp('returning empty matrix ...')
+        BadPixelData    = [];
+        return
+    end
+elseif isunix
+    [~, w]  = unix('echo $HOSTNAME');
+    if ~contains(w(1:end-1), 'xray.aps.anl.gov')
+        disp('bad pixel data does not exist at this location.')
+        disp('returning empty matrix ...')
+        BadPixelData    = [];
+        return
+    end
+end
 
 if genum == 1
     if isunix

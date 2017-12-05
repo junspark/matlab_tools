@@ -1,4 +1,4 @@
-function y = pfunc_switch(p, params)
+function y = pfunc_switch(p, xr, params)
 % pfunc_switch - switch objective function for peak fitting
 %
 %   USAGE:
@@ -8,11 +8,13 @@ function y = pfunc_switch(p, params)
 %   INPUT:
 %   p
 %       parameters for a peak appropriate for the peak function of choice
-%
+%   
+%   xr
+%       data in the x-axis
+%   
 %   params
 %       structure array with the following fields
 % 
-%       xdata       : data in the x-axis
 %       pfunc_type  : peak function type (options are splitpseudovoigt,
 %           gaussian, lorentzian, and pseudovoigt)
 %       pbkg_order  : back ground order
@@ -24,7 +26,8 @@ function y = pfunc_switch(p, params)
 %
 p	= p(:);
 
-xdata   = params.xdata;
+% xdata   = params.xdata;
+xdata   = xr;
 xdata   = xdata(:);
 y       = xdata.*0;
 

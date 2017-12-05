@@ -65,7 +65,7 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 %%% START GCP
 if license('test', 'distrib_computing_toolbox') && isunix
     disp(sprintf('parallel computing toolbox available'));
-%     delete(gcp); 
+	delete(gcp); 
 %     parpool(12);
     
     pc  = parcluster('local');
@@ -100,7 +100,7 @@ ext_image   = ext_bkg;
 %%% SETUP FILE NAME PATTERN
 fname_fmt   = sprintf('%%s%%0%dd.%%s', opts.NumDigits);
 
-%%% BAD PIXEL CORRECTION    %%% NOT YET IMPLEMENTED
+%%% BAD PIXEL CORRECTION
 BadPixelData    = LoadBadPixelData(genum);
 
 %%% CREATE OUTPUT PATH
@@ -146,7 +146,7 @@ else
         %disp('check frame numbers to ingore ...');
         %disp('positive integers only ...');
         %return
-        error('check frame numbers to ingore ...\npositive integers only ...\n'); % edited by Connor Horn 7/31/17
+        error('check frame numbers to ignore ...\npositive integers only ...\n'); % edited by Connor Horn 7/31/17
     end
 end
 
