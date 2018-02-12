@@ -29,7 +29,7 @@ function PlotSPF(PFpts, Data, varargin)
 %                      default is 'y'
 %   'zaxis'            label for the z-axis
 %                      default is 'z'
-%   'ShowSurf'         on|{off}
+%   'ShowSurf'         on | {off}
 %                      to display the PF surface
 %
 %   OUTPUT:  none
@@ -83,10 +83,10 @@ optcell = {...
 opts    = OptArgs(optcell, varargin);
 
 % define colors
-ncmap   = 256;
-cmap    = jet(ncmap);
-dData   = opts.DataRange(2) - opts.DataRange(1);
-PFptColor   = round((ncmap-1)*(Data - opts.DataRange(1))./dData) + 1;
+% ncmap   = 256;
+% cmap    = jet(ncmap);
+% dData   = opts.DataRange(2) - opts.DataRange(1);
+% PFptColor   = round((ncmap-1)*(Data - opts.DataRange(1))./dData) + 1;
 
 % now plot!
 % PLOT PF SURFACE
@@ -117,18 +117,21 @@ if strcmpi(opts.ShowSurf, 'on')
         'FontSize', 16, 'FontWeight', 'bold')
 end
 
-for i = 1:1:NumDataPts
-    if PFptColor(i) > 0 & PFptColor(i) <= ncmap
-        plot3(...
-            PFpts(i,1), PFpts(i,2), PFpts(i,3), ...
-            'Marker', 'o', ...
-            'MarkerFaceColor', cmap(PFptColor(i), :), ...
-            'MarkerEdgeColor', cmap(PFptColor(i), :), ...
-            'MarkerSize', 5);
-        hold on
-    end
-end
+scatter3(PFpts(:,1), PFpts(:,2), PFpts(:,3), 20, Data, 'filled')
+% for i = 1:1:NumDataPts
+%     if PFptColor(i) > 0 & PFptColor(i) <= ncmap
+%         plot3(...
+%             PFpts(i,1), PFpts(i,2), PFpts(i,3), ...
+%             'Marker', 'o', ...
+%             'MarkerFaceColor', cmap(PFptColor(i), :), ...
+%             'MarkerEdgeColor', cmap(PFptColor(i), :), ...
+%             'MarkerSize', 5);
+%         hold on
+%     end
+% end
+
 axis equal off
+colormap jet
 
 title(opts.Title, ...
     'FontSize', 12, 'FontWeight', 'bold')
