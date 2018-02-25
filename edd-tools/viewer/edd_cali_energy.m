@@ -7,7 +7,7 @@ function edd_cali_energy(varargin)
 % Copyright 2017 Andrew Chuang
 % $Revision: 1.0 $  $Date: 2017/11/03 $
 
-heddparMain = findall(0,'Tag','eddgetparmain_Fig');
+heddparMain = findall(0,'Tag','eddcaliEnergymain_Fig');
 if isempty(heddparMain)
     if nargin == 1
         opt = varargin{1};
@@ -75,7 +75,7 @@ heddsetparmain = figure(...
     'Name','Detector Channel_to_Energy Calibration',...
     'Position',figurePos,...
     'HandleVisibility','callback',...
-    'Tag','eddgetparmain_Fig',...
+    'Tag','eddcaliEnergymain_Fig',...
     'CloseRequestFcn',@eddparmain_CloseRequestFcn,...
     'UserData',[]);
 hAxes = axes(...
@@ -390,18 +390,23 @@ function main_accept_Callback(~,~,~)
 h = get_handle;
 
 hroot = findall(0,'Tag','eddviewmain_Fig');
-hroot = getappdata(hroot,'allhandle');
+hroothandledata = getappdata(hroot,'allhandle');
+
 switch h.opt.detno
     case 1
-        hroot.expinfo_edit_ch2e1a.String=h.main_edit_par1.String;
-        hroot.expinfo_edit_ch2e1b.String=h.main_edit_par2.String;
+        hroothandledata.expinfo_edit_ch2e1a.String=h.main_edit_par1.String;
+        hroothandledata.expinfo_edit_ch2e1b.String=h.main_edit_par2.String;
+        hroothandledata.config.visopt.Inst(1).Ch2E(1) = str2double(h.main_edit_par1.String);
+        hroothandledata.config.visopt.Inst(1).Ch2E(2) = str2double(h.main_edit_par2.String);
     case 2
-        hroot.expinfo_edit_ch2e2a.String=h.main_edit_par1.String;
-        hroot.expinfo_edit_ch2e2b.String=h.main_edit_par2.String;
+        hroothandledata.expinfo_edit_ch2e2a.String=h.main_edit_par1.String;
+        hroothandledata.expinfo_edit_ch2e2b.String=h.main_edit_par2.String;
+        hroothandledata.config.visopt.Inst(2).Ch2E(1) = str2double(h.main_edit_par1.String);
+        hroothandledata.config.visopt.Inst(2).Ch2E(2) = str2double(h.main_edit_par2.String);
     otherwise
         warndlg('Not supportted yet!!')
 end
-    
+setappdata(hroot,'allhandle',hroothandledata)
 
 
 
@@ -416,19 +421,19 @@ function uitable_selection_Callback(~,eventdata,~)
 % --- close request function of eddgetparmain fig 
 %==========================================================================
 function eddparmain_CloseRequestFcn(hObject,eventdata)                         %#ok<INUSD>
-    delete(findall(0,'Tag','eddgetparmain_Fig'))
+    delete(findall(0,'Tag','eddcaliEnergymain_Fig'))
     delete(findall(0,'-regexp','Tag','eddgetpar*'))  
 
 %==========================================================================
 % --- Load all handle object function
 %==========================================================================
 function h = get_handle
-    hmain = findall(0,'Tag','eddgetparmain_Fig');
+    hmain = findall(0,'Tag','eddcaliEnergymain_Fig');
     h = getappdata(hmain,'allhandle');
 
 %==========================================================================
 % --- Save all handle object function
 %==========================================================================
 function update_handle(handle_to_save)
-    hmain = findall(0,'Tag','eddgetparmain_Fig');
+    hmain = findall(0,'Tag','eddcaliEnergymain_Fig');
     setappdata(hmain,'allhandle',handle_to_save);
