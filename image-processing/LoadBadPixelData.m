@@ -26,7 +26,7 @@ if ispc
     end
 elseif isunix
     [~, w]  = unix('echo $HOSTNAME');
-    if ~contains(w(1:end-1), 'xray.aps.anl.gov')
+    if ~isempty(strfind(w, 'xray.aps.anl.gov'))
         disp('bad pixel data does not exist at this location.')
         disp('returning empty matrix ...')
         BadPixelData    = [];

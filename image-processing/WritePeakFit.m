@@ -1,5 +1,5 @@
 function [] = WritePeakFit(pfname, ...
-        amp_fit, fwhm_fit, mix_fit, tth_fit, bkg_fit, rsn_fit, ef_fit, rwp_fit, ...
+        amp_fit, fwhm_fit, mix_fit, tth_fit, bkg_fit, rsn_fit, ef_fit, rwp_fit, qpf_fit, ...
         polimg, pklbl, tth, d)
 % WritePkFit - writes out pkfit into a mat file
 %
@@ -11,6 +11,9 @@ function [] = WritePeakFit(pfname, ...
 %   amp, fwhm, mix, tth, bkg, rsn, ef, rwp
 %       are the peak fit information
 % 
+%   qpf_fit
+%       pole figure scatterinv vector information
+%
 %   polimg
 %       is the caked data generated using instr and cakeParms
 %
@@ -35,5 +38,6 @@ pkfit.bkg_fit   = bkg_fit;
 pkfit.rsn_fit   = rsn_fit;
 pkfit.ef_fit    = ef_fit;
 pkfit.rwp_fit   = rwp_fit;
-            
+pkfit.qpf_fit   = qpf_fit;
+
 save(pfname, 'pkfit', 'polimg', 'pklbl', 'tth', 'd')
