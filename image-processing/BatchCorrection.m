@@ -119,9 +119,9 @@ for i = 1:1:length(bkg_num)
         %return
         error('check if %s exists\n', pfname); % edited by Connor Horn 7/31/17
     end
-    num_frame   = CalcNumFrames(flist.bytes, buffer_size, frame_size);
+    num_frames   = CalcNumFrames(flist.bytes, buffer_size, frame_size);
     
-    for j = 1:1:num_frame
+    for j = 1:1:num_frames
         im_bkg  = im_bkg + NreadGE(pfname, j);
         ct  = ct + 1;
     end
@@ -165,18 +165,18 @@ if opts.CorrectAllImages
         pfname  = fullfile(path_image, fname);
         
         %%% DETERMINE NUMBER OF FRAMES IN THIS STACK
-        num_frame   = CalcNumFrames(flist(i).bytes, buffer_size, frame_size);
+        num_frames   = CalcNumFrames(flist(i).bytes, buffer_size, frame_size);
         
         %%% CHECK IF THE FRAMES TO SKIP MAKES SENSE
-        if max(FramesToIgnore) > num_frame
+        if max(FramesToIgnore) > num_frames
             %%% SKIP IF MAX FRAME NUMBER TO IGNORE IS LARGER THAN THE TOTAL
             %%% NUMBER OF FRAMES IN THEH STACK
             disp('OH NO! The number of frames in the image stack inconsistent with frames requested for correction ...')
             fprintf('skipping %s ...\n', fname);
         else
-            %%% CONTINUE IF MAX FRAME NUMBER TO IGNORE IS SMALLER THAN THE TOTAL
-            %%% NUMBER OF FRAMES IN THEH STACK
-            FramesToCorrect     = 1:1:num_frame;
+            %%% CONTINUE IF THE MAX FRAME NUMBER TO IGNORE IS SMALLER THAN THE TOTAL
+            %%% NUMBER OF FRAMES IN THE IMAGE STACK
+            FramesToCorrect     = 1:1:num_frames;
             if ~strcmpi(opts.FramesToIgnore, 'none')
                 for j = 1:1:length(FramesToIgnore)
                     idx = FramesToCorrect == FramesToIgnore(j);
@@ -207,20 +207,18 @@ if opts.CorrectAllImages
             end
 
             %%% WRITE OUT SUM FILE
-            if ~opts.OutAllFrames
-                sum_data    = sum_data - num_frame.*im_bkg;
-                sum_data    = CorrectBadPixels(sum_data, BadPixelData);
-            end        
+            sum_data    = CorrectBadPixels(sum_data, BadPixelData);
             fname_out   = [flist(i).name, '.sum'];
             pfname_out  = fullfile(path_output, fname_out);
             WriteSUM(pfname_out, sum_data);
+            
             if opts.DisplayFrames
                 PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
                 title('Sum over all corrected frames')
             end
 
             %%% WRITE OUT AVE FILE
-            ave_data    = sum_data./num_frame;
+            ave_data    = sum_data./length(FramesToCorrect);
             fname_out   = [flist(i).name, '.ave'];
             pfname_out  = fullfile(path_output, fname_out);
             WriteSUM(pfname_out, ave_data);
@@ -248,9 +246,9 @@ else
         flist       = dir(pfname);
         
         %%% DETERMINE NUMBER OF FRAMES IN THIS STACK
-        num_frame   = CalcNumFrames(flist(1).bytes, buffer_size, frame_size);
+        num_frames   = CalcNumFrames(flist(1).bytes, buffer_size, frame_size);
         %%% CHECK IF THE FRAMES TO SKIP MAKES SENSE
-        if max(FramesToIgnore) > num_frame
+        if max(FramesToIgnore) > num_frames
             %%% SKIP IF MAX FRAME NUMBER TO IGNORE IS LARGER THAN THE TOTAL
             %%% NUMBER OF FRAMES IN THEH STACK
             disp('OH NO! The number of frames in the image stack inconsistent with frames requested for correction ...')
@@ -258,7 +256,7 @@ else
         else
             %%% CONTINUE IF MAX FRAME NUMBER TO IGNORE IS SMALLER THAN THE TOTAL
             %%% NUMBER OF FRAMES IN THEH STACK
-            FramesToCorrect     = 1:1:num_frame;
+            FramesToCorrect     = 1:1:num_frames;
             if ~strcmpi(opts.FramesToIgnore, 'none')
                 for j = 1:1:length(FramesToIgnore)
                     idx = FramesToCorrect == FramesToIgnore(j);
@@ -289,10 +287,7 @@ else
             end
             
             %%% WRITE OUT SUM FILE
-            if ~opts.OutAllFrames
-                sum_data    = sum_data - num_frame.*im_bkg;
-                sum_data    = CorrectBadPixels(sum_data, BadPixelData);
-            end
+            sum_data    = CorrectBadPixels(sum_data, BadPixelData);
             fname_out   = [flist.name, '.sum'];
             pfname_out  = fullfile(path_output, fname_out);
             WriteSUM(pfname_out, sum_data);
@@ -302,7 +297,7 @@ else
             end
             
             %%% WRITE OUT AVE FILE
-            ave_data    = sum_data./num_frame;
+            ave_data    = sum_data./length(FramesToCorrect);
             fname_out   = [flist.name, '.ave'];
             pfname_out  = fullfile(path_output, fname_out);
             WriteSUM(pfname_out, ave_data);
