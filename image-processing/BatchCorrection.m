@@ -208,6 +208,9 @@ if opts.CorrectAllImages
 
             %%% WRITE OUT SUM FILE
             sum_data    = CorrectBadPixels(sum_data, BadPixelData);
+            if ~opts.OutAllFrames
+                sum_data    = sum_data - im_bkg*length(FramesToCorrect);
+            end
             fname_out   = [flist(i).name, '.sum'];
             pfname_out  = fullfile(path_output, fname_out);
             WriteSUM(pfname_out, sum_data);
@@ -288,9 +291,13 @@ else
             
             %%% WRITE OUT SUM FILE
             sum_data    = CorrectBadPixels(sum_data, BadPixelData);
+            if ~opts.OutAllFrames
+                sum_data    = sum_data - im_bkg*length(FramesToCorrect);
+            end
             fname_out   = [flist.name, '.sum'];
             pfname_out  = fullfile(path_output, fname_out);
             WriteSUM(pfname_out, sum_data);
+            
             if opts.DisplayFrames
                 PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
                 title('Sum over all corrected frames')
