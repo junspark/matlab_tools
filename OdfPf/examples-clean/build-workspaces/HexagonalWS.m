@@ -3,12 +3,12 @@
 %
 %-------------------- User Input
 %
-wsname = 'wshex3x';
+wsname = 'wshex20x';
 %
 frbase = HexBaseMesh;
 sym    = HexSymmetries;
 %
-fr_refine   = 3;       % refinement level on FR
+fr_refine   = 20;       % refinement level on FR
 sp_refine   = 20;        % refinement level on sphere
 per_fiber   = 1000;     % points per fiber
 %
