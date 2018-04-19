@@ -19,12 +19,10 @@ function pardata = ReadSpecParFile(fname, varargin)
 %       number of channels recorded in the spec generated par file (excluding the
 %       date / time channel) for arbitrary format
 %
-%   'Version'
-%       version of spec metadata file (par file).
-%       example: (coratella_feb15). default value is
-%           'none'. 'mpe_standard' is the new MPE metadata format for 
-%           1-BM-B EDD / 6-BM-A EDD / 1-ID data.
-%       this option overrides 'numchs' input.
+%   'Version'               version of spec metadata file (par file).
+%                           example: (coratella_feb15). default value is
+%                           'none'. 'mpe_standard' is the new MPE metadata
+%                           format for 1-BM-B EDD / 6-BM-A EDD / 1-ID data.
 
 % default options
 optcell = {...
