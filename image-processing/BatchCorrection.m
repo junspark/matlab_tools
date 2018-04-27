@@ -52,6 +52,9 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 %                       array where each cell element contains a [m x 1] 
 %                       matrix indicating which frames to ignore.
 %
+%   SumOnly             Only output sum files. If 0, ave file will be saved
+%                       as well (default: 1).
+%
 %   OUTPUT:             
 %                   
 %   (possibly) many files
@@ -88,6 +91,7 @@ optcell = {...
     'DisplayFrames', false, ...
     'NumDigits', 6, ...
     'FramesToIgnore', 'none', ...
+    'SumOnly', 1, ...
     };
 
 % UPDATE OPTION
@@ -122,11 +126,17 @@ for i = 1:1:length(bkg_num)
     num_frames   = CalcNumFrames(flist.bytes, buffer_size, frame_size);
     
     for j = 1:1:num_frames
-        im_bkg  = im_bkg + NreadGE(pfname, j);
+        im_bkgj = NreadGE(pfname, j);
+        im_bkg  = im_bkg + im_bkgj;
         ct  = ct + 1;
     end
 end
 im_bkg  = im_bkg./ct;
+
+% figure,
+% imagesc(im_bkgj)
+% figure,
+% imagesc(im_bkg)
 
 %%% DISPLAY BACKGROUND IF REQUESTED
 if opts.DisplayFrames
@@ -207,9 +217,9 @@ if opts.CorrectAllImages
             end
 
             %%% WRITE OUT SUM FILE
-            sum_data    = CorrectBadPixels(sum_data, BadPixelData);
             if ~opts.OutAllFrames
                 sum_data    = sum_data - im_bkg*length(FramesToCorrect);
+                sum_data    = CorrectBadPixels(sum_data, BadPixelData);
             end
             fname_out   = [flist(i).name, '.sum'];
             pfname_out  = fullfile(path_output, fname_out);
@@ -224,7 +234,9 @@ if opts.CorrectAllImages
             ave_data    = sum_data./length(FramesToCorrect);
             fname_out   = [flist(i).name, '.ave'];
             pfname_out  = fullfile(path_output, fname_out);
-            WriteSUM(pfname_out, ave_data);
+            if ~opts.SumOnly
+                WriteSUM(pfname_out, ave_data);
+            end
 
             if opts.DisplayFrames
                 PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
@@ -290,9 +302,9 @@ else
             end
             
             %%% WRITE OUT SUM FILE
-            sum_data    = CorrectBadPixels(sum_data, BadPixelData);
             if ~opts.OutAllFrames
                 sum_data    = sum_data - im_bkg*length(FramesToCorrect);
+                sum_data    = CorrectBadPixels(sum_data, BadPixelData);
             end
             fname_out   = [flist.name, '.sum'];
             pfname_out  = fullfile(path_output, fname_out);
@@ -307,7 +319,10 @@ else
             ave_data    = sum_data./length(FramesToCorrect);
             fname_out   = [flist.name, '.ave'];
             pfname_out  = fullfile(path_output, fname_out);
-            WriteSUM(pfname_out, ave_data);
+            if ~opts.SumOnly
+                WriteSUM(pfname_out, ave_data);
+            end
+            
             if opts.DisplayFrames
                 PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
                 title('Average over all corrected frames')

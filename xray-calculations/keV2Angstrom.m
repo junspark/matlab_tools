@@ -15,5 +15,5 @@ function Angstrom = keV2Angstrom(keV)
 %   Angstrom
 %       x-ray wavelength in anstroms
 
-hc  = 12.39842; % PER X-RAY BOOKLET 2009
+hc  = 12.39841973862093; % PER X-RAY BOOKLET 2009
 Angstrom    = hc./keV;
