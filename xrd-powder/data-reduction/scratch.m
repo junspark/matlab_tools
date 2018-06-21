@@ -1,3 +1,15 @@
+if ~strcmp(filetype,'cor2'); irow=intersect(find(strcmp(meta.det1_fname,fileroot)),find(meta.det1_fnum==ifile)); irow=irow(length(irow));%  find data row corresponding to current file number AND fileroot
+                else irow=intersect(find(meta.det1_fnum==ifile),find(meta.det1_fnum==iframe)); %for cor2, match both file number and frame number - not implemented in current metadata!
+                end
+                i0(index1)=(meta.scaler4_val(irow)-i0_dark*meta.integ_time(irow)).*meta.scaler4_units(irow).*ic_cf; %i0 integrated flux in photons;f25 to compensate for fact this before the 50um horiz slit
+                i1(index1)=(meta.scaler6_val(irow)-i1_dark*meta.integ_time(irow)).*meta.scaler6_units(irow).*ic_cf; %i1 is NOT in photons, just proportional to i0 and trans
+                samX(index1)=meta.samX2(irow); samY(index1)=meta.samY(irow); samZ(index1)=meta.samZ(irow); phi(index1)=meta.aY(irow);samEta(index1)=meta.aZ(irow);
+                t_exp(index1)=meta.det1_time_per_frame(irow).*meta.det1_frames_per_file(irow); t_scaler(index1)=meta.integ_time(irow);
+                crosshead_mm(index1)=meta.encoder4(irow);load_N(index1)=meta.ev2(irow);
+                temperature1(index1)=meta.ev3(irow);temperature2(index1)=meta.ev4(irow);temperature3(index1)=meta.ev5(irow);
+                trans(index1)=(meta.scaler6_val(irow)-i0_dark*meta.integ_time(irow))./(meta.scaler4_val(irow)-i1_dark*meta.integ_time(irow))./(i1_over_i0_air); %calculated transmission, normalized using no-sample ion chamber readings
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % rotation for GE1 is 152.5
 % XRDIMAGE.Image.RotAngle     = 152.5;

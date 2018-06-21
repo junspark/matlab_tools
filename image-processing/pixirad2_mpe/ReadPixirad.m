@@ -14,7 +14,11 @@ function [csq, pixelsize] = ReadPixirad(pfname, varargin)
 %       that the images are saved without the correction and the correction
 %       is applied in this code. Only the 1 color mode correction is
 %       implemented. It is also assumed that the images are acquired with
-%       AD Transform plug in with Rot270 option enabled.
+%       AD Transform plug in with Rot270 option enabled. 'pixi2' is for any
+%       images taken with the 1-id pixirad2 detector before mark rivers
+%       fixed the driver in 2018-1. all images takens after 2018-1 should
+%       use 'pixi3' option (which is same as pixi2 without the arbirary
+%       gaussian filtering).
 %
 %   nc (optional - pixi1)
 %       number of horizontal nodes (default = 476).
@@ -260,5 +264,89 @@ elseif strcmpi(opts.version, 'pixi2')
     %%% APPLY GAUSSIAN FILTER
     if opts.apply_gaussian_filter
         csq = imgaussfilt(csq, opts.gaussian_filter_sigma);
+    end
+elseif strcmpi(opts.version, 'pixi3')
+    % read in image
+    csq = double(imread(pfname));
+    
+    % ONLY CRRM MODE (PIXEL MODE) SUPPORTED - THIS IS FROM THE VENDOR
+    % ct  = imread('/home/beams/S1IDUSER/mnt/s1a/misc/pixirad2/usb.after_repair/Calibrations/2010_crrm.tif');
+    % ct  = fliplr(ct');
+    ct  = load(opts.pfname_ct);
+    ct  = ct.ct;
+    
+    bpt = load(opts.pfname_bpt);
+    bpt = bpt.bpt;
+    
+    %%% SENSITIVITY CORRECTOIN
+    if opts.apply_ct
+        % csq = csq./ct;
+        csq = csq.*ct;
+    end
+    
+    %%% BAD PIXEL CORRECTION
+    %%% MULTIPLE PASSES TO REMOVE ALL THE BAD PIXELS
+    %%% MIGHT BE PATH DEPENDENT
+    if opts.apply_bpt
+        % [n, m]  = size(csq);
+        
+        there_are_bps   = true;
+        counter = 0;
+        while there_are_bps && (counter < 5)
+            disp(sprintf('removing bad pixels - pass number %d', counter))
+            disp(sprintf('removing bad pixels - %d bad pixels exist', sum(bpt(:))))
+            [x_bpt, y_bpt]      = find(bpt == 1);
+            
+            %%% GET NEIGHBOR PIXEL VALUES
+            for i = 1:1:length(x_bpt)
+%                 pv  = nan(8,1);
+%                 if (x_bpt(i)-1) >= 1
+%                     if (y_bpt(i)-1) >= 1
+%                         pv(1)   = csq(x_bpt(i)-1, y_bpt(i)-1); % nw
+%                     end
+%                     if (y_bpt(i)+1) <= m
+%                         pv(2)   = csq(x_bpt(i)-1, y_bpt(i)+1); % ne
+%                     end
+%                     pv(3)   = csq(x_bpt(i)-1, y_bpt(i)); % n
+%                 end
+%                 
+%                 if (x_bpt(i)+1) <= n
+%                     if (y_bpt(i)-1) >= 1
+%                         pv(4)   = csq(x_bpt(i)+1, y_bpt(i)-1); % sw
+%                     end
+%                     if (y_bpt(i)+1) <= m
+%                         pv(5)   = csq(x_bpt(i)+1, y_bpt(i)+1); % se
+%                     end
+%                     pv(6)   = csq(x_bpt(i)+1, y_bpt(i)); % s
+%                 end
+%                 
+%                 if (y_bpt(i)+1) <= m
+%                     pv(7)   = csq(x_bpt(i), y_bpt(i)+1); % e
+%                 end
+%                 if (y_bpt(i)-1) >= 1
+%                     pv(8)   = csq(x_bpt(i), y_bpt(i)-1); % w
+%                 end
+%                 pv(find(pv == 0))   = nan;
+                % csq(x_bpt(i), y_bpt(i)) = mean(pv, 'omitnan');
+                
+                imc = imcrop(csq, [y_bpt(i)-1 x_bpt(i)-1 2 2]);
+                imc = imc(:);
+                imc(find(imc == 0)) = nan;
+                
+                %%% SOME USERS DO NOT HAVE OMITNAN
+                if verLessThan('matlab', '9.0')
+                    disp('this will work for now but upgrade matlab')
+                    idx = ~isnan(imc);
+                    csq(x_bpt(i), y_bpt(i)) = sum(imc(idx))/sum(idx);
+                else
+                    csq(x_bpt(i), y_bpt(i)) = mean(imc, 'omitnan');
+                end
+            end
+            bpt = (csq == 0);
+            
+            there_are_bps = ~isempty(find(bpt == 1));
+            
+            counter = counter + 1;
+        end
     end
 end

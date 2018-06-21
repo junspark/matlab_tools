@@ -65,19 +65,6 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 %       correction is slightly different)
 %
 
-%%% START GCP
-if license('test', 'distrib_computing_toolbox') && isunix
-    disp(sprintf('parallel computing toolbox available'));
-	delete(gcp); 
-%     parpool(12);
-    
-    pc  = parcluster('local');
-    pc.JobStorageLocation = '/home/beams12/S1IDUSER/.matlab/local_cluster_jobs/R2016b/batchcorr_jobs';
-    parpool(pc);
-else
-    disp(sprintf('parallel computing toolbox unavailable'));
-end
-
 %%% DEFAULT PARAMETERS
 buffer_size = 8192;
 frame_size  = 2048*2048*2;
@@ -158,6 +145,18 @@ else
         %return
         error('check frame numbers to ignore ...\npositive integers only ...\n'); % edited by Connor Horn 7/31/17
     end
+end
+
+%%% START GCP
+if license('test', 'distrib_computing_toolbox') && isunix
+    disp(sprintf('parallel computing toolbox available'));
+	delete(gcp);
+    
+    pc  = parcluster('local');
+    pc.JobStorageLocation = '/home/beams12/S1IDUSER/.matlab/local_cluster_jobs/R2016b/batchcorr_jobs';
+    parpool(pc);
+else
+    disp(sprintf('parallel computing toolbox unavailable'));
 end
 
 if opts.CorrectAllImages

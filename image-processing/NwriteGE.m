@@ -1,5 +1,5 @@
 function status = NwriteGE(pfname, data)
-% NwriteGE - write GE file
+% NwriteGE(pfname, data) - write GE file
 %
 %   INPUT:
 %
