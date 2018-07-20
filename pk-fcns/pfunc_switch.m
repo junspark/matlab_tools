@@ -1,4 +1,5 @@
-function y = pfunc_switch(p, xr, params)
+% function y = pfunc_switch(p, xr, params)
+function y = pfunc_switch(p, params)
 % pfunc_switch - switch objective function for peak fitting
 %
 %   USAGE:
@@ -26,9 +27,10 @@ function y = pfunc_switch(p, xr, params)
 %
 p	= p(:);
 
-% xdata   = params.xdata;
-xdata   = xr;
+xdata   = params.xdata;
+% xdata   = xr;
 xdata   = xdata(:);
+
 y       = xdata.*0;
 
 pfunc_type  = params.pfunc_type;

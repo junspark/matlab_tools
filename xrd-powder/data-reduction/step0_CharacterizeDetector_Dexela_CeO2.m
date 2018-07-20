@@ -23,35 +23,35 @@ clc
 % caxis([0 6000])
 
 %%% INPUT PARAMETERS
-XRDIMAGE.Image.pname        = 'C:\Users\parkjs\Desktop\dexela_jun16';
-XRDIMAGE.Image.fbase        = 'test_';
-XRDIMAGE.Image.fnumber      = 13;
-XRDIMAGE.Image.numframe     = 5;
+XRDIMAGE.Image.pname        = '/home/beams/S1IDUSER/mnt/s1b/__eval/projects_parkjs/dexela_calibration/clausen_jul18/mam_in_c';
+XRDIMAGE.Image.fbase        = 'CeO2_1s_';
+XRDIMAGE.Image.fnumber      = 29;
+XRDIMAGE.Image.numframe     = 1;
 XRDIMAGE.Image.numdigs      = 6;
-XRDIMAGE.Image.fext         = 'nc';
+XRDIMAGE.Image.fext         = 'tif';
 XRDIMAGE.Image.corrected    = 0;
 XRDIMAGE.Image.IsHydra      = 0;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
 
 %%% DARK FILES ONLY USED IF THE IMAGES ARE UNCORRECTED
-XRDIMAGE.DarkField.pname    = 'C:\Users\parkjs\Desktop\dexela_jun16';
-XRDIMAGE.DarkField.fbase    = 'test_';
-XRDIMAGE.DarkField.fnumber  = 14;
-XRDIMAGE.DarkField.numframe = 5;
+XRDIMAGE.DarkField.pname    = '/home/beams/S1IDUSER/mnt/s1b/__eval/projects_parkjs/dexela_calibration/clausen_jul18/mam_in_c';
+XRDIMAGE.DarkField.fbase    = 'dark_1s_';
+XRDIMAGE.DarkField.fnumber  = 984;
+XRDIMAGE.DarkField.numframe = 1;
 XRDIMAGE.DarkField.numdigs  = 6;
-XRDIMAGE.DarkField.fext     = 'nc';
+XRDIMAGE.DarkField.fext     = 'tif';
 
-XRDIMAGE.Calib.pname        = 'C:\Users\parkjs\Desktop\dexela_jun16';
-XRDIMAGE.Calib.fbase        = 'test_';
-XRDIMAGE.Calib.fnumber      = 21;
-XRDIMAGE.Calib.fext         = 'nc';
+XRDIMAGE.Calib.pname        = '/home/beams/S1IDUSER/mnt/s1b/__eval/projects_parkjs/dexela_calibration/clausen_jul18/mam_in_c';
+XRDIMAGE.Calib.fbase        = 'CeO2_1s_';
+XRDIMAGE.Calib.fnumber      = 29;
+XRDIMAGE.Calib.fext         = 'tif';
 
 %%% INSTRUMENT PARAMETERS
-XRDIMAGE.Instr.energy       = 78.395;       % keV
+XRDIMAGE.Instr.energy       = 71.676;       % keV
 XRDIMAGE.Instr.wavelength   = keV2Angstrom(XRDIMAGE.Instr.energy);  % wavelength (Angstrom)
-XRDIMAGE.Instr.distance     = 452.501455;  % mm
-XRDIMAGE.Instr.centers      = [ 28.395698 , 393.460317 ]; % center offsets x & y (um)
-XRDIMAGE.Instr.gammaX       = 0.007739;    % rad
-XRDIMAGE.Instr.gammaY       = 0.007752;    % rad
+XRDIMAGE.Instr.distance     = 692.103124;  % mm
+XRDIMAGE.Instr.centers      = [ -40.203701 , 106.423214 ]; % center offsets x & y (um)
+XRDIMAGE.Instr.gammaX       = -0.0004905;    % rad
+XRDIMAGE.Instr.gammaY       = 0.011895;    % rad
 XRDIMAGE.Instr.imrotation   = 0;            %%% NEED TO BE CLARIFIED
 
 % RADIAL CORRECTION
@@ -65,21 +65,21 @@ XRDIMAGE.Instr.dettype  = '2a';
 % 1 : constant value
 % 2 : [a1 a2 n1 n2 rhod]
 XRDIMAGE.Instr.detpars  = [ ...
-    -0.000315963651827 ...
-    -0.001064525934567 ...
-    -0.342112202557494 ...
-    0.584541665626205 ...
-    55.146289426203012 ...
-    1.939358890972754 ...
+    -0.0002556 ...
+    -0.1653 ...
+    0.11095597 ...
+    1.1425934...
+    5687.38873533...
+    1.873452 ...
     ];
 
 %%% CAKE PARAMETERS
 XRDIMAGE.CakePrms.bins(1)   = 36;           % number of azimuthal bins
-XRDIMAGE.CakePrms.bins(2)   = 3000;         % number of radial bins
-XRDIMAGE.CakePrms.bins(3)   = 20;            % number of angular bins
+XRDIMAGE.CakePrms.bins(2)   = 3500;         % number of radial bins
+XRDIMAGE.CakePrms.bins(3)   = 40;            % number of angular bins
 
-XRDIMAGE.CakePrms.origin(1) = 1893;     % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
-XRDIMAGE.CakePrms.origin(2) = 1795;     % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(1) = 1945.795;   % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(2) = 1555.548;     % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
 
 XRDIMAGE.CakePrms.sector(1) = -360/XRDIMAGE.CakePrms.bins(1)/2;     % start azimuth (min edge of bin) in degrees
 XRDIMAGE.CakePrms.sector(2) = 360-360/XRDIMAGE.CakePrms.bins(1)/2;  % stop  azimuth (max edge of bin) in degrees
@@ -91,7 +91,7 @@ eta_ini     = XRDIMAGE.CakePrms.sector(1) + eta_step/2;
 eta_fin     = XRDIMAGE.CakePrms.sector(2) - eta_step/2;
 azim        = eta_ini:eta_step:eta_fin;
 XRDIMAGE.CakePrms.azim      = azim;
-XRDIMAGE.CakePrms.fastint   = 0;
+XRDIMAGE.CakePrms.fastint   = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% MATERIAL PARAMETERS - CeO2
@@ -105,7 +105,7 @@ XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
     'cubic', XRDIMAGE.Material.hkls', ...
     XRDIMAGE.Instr.wavelength);
 tth     = 2*th;
-d_spacing_range = 0.01;
+d_spacing_range = 0.015;
 d_spacing_UB    = (1 + d_spacing_range)*d;
 d_spacing_LB    = (1 - d_spacing_range)*d;
 
@@ -114,10 +114,10 @@ tth_LB  = 2.*asind(XRDIMAGE.Instr.wavelength/2)./d_spacing_UB;
 
 XRDIMAGE.Material.tth       = tth;
 XRDIMAGE.Material.d_spacing = d;
-XRDIMAGE.Material.numpk     = 6;
-XRDIMAGE.Material.numbounds = 6;
+XRDIMAGE.Material.numpk     = 4;
+XRDIMAGE.Material.numbounds = 4;
 XRDIMAGE.Material.pkidx     = {...
-    [1] [2] [3] [6] [9] [10]
+    [1] [2] [3] [4]
     };
 for i = 1:1:XRDIMAGE.Material.numbounds
     XRDIMAGE.Material.pkrange(:,i)  = [ ...
@@ -129,8 +129,8 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% DATA REDUCTION FLAGS
-Analysis_Options.make_polimg    = 0;
-Analysis_Options.save_polimg    = 0;
+Analysis_Options.make_polimg    = 1;
+Analysis_Options.save_polimg    = 1;
 Analysis_Options.fits_spectra   = 1;
 Analysis_Options.save_fits      = 1;
 Analysis_Options.find_instrpars = 1;
@@ -150,7 +150,7 @@ Analysis_Options.InstrPrmFitOptions = optimset(...
     'DerivativeCheck', 'off', ...
     'MaxIter', 1e5, ...
     'MaxFunEvals', 3e5, ...
-    'TypicalX',[100 -100 1000 0.1 0.1 XRDIMAGE.Instr.detpars], ...
+    'TypicalX',[100 -100 682 0.1 0.1 XRDIMAGE.Instr.detpars], ...
     'Display','final');
 
 fname_pattern   = sprintf('%%s%%0%dd.%%s', XRDIMAGE.Image.numdigs);
@@ -170,10 +170,10 @@ else
     fname	= sprintf(fname_pattern, XRDIMAGE.DarkField.fbase, XRDIMAGE.DarkField.fnumber, XRDIMAGE.DarkField.fext);
     pfname  = fullfile(XRDIMAGE.DarkField.pname, fname);
     
-    pfname_info = ncinfo(pfname);
-    nframes     = pfname_info.Dimensions(1).Length;
-    numpixHorz  = pfname_info.Dimensions(2).Length;
-    numpixVert  = pfname_info.Dimensions(3).Length;
+    pfname_info = imfinfo(pfname);
+    nframes     = 1;
+    numpixHorz  = pfname_info.Width;
+    numpixVert  = pfname_info.Height;
     
     XRDIMAGE.Instr.numpixelsHorz    = numpixHorz;
     XRDIMAGE.Instr.numpixelsVert    = numpixVert;
@@ -227,7 +227,7 @@ if Analysis_Options.make_polimg
         pfname_polimage = [pfname, '.polimg.mat'];
         
         if XRDIMAGE.Image.corrected
-            imgi    = ReadSUM(pfname{i,1});     %%% THIS NEEDS TO BE IMPLEMENTED
+            imgi    = ReadSUM(pfname{i,1});
         else
             imgi    = bkg.*0;
             for j = 1:1:XRDIMAGE.Image.numframe
@@ -237,12 +237,18 @@ if Analysis_Options.make_polimg
             imgi    = imgi - bkg.*XRDIMAGE.Image.numframe;
         end
         
-        %%% THIS PUTS THE DETECTOR IN CORRECT ORIENTATION FOR MY CODE
-        imgi    = rot90(imgi, 1);
+        %%% THIS PUTS THE DETECTOR IN CORRECT ORIENTATION FOR C HUTCH
+        imgi    = rot90(imgi, 3);
+        
+        %%% SYNTHETIC IMAGE
+%         xxx = (1:1:3888)./388.8;
+%         yyy = (1:1:3072)./(307.2*2);
+%         imgi    = xxx'*yyy;
+%         imgi(2000:2200, :) = 27;
         
         figure(1)
         hold off
-        imagesc(rot90(imgi,1))
+        imagesc(rot90(imgi, 1)) %% DO NOT CHANGE
         caxis([-10 3000])
         axis equal tight
         colorbar vert
@@ -250,7 +256,6 @@ if Analysis_Options.make_polimg
         xlabel('X_L (pixels)')
         ylabel('Y_L (pixels)')
         title('Ensure that image matches the coordinate system')
-        text(0, 0, 'TO')
         text(XRDIMAGE.Instr.numpixelsHorz, 0, 'TI')
         text(0, 0, 'TO')
         text(0, XRDIMAGE.Instr.numpixelsVert, 'BO')
@@ -260,7 +265,7 @@ if Analysis_Options.make_polimg
         polimg	= PolarBinXRD(DetectorMesh, ...
             XRDIMAGE.Instr, ...
             XRDIMAGE.CakePrms, ...
-            imgi);
+            imgi, 'PlotProgress', 'off');
         
         if Analysis_Options.save_polimg
             disp(sprintf('Saving polimg for %s', pfname))

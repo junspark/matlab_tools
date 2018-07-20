@@ -28,17 +28,6 @@ function polimg = PolarBinXRD(mesh, instr, cakeParms, img, varargin)
 %
 %   1) this does not do retangular pixels.
 
-% save('PolarBinXRD_input.mat')
-% return
-% clear all
-% close all
-% clc
-% load('PolarBinXRD_input.mat')
-% cakeParms.fastint   = 1;
-% cakeParms.sector(3) = 240;
-% cakeParms.sector(4) = 272;
-% cakeParms.bins(2)   = 5;
-
 % default options
 optcell = {...
     'PlotProgress', 'on', ...
@@ -53,8 +42,6 @@ imgi    = img;
 
 Lx  = instr.numpixelsHorz;
 Ly  = instr.numpixelsVert;
-
-% L   = instr.detectorsize/instr.pixelsize;
 
 % !!! THESE ARE IN THE CARTESIAN FRAME !!!
 x0  = cakeParms.origin(1);   % in pixels
@@ -91,7 +78,6 @@ polimg.intensity = zeros(numAzi, numRho);
 if strcmpi(opts.PlotProgress, 'on')
     figure(1000)
     imagesc(log(abs(rot90(img,1))))
-    % imagesc(rot90(img,1))
     hold on
     axis equal
     plot(x0plt, y0plt, 'rh')
@@ -99,15 +85,10 @@ if strcmpi(opts.PlotProgress, 'on')
     ylabel('Y_L (pixels)')
     drawnow
 end
-
-if cakeParms.fastint
-    %Xgrid   = 1:1:L;
-    %Ygrid   = 1:1:L;
-    
-    Xgrid   = 1:1:Lx;
-    Ygrid   = 1:1:Ly;
-    [Xgrid,Ygrid]   = meshgrid(Xgrid, Ygrid);
-end
+% keyboard
+Xgrid   = 1:1:Lx;
+Ygrid   = 1:1:Ly;
+[Xgrid, Ygrid]  = meshgrid(Ygrid, Xgrid);
 
 for ii = 1:1:numAzi
     if strcmpi(opts.DisplayProgress, 'on')
@@ -122,14 +103,16 @@ for ii = 1:1:numAzi
     TH  = repmat(TH, numRho + 1, 1);
     
     [x, y]	= pol2cart(deg2rad(TH),R);
-    x   = x0 + x; y   = y0 + y;
+    x = x0 + x; 
+    y = y0 + y;
     
     if strcmpi(opts.PlotProgress, 'on')
         THplt   = azi_ini:dEta:azi_fin;
         THplt   = repmat(-THplt, numRho + 1, 1);
         
         [xplt, yplt]    = pol2cart(deg2rad(THplt),R);
-        xplt    = x0plt + xplt; yplt    = y0plt + yplt;
+        xplt    = x0plt + xplt;
+        yplt    = y0plt + yplt;
         
         figure(1000)
         title(num2str(polimg.azimuth(ii)))
@@ -137,98 +120,19 @@ for ii = 1:1:numAzi
         drawnow
     end
     
-    tic
-    if ~isfield(cakeParms, 'fastint') || ~cakeParms.fastint
-        V   = zeros(numRho + 1, numEta + 1);
+    tic;
+    if all(x(:) < Lx) && all((x(:) > 0)) && all(y(:) < Ly) && all(y(:) > 0)
         warn_user   = 0;
-        for i = 1:1:(numRho + 1)
-            for j = 1:1:(numEta + 1)
-                %if (x(i,j) > L) || (x(i,j) < 0) || (y(i,j) > L) || (y(i,j) < 0)
-                if (x(i,j) > Lx) || (x(i,j) < 0) || (y(i,j) > Ly) || (y(i,j) < 0)
-                    V(i,j)      = nan;
-                    warn_user   = 1;
-                else
-                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                    % OLD ROUTINE - INTEGRATION MESH INFORMATION IS NOT PREGENERATED
-                    % xy  = [x(i,j); y(i,j)];
-                    % V(i,j) = DataCoordinates(xy, L, mesh, imgi);
-                    
-                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                    % NEW ROUTINE - INTEGRATION MESH INFORMATION IS PREGENERATED
-                    fcrd    = mesh.fcrd{ii,i,j};
-                    fcon    = imgi(mesh.fcon{ii,i,j});
-                    V(i,j)  = fcrd*fcon;
-                    
-                    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                    % % SOME BENCHMARK TESTS
-                    % gridNum     = (L - 1)*(fix(xy(2)) - 1) + fix(xy(1));
-                    % elemNums    = [gridNum*2-1 gridNum*2];
-                    %
-                    % P1  = mesh.crd(:, mesh.con(:,elemNums(1)));
-                    % P2  = mesh.crd(:, mesh.con(:,elemNums(2)));
-                    % IN1 = inpolygon(xy(1), xy(2), P1(1,:), P1(2,:));
-                    % IN2 = inpolygon(xy(1), xy(2), P2(1,:), P2(2,:));
-                    % if IN1
-                    %     A1  = [P1(1,1)-P1(1,3) P1(1,2)-P1(1,3);P1(2,1)-P1(2,3) P1(2,2)-P1(2,3)];
-                    %     B1  = [xy(1)-P1(1,3); xy(2)-P1(2,3)];
-                    %     Y1  = A1\B1;
-                    %
-                    %     fele    = elemNums(1);
-                    %     fcrd    = [Y1(1) Y1(2) 1-Y1(1)-Y1(2)];
-                    % elseif IN2
-                    %     A2  = [P2(1,1)-P2(1,3) P2(1,2)-P2(1,3);P2(2,1)-P2(2,3) P2(2,2)-P2(2,3)];
-                    %     B2  = [xy(1)-P2(1,3); xy(2)-P2(2,3)];
-                    %     Y2  = A2\B2;
-                    %
-                    %     fele    = elemNums(2);
-                    %     fcrd    = [Y2(1) Y2(2) 1-Y2(1)-Y2(2)];
-                    % else
-                    %     fprintf('UH-OH')
-                    % end
-                    % fcon    = img(mesh.con(:, fele));
-                    % V(i,j)  = dot(fcon, fcrd', 1);
-                    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                end
-            end
-        end
-        Ilist   = BuildMeshPolarXRD(R, V, mesh.qrule);
     else
-        %%%% NEED TO IMPLEMENT WARNING
-        if all(x(:) < Lx) && all((x(:) > 0)) && all(y(:) < Ly) && all(y(:) > 0)
-            warn_user   = 0;
-        else
-            warn_user   = 1;
-        end
-        
-        V   = interp2(Xgrid, Ygrid, double(imgi), y, x, 'cubic');
-        V   = mean(V,2);
-        V   = (V(1:end-1) + V(2:end)) / 2;
-        
-        Ilist   = V;
+        warn_user   = 1;
     end
-    
-    %%%%%%%%%%%%%%%%%%
-    % BEFORE INTERP2 IMPLEMENTATION
-    %%%%%%%%%%%%%%%%%%
-    % if ~isfield(cakeParms, 'fastint') || ~cakeParms.fastint
-    %     Ilist   = BuildMeshPolarXRD(R, V, mesh.qrule);
-    %     % pause
-    % else
-    %     V       = mean(V,2);
-    %     V       = (V(1:end-1) + V(2:end))/2;
-    %     Ilist   = V;
-    % end
-    %%%%%%%%%%%%%%%%%%
-    
-%     idx = find(Ilist < 0);
-%     if ~isempty(idx)
-%         disp('Some pixels yielded negative numbers.')
-%         disp('Setting these to 0.')
-%         Ilist(idx)  = 0;
-%     end
+    % keyboard
+    V   = interp2(Xgrid, Ygrid, double(imgi), y, x, 'cubic');
+    V   = mean(V,2);
+    V   = (V(1:end-1) + V(2:end)) / 2;
     
     polimg.radius(ii,:)    = Rlist;
-    polimg.intensity(ii,:) = Ilist;
+    polimg.intensity(ii,:) = V;
     
     dtime   = toc;
     if warn_user

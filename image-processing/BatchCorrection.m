@@ -201,7 +201,8 @@ if opts.CorrectAllImages
                     frame_data  = frame_data - im_bkg;
                     frame_data  = CorrectBadPixels(frame_data, BadPixelData);
 
-                    fname_out   = [flist(i).name, '.frame.', num2str(j), '.cor'];
+                    % fname_out   = [flist(i).name, '.frame.', num2str(j), '.cor'];
+                    fname_out   = [flist(i).name, '_frame_', num2str(j), '.cor32'];
                     pfname_out  = fullfile(path_output, fname_out);
                     WriteSUM(pfname_out, frame_data);
                 end
@@ -286,7 +287,8 @@ else
                     frame_data  = frame_data - im_bkg;
                     frame_data  = CorrectBadPixels(frame_data, BadPixelData);
                     
-                    fname_out   = [flist.name, '.frame.', num2str(j), '.cor'];
+                    % fname_out   = [flist.name, '.frame.', num2str(j), '.cor'];
+                    fname_out   = [flist(i).name, '_frame_', num2str(j), '.cor32'];
                     pfname_out  = fullfile(path_output, fname_out);
                     WriteSUM(pfname_out, frame_data);
                 end

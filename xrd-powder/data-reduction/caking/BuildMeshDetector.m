@@ -28,34 +28,11 @@ function mesh = BuildMeshDetector(Lx, Ly, cakeParms, varargin)
 %   Note: 
 %       Only works with square images for now (2015-04-24)
 
-%%%%%%%%%%%%%%%%%%%%%%%%%
-% OLD STUFF
-% function mesh = BuildMeshDetector(Lx, Ly, cakeParms)
-%   Ly 
-%       number of pixels in the image in the vertical direction
-%
-
-% save('BuildMeshDetector.mat')
-% return
+% save('BuildMeshDetector.mat' , 'Lx', 'Ly', 'cakeParms')
 % clear all
 % close all
 % clc
-
 % load('BuildMeshDetector.mat')
-% cakeParms.bins(1)   = 36;           % number of azimuthal bins
-% cakeParms.bins(2)   = 3000;         % number of radial bins
-% cakeParms.bins(3)   = 30;            % number of angular bins
-% cakeParms.origin    = [1944 1536];
-% cakeParms.sector(1) = -360/cakeParms.bins(1)/2;     % start azimuth (min edge of bin) in degrees
-% cakeParms.sector(2) = 360-360/cakeParms.bins(1)/2;  % stop  azimuth (max edge of bin) in degrees
-% cakeParms.sector(3) = 150;  % start radius (min edge of bin) in pixels
-% cakeParms.sector(4) = 1000;  % stop  radius (max edge of bin) in pixels
-% 
-% eta_step    = (cakeParms.sector(2) - cakeParms.sector(1))/cakeParms.bins(1);
-% eta_ini     = cakeParms.sector(1) + eta_step/2;
-% eta_fin     = cakeParms.sector(2) - eta_step/2;
-% azim        = eta_ini:eta_step:eta_fin;
-% cakeParms.azim	= azim;
 
 % default options
 optcell = {...
@@ -66,7 +43,7 @@ optcell = {...
 opts    = OptArgs(optcell, varargin);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
-% GENERATE MESH
+% GENERATE MESH OF THE DETECTOR
 %%%%%%%%%%%%%%%%%%%%%%%%%
 numel   = (Lx - 1) * (Ly - 1) * 2;
 con     = zeros(3, numel);
@@ -93,7 +70,6 @@ for i = 1:1:(Ly - 1)
     xLR = xL:xR;
     xLR = repmat(xLR, 2, 1);
     con(3, idx1: idx2)  = xLR(:)';
-    
 end
 x   = repmat(1:Lx, 1, Ly);
 y   = repmat(1:Ly, Lx, 1);
@@ -106,15 +82,19 @@ mesh    = MeshStructureXRD(crd, con, numel, qr_trid03p06);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % GENERATE LOOKUP TABLE FOR BINNING
-L   = fix(Lx);
+%%%%%%%%%%%%%%%%%%%%%%%%%
+Lxf   = fix(Lx);
+Lyf   = fix(Ly);
 
 % !!! THESE ARE IN THE CARTESIAN FRAME !!!
 x0  = cakeParms.origin(1);   % in pixels
 y0  = cakeParms.origin(2);   % in pixels
 
+%%% AZIMUTHAL START AND END FOR THE ENTIRE CAKING OPERATION
 startAzi    = cakeParms.sector(1);
 endAzi      = cakeParms.sector(2);
 
+%%% RADIAL START AND END FOR THE ENTIRE CAKING OPERATION
 startRho    = cakeParms.sector(3);
 endRho      = cakeParms.sector(4);
 
@@ -125,40 +105,50 @@ numRho  = cakeParms.bins(2);
 %%% NUMBER OF ETA POINTS PER AZIMUTH
 numEta  = cakeParms.bins(3);
 
+%%% SIZE OF AZIMUTAL BIN
 dAzi    = (endAzi - startAzi)/numAzi;
+%%% SIZE OF AZIMUTAL SEGMENTS IN A AZIMUTHAL BIN
 dEta    = dAzi/numEta;
 
+%%% RADIAL GRID
 R   = startRho:(endRho-startRho)/numRho:endRho;
 R   = repmat(R, numEta + 1, 1)';
 
+%%% INSTANTIATE CRD AND CONNECTIVITY FOR THE INTEGRATOIN LOOKUP TABLE
 fcrd    = cell(numAzi, (numRho + 1), (numEta + 1));
 fcon    = cell(numAzi, (numRho + 1), (numEta + 1));
+
+%%% GENERATE LOOKUP TABLE FOR EACH CAKE
 for ii = 1:1:numAzi
     fprintf('Producing lookup table for sector %d of %d\n', ii, numAzi);
     
+    %%% START AND END AZIMIUTH OF THE ii AZIMUTH
     azi_ini = cakeParms.azim(ii) - dAzi/2;
     azi_fin = cakeParms.azim(ii) + dAzi/2;
     
+    %%% AZIMUTHAL GRID IN A CAKE
     TH  = azi_ini:dEta:azi_fin;
     TH  = repmat(TH, numRho + 1, 1);
     
+    %%% CONVERT ANGULAR GRID POSITIONS TO CARTESIANS COORDINATES
     [x, y]	= pol2cart(deg2rad(TH), R);
     x   = x0 + x; 
     y   = y0 + y;
     
+    % plot(x,y, '.')
+    % axis equal
+    % axis([0 2048 0 2048])
+    % pause
     tic;
+    
+    % figure(100)
+    % clf
     for i = 1:1:(numRho + 1)
-%         plot(crd(1,:), crd(2,:), 'k.')
-%         axis square tight
-%         hold on
         for j = 1:1:(numEta + 1)
             xy  = [x(i,j); y(i,j)];
             
             % square grid
-%             L
-%             Lx
-%             Ly
-            gridNum     = (L-1)*(fix(xy(2))-1) + fix(xy(1));
+            gridNum     = (Lxf-1)*(fix(xy(2))-1) + fix(xy(1));
             elemNums    = [gridNum*2-1 gridNum*2];
             
             P   = crd(:, con(:,elemNums(1)));
@@ -179,15 +169,15 @@ for ii = 1:1:numAzi
             end
             fcon{ii,i,j}    = con(:, fele);
             
-%             plot(xy(1), xy(2), 'g.')
-%             line([P(1,:) P(1,1)], [P(2,:) P(2,1)], 'color', 'r')
-%             plot(P(1,:), P(2,:), 'ro')
-%             P   = crd(:,con(:,elemNums(2)));
-%             plot(P(1,:), P(2,:), 'bs')
-%             axis([xy(1)-10 xy(1)+10 xy(2)-10 xy(2)+10])
+            % plot(xy(1), xy(2), 'g.')
+            % hold on
+            % line([P(1,:) P(1,1)], [P(2,:) P(2,1)], 'color', 'r')
+            % plot(P(1,:), P(2,:), 'ro')
+            % P   = crd(:,con(:,elemNums(2)));
+            % plot(P(1,:), P(2,:), 'bs')
+            % axis([xy(1)-10 xy(1)+10 xy(2)-10 xy(2)+10])
         end
     end
-    
     dtime   = toc;
     fprintf('Processing time for sector %d is %1.4f\n', ii, dtime);
 end
