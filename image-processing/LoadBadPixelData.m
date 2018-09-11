@@ -70,6 +70,15 @@ elseif genum == 4
     
     BadPixelData    = NreadGE(fname, 1);
     BadPixelData    = find(BadPixelData ~= 0);
+elseif genum == 5
+    if isunix
+        fname   = '/home/beams/S1IDUSER/mnt/s1a/misc/DetectorData/1339.6/Full/1339.6Full_BadPixel_d.txt.img';
+    elseif ispc
+        fname   = 'V:/misc/DetectorData/1339.6/Full/1339.6Full_BadPixel_d.txt.img';
+    end
+    
+    BadPixelData    = NreadGE(fname, 1);
+    BadPixelData    = find(BadPixelData ~= 0);
 else
     disp('bad pixel data does not exist. check ge number ...')
     disp('returning empty matrix ...')

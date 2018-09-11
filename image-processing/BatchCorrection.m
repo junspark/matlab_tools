@@ -246,18 +246,20 @@ if opts.CorrectAllImages
     end
 else
     %%% SELECTIVELY CORRECT IMAGES
-    image_num   = opts.lo:1:opts.hi;
+    lo_image_num = opts.lo;
+    hi_image_num = opts.hi;
+    image_num   = lo_image_num:1:hi_image_num;
     
     if image_num == -1
         %disp(sprintf('correction did not run'))
         %disp(sprintf('need to specify image numbers'))
         %return
-        error('correction did not run\nneed to specify image numbers\n'); % edited by CH 7/31/17
+        error('correction did not run\need to specify image numbers\n'); % edited by CH 7/31/17
     end
     parfor i = 1:length(image_num)
         fname   = sprintf(fname_fmt, root_image, image_num(i), ext_image);
         pfname  = fullfile(path_bkg, fname);
-        
+        fprintf('%s\n',pfname)
         flist       = dir(pfname);
         
         %%% DETERMINE NUMBER OF FRAMES IN THIS STACK
@@ -288,7 +290,7 @@ else
                     frame_data  = CorrectBadPixels(frame_data, BadPixelData);
                     
                     % fname_out   = [flist.name, '.frame.', num2str(j), '.cor'];
-                    fname_out   = [flist(i).name, '_frame_', num2str(j), '.cor32'];
+                    fname_out   = [flist.name, '_frame_', num2str(j), '.cor32'];
                     pfname_out  = fullfile(path_output, fname_out);
                     WriteSUM(pfname_out, frame_data);
                 end

@@ -16,9 +16,14 @@ function pfname = GenerateGEpfname(ImagePars)
 % 
 %   pfname
 %       cell structure with the full file names
-% 
+%
 
-if ~isfield(ImagePars, 'iscor') || ~ImagePars.iscor
+%%% Edits by Connor Horn on 7/20/18 to adapt to .cor32 format
+
+iscor = isfield(ImagePars, 'iscor') && ImagePars.iscor;
+iscor32 = isfield(ImagePars, 'iscor32') && ImagePars.iscor32;
+
+if ~iscor && ~iscor32
     numimages   = length(ImagePars.fnumber);
     
     for i = 1:1:numimages
@@ -26,7 +31,7 @@ if ~isfield(ImagePars, 'iscor') || ~ImagePars.iscor
         fname   = sprintf([ImagePars.fbase, '%0', num2str(ImagePars.numdigs), 'd.%s'], ImagePars.fnumber(i), ImagePars.fext);
         pfname{i,1} = fullfile(ImagePars.pname, fname);
     end
-else
+elseif iscor
     numimages   = length(ImagePars.fnumber);
     
     for i = 1:1:numimages
@@ -34,7 +39,20 @@ else
         fname_base  = sprintf([ImagePars.fbase, '%0', num2str(ImagePars.numdigs), 'd.%s'], ImagePars.fnumber(i), ImagePars.fext);
         for j = 1:1:ImagePars.numframe
             %fname   = sprintf([fname_base, '.frame%d.cor'], j);
-            fname   = sprintf([fname_base, '.frame.%d.cor'], j); % edited by CH on 8/3 to reflect format of batchcorr output by adding a '.'
+            fname   = sprintf([fname_base, '_frame_%d.cor'], j); % edited by CH on 8/3/17 to reflect format of batchcorr output by adding a '.'
+            pfname{i,j} = fullfile(ImagePars.pname, fname);
+        end
+    end
+    pfname  = pfname';
+    pfname  = {pfname{:}}';
+elseif iscor32
+    numimages   = length(ImagePars.fnumber);
+    
+    for i = 1:1:numimages
+        fname_base  = sprintf([ImagePars.fbase, '%0', num2str(ImagePars.numdigs), 'd.%s'], ImagePars.fnumber(i), ImagePars.fext);
+        for j = 1:1:ImagePars.numframe
+            %fname   = sprintf([fname_base, '.frame.%d.cor32'], j);
+            fname   = sprintf([fname_base, '_frame_%d.cor32'], j);
             pfname{i,j} = fullfile(ImagePars.pname, fname);
         end
     end
