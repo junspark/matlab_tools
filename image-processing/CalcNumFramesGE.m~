@@ -1,0 +1,19 @@
+function num_frames = CalcNumFramesGE(pfname)
+% CalcNumFramesGE - Calculate
+% the background subtraction.
+%
+%   USAGE:
+%
+%   BatchCorrection(path_bkg, bkg_num, root_bkg, ...
+%                       path_image, root_image, ...
+%                       genum, path_output)
+%   BatchCorrection(path_bkg, bkg_num, root_bkg, ...
+%                       path_image, root_image, ...
+%                       genum, path_output, varargin)
+%
+%   INPUT:
+%
+%   path_bkg            path where background file(s) are located.
+
+num_frames  = dir(pfname);
+num_frames  = (num_frames.bytes-8192)/2048/2048/2;
