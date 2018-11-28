@@ -229,7 +229,6 @@ if Analysis_Options.make_polimg
         title('Ensure that image matches the coordinate system')
         text(0, 0, 'TO')
         text(2048, 0, 'TI')
-        text(0, 0, 'TO')
         text(0, 2048, 'BO')
         text(2048, 2048, 'BI')
         
