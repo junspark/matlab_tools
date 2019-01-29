@@ -15,23 +15,22 @@ function imdata = ReadDexela(filename, varargin)
 %   parameter/value pairs which control certain plotting
 %   features.  Options are:
 %
+%   SPECSettingCorrect  detector initialization in SPEC is correct
+%                       (default = true). If true, Orientation parameter is
+%                       ignored. If false, Orientation parameter is used to
+%
 %   Orientation         detector orientation. options are
-%                       cable_UP - cable pointing along +Y (default)
-%                       cable_DOWN - cable pointing along -Y
+%                       cable_UP - cable pointing along +Y
+%                       cable_DOWN - cable pointing along -Y (default)
 %                       cable_IB - cable pointing -X
 %                       cable_OB - cable pointing +X
 %
 %   PlotImage           plot image data
 
-% %%% SYNTHETIC IMAGE
-% xxx = (1:1:2048)./204.8;
-% yyy = (1:1:2048)./(204.8*2);
-% imgi    = xxx'*yyy;
-% imgi(1000:1200,:)   = 27;
-
 % DEFAULT OPTIONS
 optcell = {...
-    'Orientation', 'cable_UP', ...
+    'SPECSettingCorrect', true, ...
+    'Orientation', 'cable_DOWN', ...
     'PlotImage', false, ...
     };
 
@@ -41,17 +40,29 @@ opts    = OptArgs(optcell, varargin);
 % READ IMAGE FILE
 disp(sprintf('reading %s in %s orientation', filename, opts.Orientation));
 imdata  = imread(filename);
-if strcmpi(opts.Orientation, 'cable_UP')
-    imdata  = rot90(imdata, -1);    %%% THIS MAKES WHAT YOU SEE WHAT YOU GET
-elseif strcmpi(opts.Orientation, 'cable_DOWN')
-    imdata  = rot90(imdata, 1);
-elseif strcmpi(opts.Orientation, 'cable_IB')
-    imdata  = rot90(imdata, 0);
-elseif strcmpi(opts.Orientation, 'cable_OB')
-    imdata  = rot90(imdata, 2);
+
+if opts.SPECSettingCorrect
+    disp(sprintf('specified det orientation %s ignored', opts.Orientation));
+    imdata  = rot90(imdata, -1);
 else
-    disp('no such detector orientation option')
-    return
+    %%% IF SPECSettingCorrect FALSE, THIS MAKES WHAT YOU SEE WHAT YOU GET
+    %%% THIS NEEDS TO BE CHECKED
+    if strcmpi(opts.Orientation, 'cable_DOWN')
+        disp('WARNING!!!! still needs to be implemented')
+        imdata  = rot90(imdata, -1);    
+    elseif strcmpi(opts.Orientation, 'cable_UP')
+        disp('WARNING!!!! still needs to be implemented')
+        imdata  = rot90(imdata, -1);
+    elseif strcmpi(opts.Orientation, 'cable_IB')
+        disp('WARNING!!!! still needs to be implemented')
+        imdata  = rot90(imdata, 0);
+    elseif strcmpi(opts.Orientation, 'cable_OB')
+        disp('WARNING!!!! still needs to be implemented')
+        imdata  = rot90(imdata, 2);
+    else
+        disp('no such detector orientation option')
+        return
+    end
 end
 
 if opts.PlotImage

@@ -60,6 +60,12 @@ function log = parseGrainData(pfname, qsym, varargin)
 %
 %   'Technique'     far-field (ff) or near-field (nf). default is ff.
 %   'CrdSystem'     coordinate system in the log file (default is APS)
+%	'LabToSample'	rigid body rotation to bring the sample frame coincide 
+%					with the laboratory frame. this option only works with 
+%					APS CrdSystem for now.
+%	'C_xstal' 		single crystal stiffness matrix / tensor to compute the
+%					stresses.
+%	'OffsetDirection' and 'OffsetValue' are used for stitching multiple scans.
 %
 %   OUTPUT:
 %   
