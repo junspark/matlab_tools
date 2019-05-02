@@ -152,6 +152,7 @@ if strcmpi(opts.Technique, 'ff-midas')
         'GrainRadius',[], ...
         'Completeness',[], ...
         'StrainFab',[], 'Strain',[], ...
+        'StrainFab_vec', [], 'Strain_vec', [], ...
         'PhaseNumber',[], ...
         'V',[],'Esam',[],'Ecry',[],'F',[], ...
         'ReflectionTable', [],  'CrdSys', []);
@@ -214,17 +215,23 @@ if strcmpi(opts.Technique, 'ff-midas')
             log(ct).StrainFabUnits  = 'strain';
             log(ct).StrainUnits     = 'strain';
             
+            StrainFab_vec       = VectorOfStressStrainMatrixInVM(log(i).StrainFab);
+            Strain_vec          = VectorOfStressStrainMatrixInVM(log(i).Strain);
+            
+            log(ct).StrainFab_vec   = StrainFab_vec;
+            log(ct).Strain_vec      = Strain_vec;
+                
             if isnan(opts.C_xstal)
-                log(ct).StressFab    = nan(3,3);
-                log(ct).Stress       = nan(3,3);
+                log(ct).StressFab    = nan(6,1);
+                log(ct).Stress       = nan(6,1);
                 
-                log(ct).StressFab_h     = nan(3,3);
-                log(ct).StressFab_d     = nan(3,3);
-                log(ct).StressFab_vm    = nan(1,1);
+                log(ct).StressFab_h     = nan;
+                log(ct).StressFab_d     = nan(6,1);
+                log(ct).StressFab_vm    = nan;
                 
-                log(ct).Stress_h    = nan(3,3);
-                log(ct).Stress_d    = nan(3,3);
-                log(ct).Stress_vm   = nan(1,1);
+                log(ct).Stress_h    = nan;
+                log(ct).Stress_d    = nan(6,1);
+                log(ct).Stress_vm   = nan;
                 
             elseif (size(opts.C_xstal,1) == 6) && (size(opts.C_xstal,2) == 6)
                 %%% STRAIN IS IN SAMPLE FRAME
@@ -233,7 +240,6 @@ if strcmpi(opts.Technique, 'ff-midas')
                 C   = T*opts.C_xstal*T';  % XSTAL STIFFNESS IN SAMPLE FRAME
                 
                 %%% FAB
-                StrainFab_vec       = VectorOfStressStrainMatrixInVM(log(i).StrainFab);
                 StressFab_vec       = C*StrainFab_vec;
                 log(ct).StressFab   	= StressFab_vec;
                 log(ct).StressFab_mtx   = MatrixOfStressStrainVectorInVM(StressFab_vec);
@@ -242,7 +248,6 @@ if strcmpi(opts.Technique, 'ff-midas')
                 log(ct).StressFab_vm    = VMStressStrain(StressFab_vec);
                 
                 %%% PK
-                Strain_vec          = VectorOfStressStrainMatrixInVM(log(i).Strain);
                 Stress_vec          = C*Strain_vec;
                 log(ct).Stress    	= Stress_vec;
                 log(ct).Stress_mtx  = MatrixOfStressStrainVectorInVM(Stress_vec);

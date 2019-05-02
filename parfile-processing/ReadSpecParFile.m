@@ -1397,26 +1397,26 @@ switch lower(opts.Version)
         pardata.ev8     = textdata{169};
         pardata.ev9     = textdata{170};
         pardata.ev10    = textdata{171};
-        case {'mpe_fastpar_standard', 'mpe_ff_standard'}
+    case 'white_apr19_ff_per_frame'
         fmtstring   = [ ...
             '%s %s %d %s %d ' ...
-            '%f %f %f %f ' ...
-            '%f %f %f %s ' ...
-            '%f %f %s ' ...
-            '%f %f %f %f %f %f %f %f %f %f ' ...
-            '%f %f %f %f %s ' ...
-            '%f %f %d %f %s ' ...
-            '%d %d ' ...
-            '%f %f %f %f %f %f %f ' ...
-            '%f %f %f %f %f %f %f ' ...
-            '%f %f %f %f %f %f %f ' ...
-            '%f %f %f %f %f %f %f ' ...
-            '%f %f %f %f %f %f %f ' ...
-            '%s ' ...
-            '%f %f %f %f %f'];
+            '%s %s %f %s ' ...
+            '%f %f %f %f %f %f %f %f ' ...
+            '%f %f %f %f %f %f %f %f ' ...
+            '%f %f %f %f %f %f %f %f ' ...
+            '%f %f %f %f %f %f %f %f ' ...
+            ];
+        
+%         printf("%s %s %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %8f %s %8f %8f %8f %5f %s %05d %05d %04d %12f %12f %12f %12f %12f %15.8f\n",\
+%         enddate, 
+%         x6detname, x7A[DetX], x8A[DetZ], x9A[NFYE], x10A[bbYE], x11A[ge_x], x12hydraZmot, x13A[imgXE], x14A[imgZE], x15A[imgYE], \
+%         x16A[mtsX2E], x17A[rxe], x18A[rze], x19S[fedrl], x20S[fedr2], x21A[mtsYE], x22A[aeroXE], x23A[aero], x24A[samXE], x25A[samZE], \
+%         x26motname, x27startpos, x28endpos, x29omegapos, x30OSC["exposure_time"], 
+%         x31imgprefix, x32filenum, x33OSC["first_frame_number"], x34iframe+1, x35moncnt[icnt], x36trcnt[icnt], \
+%         x37Emoncnt[icnt], x38Etrcnt[icnt], x39cntticks[icnt]/50e6, x40timestamp[icnt])  # We should put in the elapsed time based on the scaler trigger and 10MHz clock (in 1id) or 50 MHz (in 1ide)
         
         %%% READ IN DATA USING FORMAT STRING
-        textdata  = textscan(fid, fmtstring);
+        textdata  = textscan(fid, fmtstring)
         
         %%% PARSE DATA
         pardata.day     = textdata{1};
@@ -1425,24 +1425,24 @@ switch lower(opts.Version)
         pardata.time    = textdata{4};
         pardata.year    = textdata{5};
         
-        pardata.epoch_time  = textdata{6};
-        pardata.integ_time  = textdata{7};
-        pardata.Iring       = textdata{8};
-        pardata.und_gap     = textdata{9};
-        pardata.energy      = textdata{10};
-        pardata.energy_cal  = textdata{11};
-        pardata.foil_pos    = textdata{12};
-        pardata.atten_pos   = textdata{15};
+        pardata.epoch_time  = textdata{40};
+        pardata.integ_time  = textdata{39};
+        pardata.Iring       = nan;
+        pardata.und_gap     = nan;
+        pardata.energy      = nan;
+        pardata.energy_cal  = nan;
+        pardata.foil_pos    = nan;
+        pardata.atten_pos   = nan;
         
-        pardata.det1_fname              = textdata{36};
-        pardata.det1_fnum               = textdata{38};%32
-        pardata.det1_frames_per_file    = textdata{34};
-        pardata.det1_time_per_frame     = textdata{35};
+        pardata.det1_fname              = textdata{7};
+        pardata.det1_fnum               = textdata{8};
+        pardata.det1_frames_per_file    = nan;
+        pardata.det1_time_per_frame     = textdata{33};
         
-        pardata.det2_fname              = textdata{72};
-        pardata.det2_fnum               = textdata{73};
+        pardata.det2_fname              = nan;
+        pardata.det2_fnum               = nan;
         pardata.det2_frames_per_file    = nan;
-        pardata.det2_time_per_frame     = textdata{35};
+        pardata.det2_time_per_frame     = nan;
         
         pardata.det3_fname              = nan;
         pardata.det3_fnum               = nan;
@@ -1484,63 +1484,67 @@ switch lower(opts.Version)
         pardata.det10_frames_per_file   = nan;
         pardata.det10_time_per_frame    = nan;
         
-        pardata.scaler1_val     = textdata{39};
+        pardata.scaler1_val     = textdata{36};
         pardata.scaler1_units   = nan;
-        pardata.scaler2_val     = textdata{40};
+        pardata.scaler2_val     = textdata{37};
         pardata.scaler2_units   = nan;
-        pardata.scaler3_val     = textdata{41};
+        pardata.scaler3_val     = textdata{38};
         pardata.scaler3_units   = nan;
-        pardata.scaler4_val     = textdata{43};
+        pardata.scaler4_val     = textdata{39};
         pardata.scaler4_units   = nan;
-        pardata.scaler5_val     = textdata{42};
+        pardata.scaler5_val     = nan;
         pardata.scaler5_units   = nan;
-        pardata.scaler6_val     = textdata{44};
+        pardata.scaler6_val     = nan;
         pardata.scaler6_units   = nan;
-        pardata.scaler7_val     = textdata{45};
+        pardata.scaler7_val     = nan;
         pardata.scaler7_units   = nan;
-        pardata.scaler8_val     = textdata{46};
+        pardata.scaler8_val     = nan;
         pardata.scaler8_units   = nan;
-        pardata.scaler9_val     = textdata{47};
+        pardata.scaler9_val     = nan;
         pardata.scaler9_units   = nan;
         pardata.scaler10_val    = nan;
         pardata.scaler10_units  = nan;
         
-        pardata.samX        = textdata{27};
-        pardata.samY        = textdata{25};
-        pardata.samZ        = textdata{28};
+        pardata.samX        = textdata{28};
+        pardata.samY        = textdata{30};
+        pardata.samZ        = textdata{29};
         
-        pardata.aX          = textdata{29};
-        pardata.aY          = nan;
-        pardata.aZ          = textdata{30};
+        pardata.aX          = textdata{21};
+        pardata.aY          = textdata{27};
+        pardata.aZ          = textdata{22};
         
         pardata.samX2       = textdata{26};
-        pardata.samY2       = nan;
-        pardata.samZ2       = nan;
-        pardata.samOther    = nan;
+        pardata.samY2       = textdata{25};
+        pardata.samZ2       = textdata{23};
+        pardata.samOther    = textdata{20};
         
-        pardata.det1_pos1   = textdata{23};
+        pardata.scanmtr = textdata{9};
+        pardata.scanini = textdata{10};
+        pardata.scanfin = textdata{11};
+        
+        pardata.det1_pos1   = textdata{11};
         pardata.det1_pos2   = nan;
-        pardata.det1_pos3   = textdata{24};
+        pardata.det1_pos3   = textdata{12};
         
-        pardata.det2_pos1   = textdata{20};
-        pardata.det2_pos2   = textdata{21};
-        pardata.det2_pos3   = textdata{22};
+        pardata.det2_pos1   = textdata{11};
+        pardata.det2_pos2   = nan;
+        pardata.det2_pos3   = textdata{12};
         
-        pardata.det3_pos1   = textdata{17};
-        pardata.det3_pos2   = textdata{19};
-        pardata.det3_pos3   = textdata{18};
+        pardata.det3_pos1   = textdata{11};
+        pardata.det3_pos2   = nan;
+        pardata.det3_pos3   = textdata{12};
         
-        pardata.det4_pos1   = nan;
+        pardata.det4_pos1   = textdata{11};
         pardata.det4_pos2   = nan;
-        pardata.det4_pos3   = nan;
+        pardata.det4_pos3   = textdata{12};
         
-        pardata.det5_pos1   = nan;
-        pardata.det5_pos2   = nan;
-        pardata.det5_pos3   = nan;
+        pardata.det5_pos1   = textdata{13};
+        pardata.det5_pos2   = textdata{15};
+        pardata.det5_pos3   = textdata{14};
         
-        pardata.det6_pos1   = nan;
-        pardata.det6_pos2   = nan;
-        pardata.det6_pos3   = nan;
+        pardata.det6_pos1   = textdata{7};
+        pardata.det6_pos2   = textdata{9};
+        pardata.det6_pos3   = textdata{8};
        
         pardata.det7_pos1   = nan;
         pardata.det7_pos2   = nan;
@@ -1566,15 +1570,15 @@ switch lower(opts.Version)
         pardata.hex_pos6    = nan;
         pardata.hex_pos7    = nan;
         
-        pardata.slit1_V_size    = textdata{61};
-        pardata.slit1_V_pos     = textdata{65};
-        pardata.slit1_H_size    = textdata{60};
-        pardata.slit1_H_pos     = textdata{64};
+        pardata.slit1_V_size    = nan;
+        pardata.slit1_V_pos     = nan;
+        pardata.slit1_H_size    = nan;
+        pardata.slit1_H_pos     = nan;
         
-        pardata.slit2_V_size    = textdata{59};
-        pardata.slit2_V_pos     = textdata{63};
-        pardata.slit2_H_size    = textdata{58};
-        pardata.slit2_H_pos     = textdata{62};
+        pardata.slit2_V_size    = nan;
+        pardata.slit2_V_pos     = nan;
+        pardata.slit2_H_size    = nan;
+        pardata.slit2_H_pos     = nan;
         
         pardata.slit3_V_size    = nan;
         pardata.slit3_V_pos     = nan;
@@ -1608,33 +1612,29 @@ switch lower(opts.Version)
         pardata.lens4_pos1  = nan;
         pardata.lens4_pos2  = nan;
         
-        pardata.encoder1    = textdata{66};
-        pardata.encoder2    = textdata{67};
-        pardata.encoder3    = textdata{68};
-        pardata.encoder4    = textdata{69};
-        pardata.encoder5    = textdata{70};
-        pardata.encoder6    = textdata{51};
-        pardata.encoder7    = textdata{48};
-        pardata.encoder8    = textdata{49};
+        pardata.encoder1    = textdata{19};
+        pardata.encoder2    = textdata{20};
+        pardata.encoder3    = nan;
+        pardata.encoder4    = nan;
+        pardata.encoder5    = nan;
+        pardata.encoder6    = nan;
+        pardata.encoder7    = nan;
+        pardata.encoder8    = nan;
         pardata.encoder9    = nan;
         pardata.encoder10   = nan;
         
-        pardata.ev1     = textdata{52};
-        pardata.ev2     = textdata{53};
-        pardata.ev3     = textdata{54};
-        pardata.ev4     = textdata{55};
-        pardata.ev5     = textdata{56};
+        pardata.ev1     = textdata{6};
+        pardata.ev2     = textdata{10};
+        pardata.ev3     = textdata{33};
+        pardata.ev4     = textdata{24};
+        pardata.ev5     = nan;
         pardata.ev6     = nan;
         pardata.ev7     = nan;
         pardata.ev8     = nan;
         pardata.ev9     = nan;
         pardata.ev10    = nan;
         
-        pardata.scanmtr = textdata{31};
-        pardata.scanini = textdata{32};
-        pardata.scanfin = textdata{33};
-        
-        pardata.cal_foil = textdata{13};
+        pardata.cal_foil = nan;
     case '6bma_hchoo_feb18'
         fmtstring   = ['%s %s %d %s %d ' ...
             '%s %d %f %f %f %f %f %f %f %f %f %f %f'];
