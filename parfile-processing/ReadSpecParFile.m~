@@ -74,7 +74,7 @@ switch lower(opts.Version)
             '%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f ' ...
             '%f %f %f %f %f %f %f %f ' ...
             '%f %f %f %f %f %f %f %f %f %f ' ...
-            '%f %f %f %f %f %f %f %f %f %f'];
+            '%f %f %f %f %f %f %f %f %f %f %f %f %f %f'];
         
         %%% READ IN DATA USING FORMAT STRING
         textdata  = textscan(fid, fmtstring);
@@ -278,37 +278,35 @@ switch lower(opts.Version)
         pardata.lens1_pos2  = textdata{154};
         
         pardata.lens2_pos1  = textdata{155};
-        pardata.lens2_pos2  = textdata{156};
+        pardata.lens2_pos2  = textdata{148};
         
-        pardata.lens3_pos1  = textdata{157};
-        pardata.lens3_pos2  = textdata{158};
+        pardata.lens3_pos1  = textdata{149};
+        pardata.lens3_pos2  = textdata{150};
         
-        pardata.lens4_pos1  = textdata{159};
-        pardata.lens4_pos2  = textdata{160};
+        pardata.lens4_pos1  = textdata{151};
+        pardata.lens4_pos2  = textdata{152};
         
-        %%% LINE 11
-        pardata.encoder1    = textdata{161};
-        pardata.encoder2    = textdata{162};
-        pardata.encoder3    = textdata{163};
-        pardata.encoder4    = textdata{164};
-        pardata.encoder5    = textdata{165};
-        pardata.encoder6    = textdata{166};
-        pardata.encoder7    = textdata{167};
-        pardata.encoder8    = textdata{168};
-        pardata.encoder9    = textdata{169};
-        pardata.encoder10   = textdata{170};
+        pardata.encoder1    = textdata{153};
+        pardata.encoder2    = textdata{154};
+        pardata.encoder3    = textdata{155};
+        pardata.encoder4    = textdata{156};
+        pardata.encoder5    = textdata{157};
+        pardata.encoder6    = textdata{158};
+        pardata.encoder7    = textdata{159};
+        pardata.encoder8    = textdata{160};
+        pardata.encoder9    = textdata{161};
+        pardata.encoder10   = textdata{162};
         
-        %%% LINE 12
-        pardata.ev1     = textdata{171};
-        pardata.ev2     = textdata{172};
-        pardata.ev3     = textdata{173};
-        pardata.ev4     = textdata{174};
-        pardata.ev5     = textdata{175};
-        pardata.ev6     = textdata{176};
-        pardata.ev7     = textdata{177};
-        pardata.ev8     = textdata{178};
-        pardata.ev9     = textdata{179};
-        pardata.ev10    = textdata{180};
+        pardata.ev1     = textdata{163};
+        pardata.ev2     = textdata{164};
+        pardata.ev3     = textdata{165};
+        pardata.ev4     = textdata{166};
+        pardata.ev5     = textdata{167};
+        pardata.ev6     = textdata{168};
+        pardata.ev7     = textdata{169};
+        pardata.ev8     = textdata{170};
+        pardata.ev9     = textdata{171};
+        pardata.ev10    = textdata{172};
     case 'mpe_standard'
         fmtstring   = ['%s %s %d %s %d ' ...
             '%u %f %f %f %f %f %f %f ' ....
