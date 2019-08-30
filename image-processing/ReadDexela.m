@@ -29,7 +29,7 @@ function imdata = ReadDexela(filename, varargin)
 
 % DEFAULT OPTIONS
 optcell = {...
-    'SPECSettingCorrect', true, ...
+    'SPECSettingCorrect', false, ...
     'Orientation', 'cable_DOWN', ...
     'PlotImage', false, ...
     };
@@ -48,11 +48,9 @@ else
     %%% IF SPECSettingCorrect FALSE, THIS MAKES WHAT YOU SEE WHAT YOU GET
     %%% THIS NEEDS TO BE CHECKED
     if strcmpi(opts.Orientation, 'cable_DOWN')
-        disp('WARNING!!!! still needs to be implemented')
         imdata  = rot90(imdata, -1);    
     elseif strcmpi(opts.Orientation, 'cable_UP')
-        disp('WARNING!!!! still needs to be implemented')
-        imdata  = rot90(imdata, -1);
+        imdata  = rot90(imdata, 1);
     elseif strcmpi(opts.Orientation, 'cable_IB')
         disp('WARNING!!!! still needs to be implemented')
         imdata  = rot90(imdata, 0);
@@ -87,3 +85,5 @@ if opts.PlotImage
     axis equal tight
     drawnow
 end
+
+imdata  = double(imdata);
