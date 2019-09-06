@@ -47,9 +47,14 @@ if opts.SPECSettingCorrect
 else
     %%% IF SPECSettingCorrect FALSE, THIS MAKES WHAT YOU SEE WHAT YOU GET
     %%% THIS NEEDS TO BE CHECKED
+	disp(sprintf('Dexela is in %s configuration', opts.Orientation))
     if strcmpi(opts.Orientation, 'cable_DOWN')
         imdata  = rot90(imdata, -1);    
     elseif strcmpi(opts.Orientation, 'cable_UP')
+<<<<<<< HEAD
+=======
+        disp('WARNING!!!! CABLE UP = 1')
+>>>>>>> origin/master
         imdata  = rot90(imdata, 1);
     elseif strcmpi(opts.Orientation, 'cable_IB')
         disp('WARNING!!!! still needs to be implemented')
@@ -85,5 +90,8 @@ if opts.PlotImage
     axis equal tight
     drawnow
 end
+<<<<<<< HEAD
 
 imdata  = double(imdata);
+=======
+>>>>>>> origin/master
