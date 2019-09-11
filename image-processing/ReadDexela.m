@@ -49,9 +49,9 @@ else
     %%% THIS NEEDS TO BE CHECKED
 	disp(sprintf('Dexela is in %s configuration', opts.Orientation))
     if strcmpi(opts.Orientation, 'cable_DOWN')
+		disp('WARNING!!!! still needs to be implemented')
         imdata  = rot90(imdata, -1);    
     elseif strcmpi(opts.Orientation, 'cable_UP')
-        disp('WARNING!!!! CABLE UP = 1')
         imdata  = rot90(imdata, 1);
     elseif strcmpi(opts.Orientation, 'cable_IB')
         disp('WARNING!!!! still needs to be implemented')
