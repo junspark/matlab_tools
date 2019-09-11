@@ -341,20 +341,20 @@ if strcmpi(opts.Technique, 'ff-midas')
             C   = T*opts.C_xstal*T';  % XSTAL STIFFNESS IN SAMPLE FRAME
             
             %%% FAB
-            StressFab_vec       = C*StrainFab_vec;
-            grains(ct).StressFab   	= StressFab_vec;
-            grains(ct).StressFab_mtx   = MatrixOfStressStrainVectorInVM(StressFab_vec);
-            grains(ct).StressFab_h     = VolumetricStressStrain(StressFab_vec);
-            grains(ct).StressFab_d     = DeviatoricStressStrain(StressFab_vec);
-            grains(ct).StressFab_vm    = VMStressStrain(StressFab_vec);
+            StressFab_vec               = C*StrainFab_vec;
+            grains(ct).StressFab   	    = StressFab_vec;
+            grains(ct).StressFab_mtx    = MatrixOfStressStrainVectorInVM(StressFab_vec);
+            grains(ct).StressFab_h      = VolumetricStressStrain(StressFab_vec);
+            grains(ct).StressFab_d      = DeviatoricStressStrain(StressFab_vec);
+            grains(ct).StressFab_vm     = VMStressStrain(StressFab_vec);
             
             %%% PK
-            Stress_vec          = C*Strain_vec;
-            grains(ct).Stress    	= Stress_vec;
-            grains(ct).Stress_mtx  = MatrixOfStressStrainVectorInVM(Stress_vec);
-            grains(ct).Stress_h    = VolumetricStressStrain(Stress_vec);
-            grains(ct).Stress_d    = DeviatoricStressStrain(Stress_vec);
-            grains(ct).Stress_vm   = VMStressStrain(Stress_vec);
+            Stress_vec              = C*Strain_vec;
+            grains(ct).Stress       = Stress_vec;
+            grains(ct).Stress_mtx   = MatrixOfStressStrainVectorInVM(Stress_vec);
+            grains(ct).Stress_h     = VolumetricStressStrain(Stress_vec);
+            grains(ct).Stress_d     = DeviatoricStressStrain(Stress_vec);
+            grains(ct).Stress_vm    = VMStressStrain(Stress_vec);
         end
         grains(ct).StrainRMS   = Grains_csv(i, 43);
         grains(ct).C_xstal     = opts.C_xstal;
