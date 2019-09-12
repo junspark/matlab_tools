@@ -54,8 +54,8 @@ grains0_quat  = [grains0(:).quat];
 grains1_COM   = [grains1(:).COM];   % COMii    = [grains1(:).COM];
 grains1_quat  = [grains1(:).quat];  % quatii   = [grains1(:).quat];
 
-% parpool(20)
-for iii = 1:1:numgrains0
+parpool(20)
+parfor iii = 1:1:numgrains0
     disp(sprintf('table entries for grain number %d', iii));
     
     dist_table(iii,:)    = sqrt( ...
@@ -65,7 +65,7 @@ for iii = 1:1:numgrains0
         );
     miso_table(iii,:)    = rad2deg(Misorientation(grains0_quat(:,iii), grains1_quat, CubSymmetries));
 end
-% delete(gcp)
+delete(gcp)
 
 dist_table_master   = dist_table;
 miso_table_master   = miso_table;

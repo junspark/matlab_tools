@@ -25,6 +25,7 @@ function microstructure = parseGrainData_OneLayer(pname, qsym, varargin)
 %					APS CrdSystem for now.
 %	'C_xstal' 		single crystal stiffness matrix / tensor to compute the
 %					stresses.
+%	'OutputReflectionTable' outputs reflection table if requested. default is false.
 %   'ComputeSelfMisoTable'  computes misorientation angle between the
 %                           constituent grains. default is false.
 %   'ComputeSelfDistTable'  computes COM distance table between the
@@ -189,6 +190,7 @@ optcell = {...
     'CrdSystem', 'APS', ...
     'LabToSample', 0, ...
     'C_xstal', nan, ...
+	'OutputReflectionTable', false, ...
     'ComputeSelfMisoTable', false, ...
     'ComputeSelfDistTable', false, ...
     };
@@ -364,115 +366,117 @@ if strcmpi(opts.Technique, 'ff-midas')
             grains(ct).PhaseNumber  = Grains_csv(i, 44);
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%% GENERATE REFLECTION TABLE
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        idx = grains(ct).GrainID == Spots_csv(:,1);
-        
-        RingNum = Spots_csv(idx,8);
-        SpotID  = Spots_csv(idx,2);
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%% SPOT TABLE
-        ReflectionTable.Spots_csv_SpotID        = SpotID;
-        ReflectionTable.Spots_csv_ome           = Spots_csv(idx,3);
-        ReflectionTable.Spots_csv_DetHCrd       = Spots_csv(idx,4);
-        ReflectionTable.Spots_csv_DetVCrd       = Spots_csv(idx,5);
-        ReflectionTable.Spots_csv_ome_raw       = Spots_csv(idx,6);
-        ReflectionTable.Spots_csv_eta           = Spots_csv(idx,7);
-        ReflectionTable.Spots_csv_RingNum       = RingNum;
-        ReflectionTable.Spots_csv_YLab          = Spots_csv(idx,9);
-        ReflectionTable.Spots_csv_ZLab          = Spots_csv(idx,10);
-        ReflectionTable.Spots_csv_th            = Spots_csv(idx,11);
-        ReflectionTable.Spots_csv_strain_error  = Spots_csv(idx,12);
-        
-        %%% DERIVED VALUES
-        ReflectionTable.Spots_csv_derived_ome_Aero  = -ReflectionTable.Spots_csv_ome;
-        ReflectionTable.Spots_csv_derived_tth       = 2.*ReflectionTable.Spots_csv_th;
-        ReflectionTable.Spots_csv_derived_eta_vff   = ReflectionTable.Spots_csv_eta;
-        ReflectionTable.Spots_csv_derived_eta_hexrd = ConvertMIDASToHEXRD(ReflectionTable.Spots_csv_eta, ...
-            'ObjectToConvert', 'eta', 'Units', 'deg');
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%% RING TABLE
-        for j = 1:1:length(SpotID)
-            idx = (IDRings_csv(:,1) == RingNum(j)) & (IDRings_csv(:,3) == SpotID(j));
-            ringnum         = IDRings_csv(idx,1);
-            spotid_org(j)   = IDRings_csv(idx,2);
-            
-            disp(sprintf('* grain %d spot %d is from ring number %d spot id %d', ...
-                grains(ct).GrainID, SpotID(j), ringnum, spotid_org(j)));
-            
-            idx = RingNr_csv{ringnum}(:,1) == spotid_org(j);
-            rt_I_integrated(j,1)    = RingNr_csv{ringnum}(idx,2);
-            rt_ome(j,1)             = RingNr_csv{ringnum}(idx,3);
-            rt_YCen(j,1)            = RingNr_csv{ringnum}(idx,4);
-            rt_ZCen(j,1)            = RingNr_csv{ringnum}(idx,5);
-            rt_I_max(j,1)           = RingNr_csv{ringnum}(idx,6);
-            rt_ome_min(j,1)         = RingNr_csv{ringnum}(idx,7);
-            rt_ome_max(j,1)         = RingNr_csv{ringnum}(idx,8);
-            rt_RingRadius(j,1)      = RingNr_csv{ringnum}(idx,9);
-            rt_th(j,1)              = RingNr_csv{ringnum}(idx,10);
-            rt_eta(j,1)             = RingNr_csv{ringnum}(idx,11);
-            rt_dome(j,1)            = RingNr_csv{ringnum}(idx,12);
-            rt_nimg(j,1)            = RingNr_csv{ringnum}(idx,13);
-            rt_grain_volume(j,1)    = RingNr_csv{ringnum}(idx,14);
-            rt_grain_radius(j,1)    = RingNr_csv{ringnum}(idx,15);
-            rt_I_pwdr(j,1)          = RingNr_csv{ringnum}(idx,16);
-            rt_sig_r(j,1)           = RingNr_csv{ringnum}(idx,17);
-            rt_sig_eta(j,1)         = RingNr_csv{ringnum}(idx,18);
-            
-            %%% HKLS TABLE
-            idx = find(hkls_csv(:,5) == ringnum);
-            idx = idx(1);
-            
-            ht_hkls(j,:)        = abs(hkls_csv(idx,1:3));
-            ht_dspacing(j,1)    = hkls_csv(idx,4);
-            ht_qvec(j,:)        = abs(hkls_csv(idx,6:8));
-            ht_th(j,1)          = hkls_csv(idx,9);
-            ht_tth(j,1)         = hkls_csv(idx,10);
-            ht_RingRadius(j,1)  = hkls_csv(idx,11);
-        end
-        
-        ReflectionTable.RingNr_csv_I_integrated = rt_I_integrated;
-        ReflectionTable.RingNr_csv_ome          = rt_ome;
-        ReflectionTable.RingNr_csv_YCen         = rt_YCen;
-        ReflectionTable.RingNr_csv_ZCen         = rt_ZCen;
-        ReflectionTable.RingNr_csv_I_max        = rt_I_max;
-        ReflectionTable.RingNr_csv_ome_min      = rt_ome_min;
-        ReflectionTable.RingNr_csv_ome_max      = rt_ome_max;
-        ReflectionTable.RingNr_csv_RingRadius   = rt_RingRadius;
-        ReflectionTable.RingNr_csv_th           = rt_th;
-        ReflectionTable.RingNr_csv_eta          = rt_eta;
-        ReflectionTable.RingNr_csv_dome         = rt_dome;
-        ReflectionTable.RingNr_csv_nimg         = rt_nimg;
-        ReflectionTable.RingNr_csv_grain_volume = rt_grain_volume;
-        ReflectionTable.RingNr_csv_grain_radius = rt_grain_radius;
-        ReflectionTable.RingNr_csv_I_pwdr       = rt_I_pwdr;
-        ReflectionTable.RingNr_csv_sig_r        = rt_sig_r;
-        ReflectionTable.RingNr_csv_sig_eta      = rt_sig_eta;
-        %%% DERIVED VALUES
-        ReflectionTable.RingNr_csv_derived_ome_Aero     = -rt_ome;
-        ReflectionTable.RingNr_csv_derived_ome_min_Aero = -rt_ome_max;
-        ReflectionTable.RingNr_csv_derived_ome_max_Aero = -rt_ome_min;
-        ReflectionTable.RingNr_csv_derived_tth          = 2.*rt_th;
-        ReflectionTable.RingNr_csv_derived_eta_vff      = rt_eta;
-        ReflectionTable.RingNr_csv_derived_eta_hexrd    = ConvertMIDASToHEXRD(ReflectionTable.RingNr_csv_eta, ...
-            'ObjectToConvert', 'eta', 'Units', 'deg');
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%% HKL TABLE
-        ReflectionTable.hkls_csv_hkls       = ht_hkls;
-        ReflectionTable.hkls_csv_dspacing   = ht_dspacing;
-        ReflectionTable.hkls_csv_qvec       = ht_qvec;
-        ReflectionTable.hkls_csv_th         = ht_th;
-        ReflectionTable.hkls_csv_tth        = ht_tth;
-        ReflectionTable.hkls_csv_RingRadius = ht_RingRadius;
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        grains(ct).ReflectionTable = ReflectionTable;
+		if opts.OutputReflectionTable
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			%%% GENERATE REFLECTION TABLE
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			idx = grains(ct).GrainID == Spots_csv(:,1);
+			
+			RingNum = Spots_csv(idx,8);
+			SpotID  = Spots_csv(idx,2);
+			
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			%%% SPOT TABLE
+			ReflectionTable.Spots_csv_SpotID        = SpotID;
+			ReflectionTable.Spots_csv_ome           = Spots_csv(idx,3);
+			ReflectionTable.Spots_csv_DetHCrd       = Spots_csv(idx,4);
+			ReflectionTable.Spots_csv_DetVCrd       = Spots_csv(idx,5);
+			ReflectionTable.Spots_csv_ome_raw       = Spots_csv(idx,6);
+			ReflectionTable.Spots_csv_eta           = Spots_csv(idx,7);
+			ReflectionTable.Spots_csv_RingNum       = RingNum;
+			ReflectionTable.Spots_csv_YLab          = Spots_csv(idx,9);
+			ReflectionTable.Spots_csv_ZLab          = Spots_csv(idx,10);
+			ReflectionTable.Spots_csv_th            = Spots_csv(idx,11);
+			ReflectionTable.Spots_csv_strain_error  = Spots_csv(idx,12);
+			
+			%%% DERIVED VALUES
+			ReflectionTable.Spots_csv_derived_ome_Aero  = -ReflectionTable.Spots_csv_ome;
+			ReflectionTable.Spots_csv_derived_tth       = 2.*ReflectionTable.Spots_csv_th;
+			ReflectionTable.Spots_csv_derived_eta_vff   = ReflectionTable.Spots_csv_eta;
+			ReflectionTable.Spots_csv_derived_eta_hexrd = ConvertMIDASToHEXRD(ReflectionTable.Spots_csv_eta, ...
+				'ObjectToConvert', 'eta', 'Units', 'deg');
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			%%% RING TABLE
+			for j = 1:1:length(SpotID)
+				idx = (IDRings_csv(:,1) == RingNum(j)) & (IDRings_csv(:,3) == SpotID(j));
+				ringnum         = IDRings_csv(idx,1);
+				spotid_org(j)   = IDRings_csv(idx,2);
+				
+				disp(sprintf('* grain %d spot %d is from ring number %d spot id %d', ...
+					grains(ct).GrainID, SpotID(j), ringnum, spotid_org(j)));
+				
+				idx = RingNr_csv{ringnum}(:,1) == spotid_org(j);
+				rt_I_integrated(j,1)    = RingNr_csv{ringnum}(idx,2);
+				rt_ome(j,1)             = RingNr_csv{ringnum}(idx,3);
+				rt_YCen(j,1)            = RingNr_csv{ringnum}(idx,4);
+				rt_ZCen(j,1)            = RingNr_csv{ringnum}(idx,5);
+				rt_I_max(j,1)           = RingNr_csv{ringnum}(idx,6);
+				rt_ome_min(j,1)         = RingNr_csv{ringnum}(idx,7);
+				rt_ome_max(j,1)         = RingNr_csv{ringnum}(idx,8);
+				rt_RingRadius(j,1)      = RingNr_csv{ringnum}(idx,9);
+				rt_th(j,1)              = RingNr_csv{ringnum}(idx,10);
+				rt_eta(j,1)             = RingNr_csv{ringnum}(idx,11);
+				rt_dome(j,1)            = RingNr_csv{ringnum}(idx,12);
+				rt_nimg(j,1)            = RingNr_csv{ringnum}(idx,13);
+				rt_grain_volume(j,1)    = RingNr_csv{ringnum}(idx,14);
+				rt_grain_radius(j,1)    = RingNr_csv{ringnum}(idx,15);
+				rt_I_pwdr(j,1)          = RingNr_csv{ringnum}(idx,16);
+				rt_sig_r(j,1)           = RingNr_csv{ringnum}(idx,17);
+				rt_sig_eta(j,1)         = RingNr_csv{ringnum}(idx,18);
+				
+				%%% HKLS TABLE
+				idx = find(hkls_csv(:,5) == ringnum);
+				idx = idx(1);
+				
+				ht_hkls(j,:)        = abs(hkls_csv(idx,1:3));
+				ht_dspacing(j,1)    = hkls_csv(idx,4);
+				ht_qvec(j,:)        = abs(hkls_csv(idx,6:8));
+				ht_th(j,1)          = hkls_csv(idx,9);
+				ht_tth(j,1)         = hkls_csv(idx,10);
+				ht_RingRadius(j,1)  = hkls_csv(idx,11);
+			end
+			
+			ReflectionTable.RingNr_csv_I_integrated = rt_I_integrated;
+			ReflectionTable.RingNr_csv_ome          = rt_ome;
+			ReflectionTable.RingNr_csv_YCen         = rt_YCen;
+			ReflectionTable.RingNr_csv_ZCen         = rt_ZCen;
+			ReflectionTable.RingNr_csv_I_max        = rt_I_max;
+			ReflectionTable.RingNr_csv_ome_min      = rt_ome_min;
+			ReflectionTable.RingNr_csv_ome_max      = rt_ome_max;
+			ReflectionTable.RingNr_csv_RingRadius   = rt_RingRadius;
+			ReflectionTable.RingNr_csv_th           = rt_th;
+			ReflectionTable.RingNr_csv_eta          = rt_eta;
+			ReflectionTable.RingNr_csv_dome         = rt_dome;
+			ReflectionTable.RingNr_csv_nimg         = rt_nimg;
+			ReflectionTable.RingNr_csv_grain_volume = rt_grain_volume;
+			ReflectionTable.RingNr_csv_grain_radius = rt_grain_radius;
+			ReflectionTable.RingNr_csv_I_pwdr       = rt_I_pwdr;
+			ReflectionTable.RingNr_csv_sig_r        = rt_sig_r;
+			ReflectionTable.RingNr_csv_sig_eta      = rt_sig_eta;
+			%%% DERIVED VALUES
+			ReflectionTable.RingNr_csv_derived_ome_Aero     = -rt_ome;
+			ReflectionTable.RingNr_csv_derived_ome_min_Aero = -rt_ome_max;
+			ReflectionTable.RingNr_csv_derived_ome_max_Aero = -rt_ome_min;
+			ReflectionTable.RingNr_csv_derived_tth          = 2.*rt_th;
+			ReflectionTable.RingNr_csv_derived_eta_vff      = rt_eta;
+			ReflectionTable.RingNr_csv_derived_eta_hexrd    = ConvertMIDASToHEXRD(ReflectionTable.RingNr_csv_eta, ...
+				'ObjectToConvert', 'eta', 'Units', 'deg');
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			%%% HKL TABLE
+			ReflectionTable.hkls_csv_hkls       = ht_hkls;
+			ReflectionTable.hkls_csv_dspacing   = ht_dspacing;
+			ReflectionTable.hkls_csv_qvec       = ht_qvec;
+			ReflectionTable.hkls_csv_th         = ht_th;
+			ReflectionTable.hkls_csv_tth        = ht_tth;
+			ReflectionTable.hkls_csv_RingRadius = ht_RingRadius;
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
+			grains(ct).ReflectionTable = ReflectionTable;
+		end
         ct  = ct + 1;
     end
     
@@ -488,6 +492,7 @@ if strcmpi(opts.Technique, 'ff-midas')
             q2  = [grains(idx:end).quat];
             miso_table(i,idx:end)  = Misorientation(q1, q2, qsym);
         end
+		microstructure.miso_table   = miso_table;
     end
     if opts.ComputeSelfDistTable
         disp('************************************************')
@@ -503,12 +508,11 @@ if strcmpi(opts.Technique, 'ff-midas')
             dq  = sqrt(sum(dq.*dq,1));
             dist_table(i,idx:end)  = dq;
         end
+		microstructure.dist_table   = dist_table;
     end
     
     microstructure.grains       = grains;
     microstructure.nGrains      = nGrains;
-    microstructure.miso_table   = miso_table;
-    microstructure.dist_table   = dist_table;
     
 %     COM = [Grains(:).COM]';
 %     vm  = [Grains(:).StressFab_vm]';
