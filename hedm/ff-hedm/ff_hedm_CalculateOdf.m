@@ -14,12 +14,8 @@ wsname = 'wscub4x';      % workspace name
 std_agg = DegToRad * 5;  % std deviation for AggregateFunction
 std_sm  = DegToRad * 10; % std deviation for smoothing
 
-pname   = './examples/';
-fname   = 'Grains_example.csv';
-
-% ROTATION MATRIX TAKING VECTOR IN LAB FRAME TO SAMPLE FRAME
-% NECESSARY TO GET THE ORIENTATION OF CRYSTALS WITH RESPECT TO SAMPLE FRAME
-RLab2Sam    = eye(3,3);
+pname_root  = '/home/beams/S1IDUSER/mnt/orthros/internal_aug18_midas/ff/hedm_resolution';
+pname0      = fullfile(pname_root, 'ss_sam_ff3_Layer8_Analysis_Time_2018_09_11_12_27_14');
 
 % SMOOTHING METHOD
 % 1: Discrete Delta
@@ -36,16 +32,19 @@ eval(['ws = ', wsname, ';']);
 clear(wsname)
 
 % Load MIDAS results
-pfname  = fullfile(pname, fname);
-Grains  = parseGrainData(pfname, ws.frmesh.symmetries);
-numpts  = length(Grains);
-wts     = ones(1, numpts);
+grain_map   = parseGrainData_OneLayer(pname0, CubSymmetries, ...
+    'CrdSystem', 'APS', ...
+    'LabToSample', 0, ...
+    'C_xstal', nan, ...
+    'ComputeSelfMisoTable', false, ...
+    'ComputeSelfDistTable', false, ...
+    'OutputReflectionTable', false, ...
+    'NumFrames', 1440, ...
+    'Technique', 'ff-midas');
 
-% CONVERT [R] TO SAMPLE COORDINATE SYSTEM
-for i = 1:1:numpts
-    RMats(:,:,i)   =  RLab2Sam*Grains(i).RMat;
-end
-quat    = QuatOfRMat(RMats);
+numpts  = grain_map.nGrains;
+wts     = ones(1, numpts);
+quat    = [grain_map.grains(:).quat];
 rod     = ToFundamentalRegion(quat, ws.frmesh.symmetries);
 
 % ODF GENERATION FROM DATA
