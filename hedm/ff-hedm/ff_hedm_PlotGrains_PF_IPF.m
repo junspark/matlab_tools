@@ -6,43 +6,57 @@ clc
 %%% INSTALLS MTEX
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 run('/home/beams/S1IDUSER/mnt/s1b/__eval/mtex-4.4.0/startup_mtex.m')
+
+% plotting convention
+setMTEXpref('xAxisDirection','east');
+setMTEXpref('zAxisDirection','outOfPlane');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% USER INPUT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% workspace name
-wsname_cub  = 'wscub4x';
+wsname  = 'wscub4x';
 
 %%% MIDAS RESULT PATH
 pname_root  = '/home/beams/S1IDUSER/mnt/orthros/internal_aug18_midas/ff/hedm_resolution';
 pname       = fullfile(pname_root, 'ss_sam_ff3_Layer8_Analysis_Time_2018_09_11_12_27_14');
+
+%%% IDENTIFY GRAIN OF INTEREST USING GRAINID
 gid         = 5414;
 
+%%% MTEX RELATED PARAMETERS
 %%% CRYSTAL SYMMETRY IN MTEX CONVENTION
-cs  = crystalSymmetry('Td');
-CS  = {...
-    crystalSymmetry('Td', [3.6 3.6 3.6], 'mineral', 'Fe', 'color', 'light blue'), ...
-    };
+cs  = crystalSymmetry('Td', [3.662 3.662 3.662], 'mineral', 'Iron', 'color', 'light blue');
+
+% crystal symmetry
+CS = {... 
+    'notIndexed', ...
+    cs};
 
 %%% CRYSTAL SYMMETRY IN MTEX CONVENTION
 ss  = specimenSymmetry('orthorhombic');
-SS  = specimenSymmetry('orthorhombic');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-load(wsname_cub);
-eval(['wscub    = ', wsname_cub, ';']);
-clear(wsname_cub)
-
+%%% LOAD DATA AND WORKSPACES
 grain_map   = parseGrainData_OneLayer(pname, CubSymmetries, ...
     'CrdSystem', 'APS', ...
     'LabToSample', 0, ...
     'C_xstal', nan, ...
-    'ComputeSelfMisoTable', 1, ...
-    'ComputeSelfDistTable', 1, ...
+    'ComputeSelfMisoTable', false, ...
+    'ComputeSelfDistTable', false, ...
     'OutputReflectionTable', false, ...
     'NumFrames', 1440, ...
     'Technique', 'ff-midas');
+
+%%% Import Grains.csv file for EBSD Data
+pfname  = fullfile(pname, 'Grains.csv');
+
+%%% Import the Data
+% create an EBSD variable containing the data
+ebsd = loadEBSD(pfname, CS, 'interface', 'generic', ...
+    'ColumnNames', { 'x' 'y' 'z' 'Weight' 'ConfidenceIndex' 'Phase' 'phi1' 'Phi' 'phi2'}, ...
+    'Columns', [11 12 13 23 24 44 45 46 47], 'Bunge');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% GRAIN OF INTEREST
@@ -89,44 +103,13 @@ figure,
 plotIPDF(ori, yvector, cs, 'antipodal')
 hold off
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%% POLE FIGURE PLOTS
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% Import Script for EBSD Data
-%
-% This script was automatically created by the import wizard. You should
-% run the whoole script or parts of it in order to import your data. There
-% is no problem in making any changes to this script.
-
-%%% Specify Crystal and Specimen Symmetries
-
-% crystal symmetry
-CS = {... 
-  'notIndexed',...
-  crystalSymmetry('m-3m', [3.662 3.662 3.662], 'mineral', 'Iron', 'color', 'light blue')};
-
-% plotting convention
-setMTEXpref('xAxisDirection','east');
-setMTEXpref('zAxisDirection','outOfPlane');
-
-%%% Specify File Names
-
-% path to files
-pname = '/home/s1b/__eval/projects_parkjs/ff_plotter';
-
-% which files to be imported
-fname = [pname '/Grains.csv'];
-
-%%% Import the Data
-
-% create an EBSD variable containing the data
-ebsd = loadEBSD(fname,CS,'interface','generic',...
-  'ColumnNames', { 'x' 'y' 'z' 'Weight' 'ConfidenceIndex' 'Phase' 'phi1' 'Phi' 'phi2'}, 'Columns', [11 12 13 23 24 44 45 46 47], 'Bunge');
- 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% POLE FIGURE PLOTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 plotPDF(ebsd('Iron').orientations,Miller(1,0,0,ebsd('Iron').CS))
 
-%%% UNINSTALLS MTEX IN CASE OF CONFLICTS
-run('/home/beams/S1IDUSER/mnt/s1b/__eval/mtex-4.4.0/uninstall_mtex.m')
+%%% UNINSTALL MTEX IN CASE OF CONFLICTS
+% run('/home/beams/S1IDUSER/mnt/s1b/__eval/mtex-4.4.0/uninstall_mtex.m')
 
 % c   = [1 1 1]';
 % cu  = UnitVector(c);
