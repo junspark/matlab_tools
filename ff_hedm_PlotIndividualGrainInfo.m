@@ -1,0 +1,26 @@
+clear all
+close all
+clc
+
+pname_root  = '/home/beams/S1IDUSER/mnt/orthros/internal_aug18_midas/ff/hedm_resolution';
+pname0      = fullfile(pname_root, 'ss_sam_ff3_Layer8_Analysis_Time_2018_09_11_12_27_14');
+
+gid     = 5414;
+
+% Load MIDAS results
+grain_map   = parseGrainData_OneLayer(pname0, CubSymmetries, ...
+    'CrdSystem', 'APS', ...
+    'LabToSample', 0, ...
+    'C_xstal', nan, ...
+    'ComputeSelfMisoTable', false, ...
+    'ComputeSelfDistTable', false, ...
+    'OutputReflectionTable', false, ...
+    'NumFrames', 1440, ...
+    'Technique', 'ff-midas');
+
+GrainID = [grain_map.grains.GrainID];
+numpts  = grain_map.nGrains;
+idx     = find(GrainID == gid);
+
+straini = grain_map.grains(idx).Strain;
+PlotJack(straini, 'title', sprintf('grain number : %d', gid))
