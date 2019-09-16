@@ -2,30 +2,10 @@ clear all
 close all
 clc
 
-% ncdisp(pfname);
-% pname   = 'S:\startup_mam_jun16\dexela';
-% % fname   = 'test_000021.nc';
-% % iframe  = 3;
-%
-% fname   = 'test_000013.nc';
-% iframe  = 1;
-% pfname  = fullfile(pname, fname);
-% img     = NreadDexela(pfname, iframe);
-%
-% fname   = 'test_000014.nc';
-% iframe  = 1;
-% pfname  = fullfile(pname, fname);
-% bkg     = NreadDexela(pfname, iframe);
-%
-% %%% THIS IS THE FLIPPING NEEDED TO GET IT INTO MY CRD
-% imagesc(rot90(img - bkg,2))
-% axis equal
-% caxis([0 6000])
-
 %%% INPUT PARAMETERS
-XRDIMAGE.Image.pname        = '/home/beams/S1IDUSER/mnt/s1b/__eval/projects_parkjs/dexela_calibration/clausen_jul18/mam_in_c';
-XRDIMAGE.Image.fbase        = 'CeO2_1s_';
-XRDIMAGE.Image.fnumber      = 29;
+XRDIMAGE.Image.pname        = '/home/beams/S1IDUSER/mnt/s1b/__eval/projects_parkjs/dexela_workflow/shastri_jul19/dunand_AlCe_alloy/data/CeO2_0pt5s';
+XRDIMAGE.Image.fbase        = 'CeO2_0pt5s';
+XRDIMAGE.Image.fnumber      = 53; %51:55;
 XRDIMAGE.Image.numframe     = 1;
 XRDIMAGE.Image.numdigs      = 6;
 XRDIMAGE.Image.fext         = 'tif';
@@ -33,52 +13,52 @@ XRDIMAGE.Image.corrected    = 0;
 XRDIMAGE.Image.IsHydra      = 0;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
 
 %%% DARK FILES ONLY USED IF THE IMAGES ARE UNCORRECTED
-XRDIMAGE.DarkField.pname    = '/home/beams/S1IDUSER/mnt/s1b/__eval/projects_parkjs/dexela_calibration/clausen_jul18/mam_in_c';
-XRDIMAGE.DarkField.fbase    = 'dark_1s_';
-XRDIMAGE.DarkField.fnumber  = 984;
+XRDIMAGE.DarkField.pname    = '/home/beams/S1IDUSER/mnt/s1b/__eval/projects_parkjs/dexela_workflow/shastri_jul19/dunand_AlCe_alloy/data/CeO2_0pt5s';
+XRDIMAGE.DarkField.fbase    = 'dark_0pt5s';
+XRDIMAGE.DarkField.fnumber  = 61:65;
 XRDIMAGE.DarkField.numframe = 1;
 XRDIMAGE.DarkField.numdigs  = 6;
 XRDIMAGE.DarkField.fext     = 'tif';
 
-XRDIMAGE.Calib.pname        = '/home/beams/S1IDUSER/mnt/s1b/__eval/projects_parkjs/dexela_calibration/clausen_jul18/mam_in_c';
-XRDIMAGE.Calib.fbase        = 'CeO2_1s_';
-XRDIMAGE.Calib.fnumber      = 29;
+%%% CALIBRATION FILE
+XRDIMAGE.Calib.pname        = './';
+XRDIMAGE.Calib.fbase        = 'CeO2_0pt5s_';
+XRDIMAGE.Calib.fnumber      = 53;
 XRDIMAGE.Calib.fext         = 'tif';
 
 %%% INSTRUMENT PARAMETERS
 XRDIMAGE.Instr.energy       = 71.676;       % keV
 XRDIMAGE.Instr.wavelength   = keV2Angstrom(XRDIMAGE.Instr.energy);  % wavelength (Angstrom)
-XRDIMAGE.Instr.distance     = 692.103124;  % mm
-XRDIMAGE.Instr.centers      = [ -40.203701 , 106.423214 ]; % center offsets x & y (um)
-XRDIMAGE.Instr.gammaX       = -0.0004905;    % rad
-XRDIMAGE.Instr.gammaY       = 0.011895;    % rad
+XRDIMAGE.Instr.distance     = 651.224248;  % mm
+XRDIMAGE.Instr.centers      = [ 245.854476 , -93.040774 ]; % center offsets x & y (um)
+XRDIMAGE.Instr.gammaX       = -0.001182;    % rad
+XRDIMAGE.Instr.gammaY       = -0.012298;    % rad
 XRDIMAGE.Instr.imrotation   = 0;            %%% NEED TO BE CLARIFIED
 
 % RADIAL CORRECTION
 % 0 : no correction
 % 1 : constant radial offset
 % 2 : PROPOSED BY ISSN 0909-0495 LEE
-% XRDIMAGE.Instr.dettype  = '2a';
 XRDIMAGE.Instr.dettype  = '2a';
 
 % 0 : []
 % 1 : constant value
 % 2 : [a1 a2 n1 n2 rhod]
 XRDIMAGE.Instr.detpars  = [ ...
-    -0.0002556 ...
-    -0.1653 ...
-    0.11095597 ...
-    1.1425934...
+    -0.000003 ...
+    -0.083582 ...
+    -2.496740 ...
+    1.171598...
     5687.38873533...
-    1.873452 ...
+    1.595635 ...
     ];
 
 %%% CAKE PARAMETERS
-XRDIMAGE.CakePrms.bins(1)   = 36;           % number of azimuthal bins
+XRDIMAGE.CakePrms.bins(1)   = 72;           % number of azimuthal bins
 XRDIMAGE.CakePrms.bins(2)   = 3500;         % number of radial bins
-XRDIMAGE.CakePrms.bins(3)   = 40;            % number of angular bins
+XRDIMAGE.CakePrms.bins(3)   = 60;            % number of angular bins
 
-XRDIMAGE.CakePrms.origin(1) = 1945.795;   % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
+XRDIMAGE.CakePrms.origin(1) = 1942.795;   % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
 XRDIMAGE.CakePrms.origin(2) = 1555.548;     % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
 
 XRDIMAGE.CakePrms.sector(1) = -360/XRDIMAGE.CakePrms.bins(1)/2;     % start azimuth (min edge of bin) in degrees
@@ -105,7 +85,7 @@ XRDIMAGE.Material.hkls      = load([XRDIMAGE.Material.structure, '.hkls']);
     'cubic', XRDIMAGE.Material.hkls', ...
     XRDIMAGE.Instr.wavelength);
 tth     = 2*th;
-d_spacing_range = 0.015;
+d_spacing_range = 0.025;
 d_spacing_UB    = (1 + d_spacing_range)*d;
 d_spacing_LB    = (1 - d_spacing_range)*d;
 
@@ -114,10 +94,10 @@ tth_LB  = 2.*asind(XRDIMAGE.Instr.wavelength/2)./d_spacing_UB;
 
 XRDIMAGE.Material.tth       = tth;
 XRDIMAGE.Material.d_spacing = d;
-XRDIMAGE.Material.numpk     = 4;
-XRDIMAGE.Material.numbounds = 4;
+XRDIMAGE.Material.numpk     = 6;
+XRDIMAGE.Material.numbounds = 6;
 XRDIMAGE.Material.pkidx     = {...
-    [1] [2] [3] [4]
+    [1] [2] [3] [4] [5] [6]
     };
 for i = 1:1:XRDIMAGE.Material.numbounds
     XRDIMAGE.Material.pkrange(:,i)  = [ ...
@@ -143,7 +123,7 @@ Analysis_Options.PkFuncOptions.pfunc_type	= 'pseudoVoigt';
 Analysis_Options.PkFuncOptions.pbkg_order	= 2;
 Analysis_Options.PkFitOptimizationOptions   = optimset(...
     'MaxIter', 5e5, ...
-    'MaxFunEvals',3e5);
+    'MaxFunEvals', 3e5);
 
 %%% INSTR OPTIMIZATION OPTIONS
 Analysis_Options.InstrPrmFitOptions = optimset(...
@@ -153,7 +133,7 @@ Analysis_Options.InstrPrmFitOptions = optimset(...
     'TypicalX',[100 -100 682 0.1 0.1 XRDIMAGE.Instr.detpars], ...
     'Display','final');
 
-fname_pattern   = sprintf('%%s%%0%dd.%%s', XRDIMAGE.Image.numdigs);
+fname_pattern   = sprintf('%%s_%%0%dd.%%s', XRDIMAGE.Image.numdigs);
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% LOAD XRD IMAGES
@@ -167,13 +147,20 @@ else
     fprintf('loading background file for dark.\n');
     disp('###########################')
     
-    fname	= sprintf(fname_pattern, XRDIMAGE.DarkField.fbase, XRDIMAGE.DarkField.fnumber, XRDIMAGE.DarkField.fext);
-    pfname  = fullfile(XRDIMAGE.DarkField.pname, fname);
-    
-    pfname_info = imfinfo(pfname);
-    nframes     = 1;
-    numpixHorz  = pfname_info.Width;
-    numpixVert  = pfname_info.Height;
+    for i = 1:1:length(XRDIMAGE.DarkField.fnumber)
+        fname	= sprintf(fname_pattern, XRDIMAGE.DarkField.fbase, XRDIMAGE.DarkField.fnumber(i), XRDIMAGE.DarkField.fext);
+        pfname  = fullfile(XRDIMAGE.DarkField.pname, fname);
+        
+        if i == 1
+            bkg = ReadDexela(pfname, 'SPECSettingCorrect', false, 'Orientation', 'cable_UP');
+        else
+            bkg = bkg + ReadDexela(pfname, 'SPECSettingCorrect', false, 'Orientation', 'cable_UP');
+        end
+    end
+    bkg = bkg./length(XRDIMAGE.DarkField.fnumber);
+        
+    numpixHorz  = size(bkg,1);
+    numpixVert  = size(bkg,2);
     
     XRDIMAGE.Instr.numpixelsHorz    = numpixHorz;
     XRDIMAGE.Instr.numpixelsVert    = numpixVert;
@@ -188,9 +175,9 @@ else
     
     if numpixVert == 3072
         XRDIMAGE.Instr.pixelsizeVert    = 0.0748;          % mm
-    elseif numpixHorz == 1536
+    elseif numpixVert == 1536
         XRDIMAGE.Instr.pixelsizeVert    = 0.1496;          % mm
-    elseif numpixHorz == 768
+    elseif numpixVert == 768
         XRDIMAGE.Instr.pixelsizeVert    = 0.2992;          % mm
     end
     
@@ -199,12 +186,6 @@ else
     
     %%% CONVERT TO IMAGE COORDINATES
     XRDIMAGE.CakePrms.origin(2) = XRDIMAGE.Instr.numpixelsVert - XRDIMAGE.CakePrms.origin(2);
-    
-    bkg = zeros(numpixVert, numpixHorz);
-    for i = 1:1:nframes
-        bkg     = NreadDexela(pfname, i) + bkg;
-    end
-    bkg = bkg./nframes;
 end
 
 if Analysis_Options.make_polimg
@@ -231,14 +212,11 @@ if Analysis_Options.make_polimg
         else
             imgi    = bkg.*0;
             for j = 1:1:XRDIMAGE.Image.numframe
-                imgj    = NreadDexela(pfname, j);
+                imgj    = ReadDexela(pfname, 'SPECSettingCorrect', false, 'Orientation', 'cable_UP');
                 imgi    = imgi + imgj;
             end
             imgi    = imgi - bkg.*XRDIMAGE.Image.numframe;
         end
-        
-        %%% THIS PUTS THE DETECTOR IN CORRECT ORIENTATION FOR C HUTCH
-        imgi    = rot90(imgi, 3);
         
         %%% SYNTHETIC IMAGE
 %         xxx = (1:1:3888)./388.8;
