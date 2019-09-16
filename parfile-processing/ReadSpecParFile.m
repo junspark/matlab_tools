@@ -74,11 +74,13 @@ switch lower(opts.Version)
             '%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f ' ...
             '%f %f %f %f %f %f %f %f ' ...
             '%f %f %f %f %f %f %f %f %f %f ' ...
-            '%f %f %f %f %f %f %f %f %f %f'];
+            '%f %f %f %f %f %f %f %f %f %f' ...
+            '%f %f %f %f'];
         
         %%% READ IN DATA USING FORMAT STRING
         textdata  = textscan(fid, fmtstring);
-        
+        whos textdata
+        whos fmtstring
         %%% PARSE DATA
         %%% LINE 1
         pardata.day     = textdata{1};
