@@ -55,6 +55,10 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 %   SumOnly             Only output sum files. If 0, ave file will be saved
 %                       as well (default: 1).
 %
+%   NewFileNameFormat   Use old file naming convenction where "_" was 
+%                       included in the file name prefix (default is new). This
+%                       is to ensure backwards compatibility.
+%
 %   OUTPUT:             
 %                   
 %   (possibly) many files
@@ -79,6 +83,7 @@ optcell = {...
     'NumDigits', 6, ...
     'FramesToIgnore', 'none', ...
     'SumOnly', 1, ...
+    'NewFileNameFormat', true, ...
     };
 
 % UPDATE OPTION
@@ -89,7 +94,11 @@ ext_bkg     = ['ge', num2str(genum)];
 ext_image   = ext_bkg;
 
 %%% SETUP FILE NAME PATTERN
-fname_fmt   = sprintf('%%s%%0%dd.%%s', opts.NumDigits);
+if opts.NewFileNameFormat
+    fname_fmt   = sprintf('%%s_%%0%dd.%%s', opts.NumDigits);
+else
+    fname_fmt   = sprintf('%%s%%0%dd.%%s', opts.NumDigits);
+end
 
 %%% BAD PIXEL CORRECTION
 BadPixelData    = LoadBadPixelData(genum);
