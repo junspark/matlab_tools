@@ -1,4 +1,20 @@
 function imctrl = ReadGSAS2Imctrl(fimctrl)
+% ReadGSAS2Imctrl - read GSAS2 generated imctrl file
+%
+%   USAGE:
+%
+%   imctrl = ReadGSAS2Imctrl(fimctrl)
+%
+%   INPUT:
+%
+%   fimctrl
+%       full name of the imctrl file
+%
+%   OUTPUT:
+%
+%   imctrl
+%       imctrl data
+
 
 % clear all
 % close all
