@@ -1,0 +1,30 @@
+brown_nov19 (wf.ge for hydra)
+- one of the first versions 
+- background subtraction (sum and cor32)
+- script from sum to integration (python2) => users could not do
+- sum over all four panels (python2)  => users could not do
+- use auto integrate + chi output (gsas2) per frame
+- use chi output and sum over all four panels (matlab)
+
+daymond_feb20 (wf.ge for hydra)
+- background subtraction (sum)
+- use auto integrate + chi output (gsas2)
+- use chi output and sum over all four panels (python2)
+- peak fitting (matlab)
+- multiple peak fitting (matlab)
+
+joha_feb20 (wf.ge for hydra)
+- background subtraction (sum)
+- use auto integrate + chi output (gsas2)
+- use chi output and sum over all four panels (python2)
+- peak fitting (matlab)
+
+kaoumi_aug16 2020-04-07 (wf.ge for hydra)
+- background subtraction (sum)
+- use auto integrate + chi output (gsas2)
+- use chi output and sum over all four panels (python)
+
+mli_nov19 (wf.dexela for hydra)
+- remove undulating background 
+- use auto integrate + chi output (gsas2)
+- peak fitting (matlab)
