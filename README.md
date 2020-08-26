@@ -6,7 +6,7 @@ MTEX is used to generate certain coloring schemes conventional to the texture co
 
 PhotonAttenuation2 Package is orginally provided by Jarek Tuszynski. Its original version is available at http://www.mathworks.com/examples/matlab/3154-tutorial-for-photonattenuation2-package.
 
-vtkwrite is originally from http://www.mathworks.com/matlabcentral/fileexchange/47814-export-3d-data-to-paraview-in-vtk-legacy-file-format and https://github.com/joe-of-all-trades/vtkwrite
+vtkwrite is originally from http://www.mathworks.com/matlabcentral/fileexchange/47814-export-3d-data-to-paraview-in-vtk-legacy-file-format and https://github.com/joe-of-all-trades/vtkwrite.
 
 Tools for postprocessing Near Field-High Energy Diffraction Microscopy / Ice9 results are provided by D. Menasche at Carnegie Mellon University.
 
