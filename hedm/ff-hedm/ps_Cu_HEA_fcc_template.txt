@@ -1,0 +1,85 @@
+# ~/.MIDAS/MIDAS_V4_FarField_Layers ps_Au.txt 1 1 1 5 orthrosregular parkjs@anl.gov
+# ~/.MIDAS/MIDAS_V5_FarField_Layers ps_Au.txt 1 1 1 4 orthrosregular parkjs@anl.gov
+
+# ~/.MIDAS/MIDAS_V4_FarField_Layers ps_Au.txt 1 1 1 10 orthrosnew parkjs@anl.gov
+# ~/.MIDAS/MIDAS_V4_FarField_FitGrain . ps_Au.txt 215
+
+RawFolder /s1c/mpe1_oct20/ge3/                                                 ### DIRECTORY WHERE RAW DATA LIVE
+SeedFolder /data/tomo1/mpe1_oct20_midas/ff/mishra_CuHEA_fcc                    ### DIRECTORY WHERE ANALYSIS / OUTPUT LIVE
+FileStem mishra_hr2_s1_load0_ff
+StartFileNrFirstLayer 23
+Dark /s1c/mpe1_oct20/ge3/dark_before_000022.ge3                                ### DARK FILE FULL PATH 
+
+########## CHANGE THESE ###############
+RingThresh 2 125
+RingThresh 5 100
+RingThresh 6 80
+RingThresh 7 80
+OverAllRingToIndex 6
+MinNrSpots 3
+LatticeConstant 3.59338 3.59338 3.59338 90 90 90
+SpaceGroup 225
+
+Wavelength 0.1729728                                                               ### ANGSTROMS
+tx 0.198181                                            ### TILT OF THE DETECTOR AROUND X RAY BEAM (ALONG ZL) 0.111380461446373146827681921422 (OTHER)
+Lsd 902538.629383669468
+BC 1023.838410 985.713127
+ty -0.179564
+tz -0.018148
+p0 0.000051737454
+p1 -0.000063140638
+p2 -0.000771234047
+p3 1.440700397485
+Wedge 0
+
+############# NOT SO MUCH ################
+HeadSize 8396800
+Vsample 1000000000
+BeamThickness 400
+GlobalPosition 0
+NumPhases 1
+PhaseNr 1
+MargABC 2
+MargABG 2
+#FrameOmeChange 301 29.5 -1
+Padding 6                                                                       ### "FILESTEM_XXXZZZ.geY" NUMBER OF X AND Z IN FILE NUMBER (6 IN THIS CASE)
+Ext .ge3                                                                        ### FILE NAME EXTENSION
+NrFilesPerSweep 1                                                               ### NUMBER OF FILES PER LAYER
+ImTransOpt 0                                                                    ### IMAGE TRANSFORMATION IN THE RIGHT ORDER
+BeamCurrent 1                                                                   ### BEAM CURRENT (LEAVE AS 1 NOW)
+UpperBoundThreshold 14000                                                       ### SATURATION INTENSITY - UPPERBOUND THRESHOLD
+OmegaStep -0.25                                                              ### OMEGA STEP SIZE (+ IS CONVENTIONAL RIGHT HAND RULE ROTATION ABOUT APS +Y)
+OmegaFirstFile 180                                                             ### OMEGA VALUE FOR THE FIRST FRAME IN THE FIRST FILE (RANGE IS ALWAY BETWEEN -180 TO +180)
+px 200                                                                          ### PIXEL SIZE IN MICRONS (ASSUME SQUARE PIXELS)
+Width 2000                                                                      ### 1/2 * (TTH RANGE FOR PEAKSEARCH IN PIXELS)
+NrPixels 2048                                                                   ### NUMBER OF PIXELS IN DETECTOR IN A DIRECTION (ASSUME SQUARE DETECTOR)
+MaxRingRad 204800                                                               ### MAX RING RADIUS (MICRONS) TO LIMIT NUMBER OF RINGS TO SIMULATE / CALCULATION
+StartNr 1                                                                       ### LEAVE AS 1
+EndNr 1440                                                                       ### TOTAL NUMBER OF FRAMES FOR THE LAYER
+Rsample 1800                                                                     ### RADIUS OF THE SAMPLE (LIMITS SEARCH SPACE IN X AND Z) MICRONS
+Hbeam 800                                                                         ### HEIGHT OF THE BEAM (MICRONS) (LIMITS SEARCH SPACE IN Y)
+DoFit 0                                                                         ### USE SAMPLE TO REFINE THE EXPERIMENT
+MinEta 6                                                                        ### ANGLE AROUND THE Y THAT IS NOT CONSIDERED
+MinOmeSpotIDsToIndex -90                                                        ### LIMITS FIBER SEARCH SPACE SO THAT REFLECTIONS FROM SAME GRAIN ARE NOT REVISITED EXTENSIVELY. MIN / MAX OME SHOULD COVER AT LEAST 90 FOR NOW.
+MaxOmeSpotIDsToIndex 90
+tolTilts 2                                                                      ### TILT TOLERANCE IF DoFit = 1 (DEG)
+tolBC 10                                                                        ### BEAM CENTER TOLERANCE IF DoFit = 1 (PIX)
+tolLsd 5000                                                                     ### SAMPLE TO DETECTOR DISTANCE TOLERANCE IF DoFit = 1 (MICRONS)
+RhoD 204800                                                                     ### DET DISTORTION PARAMETERS
+Completeness 0.8                                                                ### COMPLETENESS IN FABLE SENSE
+NewType 1                                                                       ### LEAVE AS IS
+OmegaRange -180.0 -112.5                                                             ### OMEGA RANGE DEFINES WHERE TO LOOK FOR PEAKS (IF SHADOWING CREATE MULTIPLE OMEGA RANGES)
+BoxSize  -1000000 1000000 -1000000 1000000                                       ### ACTIVE DETECTOR AREA AT THE OMEGA RANGE (MICRONS) (HORIZONTAL RANGE - NEGATIVE IN INBOARD / VERTICAL RANGE - NEGATIVE IS DOWN)
+OmegaRange  -67.5 67.5                                                             ### OMEGA RANGE DEFINES WHERE TO LOOK FOR PEAKS (IF SHADOWING CREATE MULTIPLE OMEGA RANGES)
+BoxSize  -1000000 1000000 -1000000 1000000                                       ### ACTIVE DETECTOR AREA AT THE OMEGA RANGE (MICRONS) (HORIZONTAL RANGE - NEGATIVE IN INBOARD
+OmegaRange  112.5 180.0                                                             ### OMEGA RANGE DEFINES WHERE TO LOOK FOR PEAKS (IF SHADOWING CREATE MULTIPLE OMEGA RANGES)
+BoxSize  -1000000 1000000 -1000000 1000000                                       ### ACTIVE DETECTOR AREA AT THE OMEGA RANGE (MICRONS) (HORIZONTAL RANGE - NEGATIVE IN INBOARD / VERTICAL RANGE - NEGATIVE IS DOWN)
+StepSizePos 100                                                                   ### GRID SIZE IN SAMPLE SPACE (MICRONS)
+StepSizeOrient 0.1                                                              ### FIBER STEP SIZE (DEG)
+MarginEta 800                                                                   ### ETA TOLERANCE FROM EXPECTED SPOT POSITION (MICRONS)
+MarginRadius 800                                                                ### ALLOWABLE GRAIN SIZE MISMATCH (PERCENT)
+MarginRadial 800                                                                ### RADIAL TOLERANCE FROM EXPECTED SPOT POSITION (MICRONS)
+MarginOme 0.5                                                                   ### OMEGA TOLERANCE FROM EXPECTED SPOT POSITION (DEG)
+OmeBinSize 0.2                                                                  ### LEAVE AS IS
+EtaBinSize 0.2                                                                  ### LEAVE AS IS
+UseFriedelPairs 1                                                               ### USE FRIDEL PAIRS (INDEXING FASTER)
