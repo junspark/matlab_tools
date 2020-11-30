@@ -1,4 +1,4 @@
-function [] = WritePolimg(pfname, polimg, instr, omega, chi, cakeprms)
+function [] = WritePolimg(pfname, polimg, instr, omega, chi, prrot, cakeprms)
 % WritePolimg - writes out polimg into a mat file
 %
 %   INPUT:
@@ -17,6 +17,9 @@ function [] = WritePolimg(pfname, polimg, instr, omega, chi, cakeprms)
 %
 %   chi
 %           is the rotation about the Z axis in APS (rarely used)
+%   
+%   prrot 
+%           is stepper rotation or translation used in scanning
 %
 %   cakeParms
 %           is the structure array that defines the caking parameters
@@ -27,5 +30,6 @@ function [] = WritePolimg(pfname, polimg, instr, omega, chi, cakeprms)
 
 instr.omega = omega;
 instr.chi   = chi;
+instr.prrot = prrot;
 
 save(pfname, 'polimg', 'instr', 'cakeprms')
