@@ -254,7 +254,13 @@ for iiii = 1:1:length(FROOT)
                 pfname{iii, 1}  = fullfile(XRDIMAGE.Image.pname, ...
                     XRDIMAGE.Image.samplename, XRDIMAGE.Image.fext, fname);
             case {'cor', 'cor32'}
-                for jjj = 1:1:XRDIMAGE.Image.scan_nframes
+                fname   = sprintf('%s_%06d.%s', ...
+                    XRDIMAGE.Image.froot, XRDIMAGE.Image.fnumber(iii), XRDIMAGE.Image.fext);
+                pfname_ge   = fullfile('/home/beams/S1IDUSER/mnt/s1c/lywang_nov20/ge3/', fname);
+                
+                XRDIMAGE.Image.scan_nframes(iii)    = CalcNumFramesGE(pfname_ge);
+                
+                for jjj = 1:1:XRDIMAGE.Image.scan_nframes(iii)
                     fname   = sprintf('%s_%06d.%s_frame_%d.%s', ...
                         XRDIMAGE.Image.froot, XRDIMAGE.Image.fnumber(iii), XRDIMAGE.Image.fext, jjj, XRDIMAGE.Image.corrected);
                     pfname{iii, jjj}    = fullfile(XRDIMAGE.Image.pname, ...
@@ -278,7 +284,17 @@ for iiii = 1:1:length(FROOT)
                     omega_grid  = (omega_grid(1:end-1) + omega_grid(2:end))./2;
                     chi_grid    = 0.*omega_grid;
                 case 'prrot'
-                    warning('we have nothing here; maybe implement a flag that says prrot is angle or not?')
+                    prrot_grid  = linspace(XRDIMAGE.Image.scan_ini(iii), ...
+                        XRDIMAGE.Image.scan_fin(iii), ...
+                        XRDIMAGE.Image.scan_nframes(iii)+1);
+                    prrot_grid  = (prrot_grid(1:end-1) + prrot_grid(2:end))./2;
+                    
+                    omega_grid  = 0.*prrot_grid;
+                    chi_grid    = 0.*prrot_grid;
+                case 'NIL'
+                    prrot_grid  = ones(XRDIMAGE.Image.scan_nframes(iii),1)*999;
+                    omega_grid  = ones(XRDIMAGE.Image.scan_nframes(iii),1)*999;
+                    chi_grid    = ones(XRDIMAGE.Image.scan_nframes(iii),1)*999;
             end
             
             for jjj = 1:1:XRDIMAGE.Image.scan_nframes(iii)
