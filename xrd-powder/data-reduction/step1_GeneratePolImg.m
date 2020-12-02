@@ -195,7 +195,14 @@ for iiii = 1:1:length(FROOT)
                 pfname{iii, 1}  = fullfile(XRDIMAGE.Image.pname, ...
                     XRDIMAGE.Image.samplename, XRDIMAGE.Image.fext, fname);
             case {'cor', 'cor32'}
-                for jjj = 1:1:XRDIMAGE.Image.scan_nframes
+                %%% THIS IS WORKAROUND TO GET THE CORRECT FRAME NUMBER
+                fname   = sprintf('%s_%06d.%s', ...
+                    XRDIMAGE.Image.froot, XRDIMAGE.Image.fnumber(iii), XRDIMAGE.Image.fext);
+                pfname_ge   = fullfile('/home/beams/S1IDUSER/mnt/s1c/lywang_nov20/ge3/', fname);
+                
+                XRDIMAGE.Image.scan_nframes(iii)    = CalcNumFramesGE(pfname_ge);
+                
+                for jjj = 1:1:XRDIMAGE.Image.scan_nframes(iii)
                     fname   = sprintf('%s_%06d.%s_frame_%d.%s', ...
                         XRDIMAGE.Image.froot, XRDIMAGE.Image.fnumber(iii), XRDIMAGE.Image.fext, jjj, XRDIMAGE.Image.corrected);
                     pfname{iii, jjj}    = fullfile(XRDIMAGE.Image.pname, ...
@@ -236,7 +243,7 @@ for iiii = 1:1:length(FROOT)
                     chi_grid    = ones(XRDIMAGE.Image.scan_nframes(iii),1)*999;
             end
             
-            for jjj = 1:1:XRDIMAGE.Image.scan_nframes
+            for jjj = 1:1:XRDIMAGE.Image.scan_nframes(iii)
                 tic
                 disp('###########################')
                 disp(sprintf('Looking at %s', pfname{iii, jjj}))
