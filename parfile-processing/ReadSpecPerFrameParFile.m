@@ -53,20 +53,20 @@ while ~feof(fid)
     lindata = fgetl(fid);
     lindata = strsplit(lindata);
     
-    day{ct}     = lindata{1};
-    month{ct}   = lindata{2};
-    date(ct)    = str2num(lindata{3});
-    time{ct}    = lindata{4};
-    year{ct}    = str2num(lindata{5});
+    day{ct,1}   = lindata{1};
+    month{ct,1} = lindata{2};
+    date(ct,1)  = str2num(lindata{3});
+    time{ct,1}  = lindata{4};
+    year{ct,1}  = str2num(lindata{5});
     
-    epoch_time{ct}  = str2num(lindata{6});
-    integ_time{ct}  = str2num(lindata{7});
-    Iring{ct}       = str2num(lindata{8});
+    epoch_time{ct,1}    = str2num(lindata{6});
+    integ_time{ct,1}    = str2num(lindata{7});
+    Iring{ct,1}         = str2num(lindata{8});
     
-    det_fname{ct}           = lindata{9};
-    det_fnum(ct)            = str2num(lindata{10});
-    det_frames_per_file(ct) = str2num(lindata{11});
-    det_time_per_frame(ct)  = str2num(lindata{12});
+    det_fname{ct,1}             = lindata{9};
+    det_fnum(ct,1)              = str2num(lindata{10});
+    det_frames_per_file(ct,1)   = str2num(lindata{11});
+    det_time_per_frame(ct,1)    = str2num(lindata{12});
     
     %%% GET PER FRAME DATA
     nframes = det_frames_per_file(ct);
@@ -75,29 +75,29 @@ while ~feof(fid)
     idx1    = idx_start_of_per_frame_data;
     idx2    = idx_start_of_per_frame_data + nframes - 1;
     
-    per_frame_data      = str2mat(lindata{idx1:idx2});
-    per_frame_data0{ct} = str2num(per_frame_data);
+    per_frame_data          = str2mat(lindata{idx1:idx2});
+    per_frame_data0{ct, 1}  = str2num(per_frame_data);
     
     %%% SET 1
     idx1    = idx2 + 1;
     idx2    = idx1 + nframes - 1;
     
-    per_frame_data      = str2mat(lindata{idx1:idx2});
-    per_frame_data1{ct} = str2num(per_frame_data);
+    per_frame_data          = str2mat(lindata{idx1:idx2});
+    per_frame_data1{ct,1}   = str2num(per_frame_data);
     
     %%% SET 2
     idx1    = idx2 + 1;
     idx2    = idx1 + nframes - 1;
     
-    per_frame_data      = str2mat(lindata{idx1:idx2});
-    per_frame_data2{ct} = str2num(per_frame_data);
+    per_frame_data          = str2mat(lindata{idx1:idx2});
+    per_frame_data2{ct,1}   = str2num(per_frame_data);
     
     %%% SET 3
     idx1    = idx2 + 1;
     idx2    = idx1 + nframes - 1;
     
-    per_frame_data      = str2mat(lindata{idx1:idx2});
-    per_frame_data3{ct} = str2num(per_frame_data);
+    per_frame_data          = str2mat(lindata{idx1:idx2});
+    per_frame_data3{ct,1}   = str2num(per_frame_data);
 end
 fclose(fid);
 
