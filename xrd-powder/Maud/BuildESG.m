@@ -3,7 +3,7 @@ function BuildESG(pfname, polImg, distance, wavelength, omega, chi, prrot, cakeP
 %
 %   USAGE:
 %
-%   BuildESG(pfname, polImg, distance, wavelength, omega, chi, cakeParms)
+%   BuildESG(pfname, polImg, distance, wavelength, omega, chi, prrot, cakeParms)
 %
 %   INPUT:
 %
@@ -72,7 +72,7 @@ A   = {'_pd_block_id noTitle|#0';
     '_pd_proc_2theta_corrected';
     '_pd_calc_intensity_total';};
 
-for yyy=1:size(A,1);
+for yyy=1:size(A,1)
     fprintf(fid, '%s', A{yyy});
     fprintf(fid, '\n');
 end
