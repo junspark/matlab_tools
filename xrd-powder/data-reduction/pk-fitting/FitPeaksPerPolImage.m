@@ -3,10 +3,21 @@ function status = FitPeaksPerPolImage(pfname, Material, Analysis_Options, vararg
 % default options
 optcell = {...
     'ShowPlot', false, ...
+    'MetaDataFieldName', nan, ...
+    'MetaDataFieldValues', nan, ...
     };
 
 % update option
 opts    = OptArgs(optcell, varargin);
+
+if length(opts.MetaDataFieldName) ~= length(opts.MetaDataFieldValues)
+    error('metadata field name length and field value length are different')
+    status = -1;
+else
+    for iii = 1:1:length(opts.MetaDataFieldName)
+        csv_header{iii} = opts.MetaDataFieldName{iii};
+    end
+end
 
 %%%%% 
 disp('###########################')
@@ -35,11 +46,22 @@ switch opts.ShowPlot
         hold off
 end
 
-csv_table   = [];
+ct_hdr_items    = 1;
+if ~isnan(opts.MetaDataFieldValues)
+    for iii = 1:1:length(opts.MetaDataFieldName)
+        csv_table_hdr{ct_hdr_items} = opts.MetaDataFieldName{iii};
+        ct_hdr_items    = ct_hdr_items + 1;
+    end
+end
+
+csv_table       = [];
 for kkk = 1:1:CakePrms.bins(1)
-    csv_table_kkk   = polimg.azimuth(kkk);
-    
-    fprintf('Looking at azimuthal bin %d of %d\n', kkk, CakePrms.bins(1))
+    fprintf('Looking at azimuthal bin %d of %d\n', kkk, CakePrms.bins(1));
+    csv_table_kkk       = polimg.azimuth(kkk);
+    if kkk == 1
+        csv_table_hdr{ct_hdr_items} = 'eta';
+        ct_hdr_items                = ct_hdr_items + 1;
+    end
     
     x   = polimg.tth_grid;
     y   = polimg.intensity_in_tth_grid(kkk,:);
@@ -57,6 +79,7 @@ for kkk = 1:1:CakePrms.bins(1)
             title(['bin number : ', num2str(kkk)])
     end
     
+    ct_pk   = 0;
     for mmm = 1:1:Material.numbounds
         numpks  = length(Material.pkidx{mmm});
         fprintf('Looking at bound number %d of %d with %d peaks\n', mmm, Material.numbounds, numpks);
@@ -182,20 +205,81 @@ for kkk = 1:1:CakePrms.bins(1)
         % pro  = pkfitResultMapping(pkpars, pr);
         rwp = ErrorRwp(yr, yf);
         
-        pkfit.amp(kkk,mmm)  = pr(1);
-        pkfit.fwhm(kkk,mmm) = pr(2);
-        pkfit.mix(kkk,mmm)  = pr(3);
-        pkfit.rho(kkk,mmm)  = pr(4);
-        pkfit.bkg{kkk,mmm}  = pr(5:end);
+        pr_pk   = pr(1:end-2);
+        pr_bkg  = pr(end-1:end);
+        for nnn = 1:1:numpks
+            idx_pk_LB   = 1 + (nnn-1)*4;
+            idx_pk_UB   = nnn*4;
+            
+            % integral(@pfunc_switch(pr_one_pk, pkpars), xr(1), xr(end))
+            pr_one_pk   = [pr_pk(idx_pk_LB:idx_pk_UB); pr_bkg];
+            yf_one_pk   = pfunc_switch(pr_one_pk, pkpars);
+            
+            q_bkg       = polyint(pr_bkg');
+            
+            integrated_intensity_with_background    = trapz(xr, yf_one_pk);
+            integrated_background                   = diff(polyval(q_bkg,[xr(1) xr(end)]));
+            
+            integrated_intensity(nnn)   = integrated_intensity_with_background - integrated_background;
+            
+            % pr_pk(idx_pk_LB:idx_pk_UB)
+            % integrated_intensity(nnn)
+            csv_table_kkk   = [csv_table_kkk pr_pk(idx_pk_LB:idx_pk_UB)' integrated_intensity(nnn)];
+        end
+        
+        pkfit.amp{kkk,mmm}  = pr_pk(1:4:end);
+        pkfit.fwhm{kkk,mmm} = pr_pk(2:4:end);
+        pkfit.mix{kkk,mmm}  = pr_pk(3:4:end);
+        pkfit.rho{kkk,mmm}  = pr_pk(4:4:end);
+        pkfit.bkg{kkk,mmm}  = pr_bkg;
         pkfit.rsn(kkk,mmm)  = rsn;
         pkfit.ef(kkk,mmm)   = ef;
         pkfit.rwp(kkk,mmm)  = rwp;
+        pkfit.I{kkk,mmm}    = integrated_intensity;
         
-        csv_table_kkk   = [csv_table_kkk pr' rsn ef rwp];
+        csv_table_kkk   = [csv_table_kkk pr_bkg' rsn ef rwp];
+        
+        if kkk == 1
+            for nnn = 1:1:numpks
+                ct_pk   = ct_pk + 1;
+                
+                csv_table_hdr{ct_hdr_items} = sprintf('pk%d-amp', ct_pk);
+                ct_hdr_items    = ct_hdr_items + 1;
+                
+                csv_table_hdr{ct_hdr_items} = sprintf('pk%d-fwhm', ct_pk);
+                ct_hdr_items    = ct_hdr_items + 1;
+                
+                csv_table_hdr{ct_hdr_items} = sprintf('pk%d-mix', ct_pk);
+                ct_hdr_items    = ct_hdr_items + 1;
+                
+                csv_table_hdr{ct_hdr_items} = sprintf('pk%d-pos', ct_pk);
+                ct_hdr_items    = ct_hdr_items + 1;
+                
+                csv_table_hdr{ct_hdr_items} = sprintf('pk%d-I', ct_pk);
+                ct_hdr_items    = ct_hdr_items + 1;
+            end
+            
+            csv_table_hdr{ct_hdr_items} = sprintf('bnd%d-bkg0', mmm);
+            ct_hdr_items    = ct_hdr_items + 1;
+            
+            csv_table_hdr{ct_hdr_items} = sprintf('bnd%d-bkg1', mmm);
+            ct_hdr_items    = ct_hdr_items + 1;
+            
+            csv_table_hdr{ct_hdr_items} = sprintf('bnd%d-rsn', mmm);
+            ct_hdr_items    = ct_hdr_items + 1;
+            
+            csv_table_hdr{ct_hdr_items} = sprintf('bnd%d-ef', mmm);
+            ct_hdr_items    = ct_hdr_items + 1;
+            
+            csv_table_hdr{ct_hdr_items} = sprintf('bnd%d-rwp', mmm);
+            ct_hdr_items    = ct_hdr_items + 1;
+        end
     end
+    
     csv_table   = [ 
         csv_table; ...
         csv_table_kkk;];
+    
     switch opts.ShowPlot
         case {true, 1}
             figure(11)
@@ -204,11 +288,22 @@ for kkk = 1:1:CakePrms.bins(1)
     end    
 end
 
+if ~isnan(opts.MetaDataFieldValues)
+    csv_table   = [repmat(opts.MetaDataFieldValues, CakePrms.bins(1), 1) csv_table];
+end
+
+% size(csv_table_hdr)
+% size(csv_table)
+
+%%% CONVERT TO MATLAB TABLE FORMAT
+CSV_TABLE   = array2table(csv_table, 'VariableNames', csv_table_hdr);
+
 if Analysis_Options.save_fits
     disp('###########################')
     fprintf('Saving peak fits in %s\n', pfname_pkfit)
     save(pfname_pkfit, 'pfname', 'Material', 'pkfit', 'pkpars', 'CakePrms', 'Instr', 'polimg');
-    csvwrite(pfname_pkfit_tbl, csv_table);
+    
+    writetable(CSV_TABLE, pfname_pkfit_tbl)
 else
     disp('###########################')
     fprintf('Not saving peak fits for %s\n', pfname)
