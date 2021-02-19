@@ -30,13 +30,8 @@ addpath(genpath('/home/beams/PARKJS/matlab/matlab_tools'));
 
 %%% INPUT PARAMETERS
 XRDIMAGE.Image.pname        = '/home/beams/S1IDUSER/mnt/orthros/mpe1_oct20_bc';
-<<<<<<< HEAD
 XRDIMAGE.Image.froot        = 'hassani_LaB6_1s';
 XRDIMAGE.Image.fnumber      = 981:982; % 4116 / 4117
-=======
-XRDIMAGE.Image.froot        = 'LaB6_1s';
-XRDIMAGE.Image.fnumber      = 6:7; % 4116 / 4117
->>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
 XRDIMAGE.Image.numdigs      = 6;
 XRDIMAGE.Image.fext         = 'ge3';
 XRDIMAGE.Image.corrected    = 'sum';
@@ -45,17 +40,10 @@ XRDIMAGE.Image.IsHydra      = 0;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE
 %%% INSTRUMENT PARAMETERS
 XRDIMAGE.Instr.energy       = 71.676;       % keV
 XRDIMAGE.Instr.wavelength   = keV2Angstrom(XRDIMAGE.Instr.energy);  % wavelength (Angstrom)
-<<<<<<< HEAD
 XRDIMAGE.Instr.distance     = 901.554348;  % mm
 XRDIMAGE.Instr.centers      = [ -123.160428 , -163.823410 ]; % center offsets x & y (um)
 XRDIMAGE.Instr.gammaX       = -0.003127;    % rad
 XRDIMAGE.Instr.gammaY       = -0.000162;    % rad
-=======
-XRDIMAGE.Instr.distance     = 903.229;  % mm
-XRDIMAGE.Instr.centers      = [ -285.632569 , 2.094275 ]; % center offsets x & y (um)
-XRDIMAGE.Instr.gammaX       = -0.003136;    % rad
-XRDIMAGE.Instr.gammaY       = -0.008367;    % rad
->>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
 XRDIMAGE.Instr.detsizeHorz  = 409.6;    % mm
 XRDIMAGE.Instr.detsizeVert  = 409.6;    % mm
 XRDIMAGE.Instr.pixelsizeHorz    = 0.2;          % mm
@@ -83,15 +71,9 @@ XRDIMAGE.Instr.detpars  = [ ...
     ]*1e2;
 
 %%% CAKE PARAMETERS
-<<<<<<< HEAD
 XRDIMAGE.CakePrms.bins(1)   = 36;           % number of azimuthal bins
 XRDIMAGE.CakePrms.bins(2)   = 3000;         % number of radial bins
 XRDIMAGE.CakePrms.bins(3)   = 10;            % number of angular bins
-=======
-XRDIMAGE.CakePrms.bins(1)   = 72;           % number of azimuthal bins
-XRDIMAGE.CakePrms.bins(2)   = 1000;         % number of radial bins
-XRDIMAGE.CakePrms.bins(3)   = 70;            % number of angular bins
->>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
 
 XRDIMAGE.CakePrms.origin(1) = 1024.190;     % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
 XRDIMAGE.CakePrms.origin(2) = 1062.110;     % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
@@ -135,14 +117,11 @@ XRDIMAGE.Material.numbounds = 11;
 XRDIMAGE.Material.pkidx     = {...
     [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12]
     };
-<<<<<<< HEAD
 % XRDIMAGE.Material.numpk     = 3;
 % XRDIMAGE.Material.numbounds = 3;
 % XRDIMAGE.Material.pkidx     = {...
 %     [2] [3] [4]
 %     };
-=======
->>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
 for iii = 1:1:XRDIMAGE.Material.numbounds
     XRDIMAGE.Material.pkrange(:,iii)  = [ ...
         min(tth_LB(XRDIMAGE.Material.pkidx{iii})); ...
