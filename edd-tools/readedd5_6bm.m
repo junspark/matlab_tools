@@ -45,7 +45,7 @@ if nargin ~= 1
 end
 
 % open and read the file into memory
-if isdir(logtoopen)
+if isfolder(logtoopen)
     [fpath, fname, ~] = fileparts(logtoopen);
     fullname= fullfile(logtoopen,sprintf('%s.xy',fname));
     fid=fopen(fullname);if fid == -1, error('Can''t find/open the input file.'); end
@@ -87,6 +87,7 @@ for i = 1:length(ind_command)
     else
         snlog = f(ind_command(i):(size(f,2)));
     end
+    
     % find scans
     scanst = strfind(snlog,'#Scan');
     scanen = [scanst(2:end)-1 length(snlog)];
@@ -110,7 +111,6 @@ for i = 1:length(ind_command)
     motor_value_all = str2num(snlog(lf(2)+3:lf(3)-2));
     % convert all motor information into struct
     edd(i).allmotors = cell2struct(num2cell(motor_value_all),motor_name_all,2);
-    
     %assignin('base','tmp',motor_all);
     
     switch cmd_use

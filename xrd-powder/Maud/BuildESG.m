@@ -1,9 +1,9 @@
-function BuildESG(pfname, polImg, distance, wavelength, omega, chi, cakeParms)
+function BuildESG(pfname, polImg, distance, wavelength, omega, chi, prrot, cakeParms)
 % BuildESG - builds ESG file for MAUD input
 %
 %   USAGE:
 %
-%   BuildESG(pfname, polImg, distance, wavelength, omega, chi, cakeParms)
+%   BuildESG(pfname, polImg, distance, wavelength, omega, chi, prrot, cakeParms)
 %
 %   INPUT:
 %
@@ -24,6 +24,9 @@ function BuildESG(pfname, polImg, distance, wavelength, omega, chi, cakeParms)
 %
 %   chi
 %           is the rotation about the Z axis in APS (rarely used)
+%   
+%   prrot 
+%           is stepper rotation or translation used in scanning
 %
 %   cakeParms
 %           is the structure array that defines the caking parameters
@@ -37,6 +40,7 @@ instr.distance      = distance;
 instr.wavelength    = wavelength;
 instr.omega         = omega;
 instr.chi           = chi;
+instr.prrot         = prrot;
 
 r   = tand(polImg.tth_grid).*instr.distance;
 I   = polImg.intensity_in_tth_grid;
@@ -68,7 +72,7 @@ A   = {'_pd_block_id noTitle|#0';
     '_pd_proc_2theta_corrected';
     '_pd_calc_intensity_total';};
 
-for yyy=1:size(A,1);
+for yyy=1:size(A,1)
     fprintf(fid, '%s', A{yyy});
     fprintf(fid, '\n');
 end

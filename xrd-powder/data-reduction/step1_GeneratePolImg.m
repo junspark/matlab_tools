@@ -6,21 +6,32 @@ addpath(genpath('/home/beams/PARKJS/matlab/matlab_tools'));
 % addpath(genpath('C:\Users\parkjs\Documents\GitHub\matlab_tools'));
 
 %%% CALIBRATION FILES
+<<<<<<< HEAD
 XRDIMAGE.Calib.pname        = '/home/beams/S1IDUSER/mnt/orthros/mpe1_oct20_bc';
 XRDIMAGE.Calib.froot        = 'hassani_LaB6_1s';
 XRDIMAGE.Calib.fnumber      = 981:982; % 4116 / 4117
+=======
+XRDIMAGE.Calib.pname        = '/home/beams/S1IDUSER/mnt/orthros/lywang_nov20_bc';
+XRDIMAGE.Calib.froot        = 'LaB6_1s_Mg';
+XRDIMAGE.Calib.fnumber      = 8:9; % 4116 / 4117
+>>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
 XRDIMAGE.Calib.numdigs      = 6;
 XRDIMAGE.Calib.fext         = 'ge3';
 XRDIMAGE.Calib.corrected    = 'sum';
 
 %%% SAMPLE FILES
+<<<<<<< HEAD
 XRDIMAGE.Image.pname        = '/home/beams/S1IDUSER/mnt/orthros/mpe1_oct20_bc';
+=======
+XRDIMAGE.Image.pname        = '/home/beams/S1IDUSER/mnt/orthros/lywang_nov20_bc';
+>>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
 XRDIMAGE.Image.numdigs      = 6;
 XRDIMAGE.Image.fext         = 'ge3';        %%% CHECK METADATA SEARCH
 XRDIMAGE.Image.corrected    = 'cor32';
 XRDIMAGE.Image.IsHydra      = 0;    % 0 = Single panel; 1 = GE1; 2 = GE2; 3 = GE3; 4 = GE4;
 
 %%% METADATA FILES
+<<<<<<< HEAD
 XRDIMAGE.Image.per_scan_metadata    = '/home/beams/S1IDUSER/new_data/mpe1_oct20/saxs_waxs_fmt_fastpar.par';
 XRDIMAGE.Image.per_frame_metadata   = '/home/beams/S1IDUSER/new_data/mpe1_oct20/mpe1_oct20_FF.par';
 
@@ -82,6 +93,28 @@ FROOT   = {'hassani_sam1_load0_pd'; ...
 % FROOT   = {
 %     'hassani_sam1_load10_pd'; ...
 %     };
+=======
+XRDIMAGE.Image.per_scan_metadata    = '/home/beams/S1IDUSER/new_data/lywang_nov20/saxs_waxs_fmt_fastpar.par';
+XRDIMAGE.Image.per_frame_metadata   = '/home/beams/S1IDUSER/new_data/lywang_nov20/lywang_nov20_FF.par';
+
+% XRDIMAGE.Image.samplename   = 'LaB6_1s_200umx200um_beam';
+% FROOT   = {'LaB6_1s_200umx200um_beam'; ...
+%     };
+
+XRDIMAGE.Image.samplename   = 'MgAlZnCa_no2_sam1_waxs_cont_loading';
+FROOT   = {'MgAlZnCa_no2_sam1_waxs_cont_loading'; ...
+    };
+
+%%% DATA REDUCTION FLAGS
+Analysis_Options.make_polimg    = 1;
+Analysis_Options.save_polimg    = 1;
+Analysis_Options.fits_spectra   = 0;
+Analysis_Options.save_fits      = 0;
+Analysis_Options.find_instrpars = 0;
+Analysis_Options.save_instrpars = 0;
+Analysis_Options.find_detpars	= 0;
+Analysis_Options.generateESG    = 1;
+>>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
 
 for iiii = 1:1:length(FROOT)
     %%% INPUT PARAMETERS
@@ -172,8 +205,13 @@ for iiii = 1:1:length(FROOT)
     
     %%% CAKE PARAMETERS
     XRDIMAGE.CakePrms.bins(1)   = 36;           % number of azimuthal bins
+<<<<<<< HEAD
     XRDIMAGE.CakePrms.bins(2)   = 3000;         % number of radial bins
     XRDIMAGE.CakePrms.bins(3)   = 10;           % number of angular bins
+=======
+    XRDIMAGE.CakePrms.bins(2)   = 1000;         % number of radial bins
+    XRDIMAGE.CakePrms.bins(3)   = 70;           % number of angular bins
+>>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
     
     XRDIMAGE.CakePrms.origin(1) = 1024.190;     % apparent X center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
     XRDIMAGE.CakePrms.origin(2) = 1062.110;     % apparent Y center in pixels // THIS IS WHAT YOU SEE ON FIGURE 1
@@ -236,11 +274,25 @@ for iiii = 1:1:length(FROOT)
                 pfname{iii, 1}  = fullfile(XRDIMAGE.Image.pname, ...
                     XRDIMAGE.Image.samplename, XRDIMAGE.Image.fext, fname);
             case {'cor', 'cor32'}
+<<<<<<< HEAD
+=======
+                %%% THIS IS WORKAROUND TO GET THE CORRECT FRAME NUMBER
+                fname   = sprintf('%s_%06d.%s', ...
+                    XRDIMAGE.Image.froot, XRDIMAGE.Image.fnumber(iii), XRDIMAGE.Image.fext);
+                pfname_ge   = fullfile('/home/beams/S1IDUSER/mnt/s1c/lywang_nov20/ge3/', fname);
+                
+                XRDIMAGE.Image.scan_nframes(iii)    = CalcNumFramesGE(pfname_ge);
+                
+>>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
                 for jjj = 1:1:XRDIMAGE.Image.scan_nframes(iii)
                     fname   = sprintf('%s_%06d.%s_frame_%d.%s', ...
                         XRDIMAGE.Image.froot, XRDIMAGE.Image.fnumber(iii), XRDIMAGE.Image.fext, jjj, XRDIMAGE.Image.corrected);
                     pfname{iii, jjj}    = fullfile(XRDIMAGE.Image.pname, ...
+<<<<<<< HEAD
                         XRDIMAGE.Image.samplename, XRDIMAGE.Image.fext, XRDIMAGE.Image.froot, fname);
+=======
+                        XRDIMAGE.Image.samplename, XRDIMAGE.Image.fext, fname);
+>>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
                 end
             otherwise
                 warning('check XRDIMAGE.Image.corrected paramter')
@@ -250,10 +302,16 @@ for iiii = 1:1:length(FROOT)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% LOAD XRD IMAGES & GENERATE POLIMG FILE
     if Analysis_Options.make_polimg
+<<<<<<< HEAD
         
         delete(gcp)
         parpool(6)
         parfor iii = 1:1:numimg
+=======
+%         delete(gcp)
+%         parpool(10)
+        for iii = 1:1:numimg
+>>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
             scan_mtr    = XRDIMAGE.Image.scan_mtr{iii};
             switch scan_mtr
                 case 'aero'
@@ -272,6 +330,13 @@ for iiii = 1:1:length(FROOT)
                     
                     omega_grid  = 0.*prrot_grid;
                     chi_grid    = 0.*prrot_grid;
+<<<<<<< HEAD
+=======
+                case 'NIL'
+                    prrot_grid  = ones(XRDIMAGE.Image.scan_nframes(iii),1)*999;
+                    omega_grid  = ones(XRDIMAGE.Image.scan_nframes(iii),1)*999;
+                    chi_grid    = ones(XRDIMAGE.Image.scan_nframes(iii),1)*999;
+>>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
             end
             
             for jjj = 1:1:XRDIMAGE.Image.scan_nframes(iii)
@@ -283,7 +348,11 @@ for iiii = 1:1:length(FROOT)
                 pfname_polimage = [pfname{iii,jjj}, '.polimg.mat'];
                 pfname_esg      = [pfname{iii,jjj}, '.esg'];
                 
+<<<<<<< HEAD
                 imgi    = ReadSUM(pfname{iii,jjj});
+=======
+                imgi    = ReadSUM(pfname{iii,1});
+>>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
                 
                 %         figure(1)
                 %         hold off
@@ -363,8 +432,16 @@ for iiii = 1:1:length(FROOT)
                 %         imagesc(log(abs(polimg.intensity_in_tth_grid))), axis square tight
                 %         title('Caked image // radial position is corrected')
                 %         hold off
+<<<<<<< HEAD
                 toc 
             end
         end
     end
 end
+=======
+                toc
+            end
+        end
+    end
+end
+>>>>>>> 78ba08e6797acb78a305a42a2d88acc91f6841ef
