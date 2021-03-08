@@ -13,7 +13,7 @@ opts    = OptArgs(optcell, varargin);
 if length(opts.MetaDataFieldName) ~= length(opts.MetaDataFieldValues)
     error('metadata field name length and field value length are different')
     status = -1;
-else
+elseif ~isnan(opts.MetaDataFieldName) && ~isnan(opts.MetaDataFieldValues)
     for iii = 1:1:length(opts.MetaDataFieldName)
         csv_header{iii} = opts.MetaDataFieldName{iii};
     end
@@ -72,7 +72,6 @@ for kkk = 1:1:CakePrms.bins(1)
             subplot(1,2,1)
             plot(x, y, 'k.')
             hold on
-            plot(tth, mean(y), 'g^')
             axis([min(x) max(x) min(y) max(y)+100])
             xlabel('radial distance (mm)')
             ylabel('intensity (arb. units)')
@@ -186,6 +185,7 @@ for kkk = 1:1:CakePrms.bins(1)
             case {true, 1}
                 figure(11)
                 subplot(1,2,1)
+                plot(tth, mean(y), 'g^')
                 plot(xr, yr, 'b.')
                 plot(xr, y0, 'r-')
                 plot(xr, yf, 'g-')
