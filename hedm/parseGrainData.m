@@ -133,8 +133,13 @@ disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 if strcmpi(opts.Technique, 'ff-midas')
     disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     for iii = 1:1:length(pfname)
-        A    = load(pfname{iii});
-        nGrains(iii)    = size(A, 1);
+        switch isfile(pfname{iii})
+            case true
+                A    = load(pfname{iii});
+                nGrains(iii)    = size(A, 1);
+            case false
+                nGrains(iii)    = 0;
+        end
     end
     disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     nCols       = size(A, 2);
@@ -161,111 +166,119 @@ if strcmpi(opts.Technique, 'ff-midas')
     for iii = 1:1:length(pfname)
         disp(sprintf('parsing ff-hedm data from %s', pfname{iii}));
         disp(sprintf('number of grains in this layer : %d', nGrains(iii)));
-        A    = load(pfname{iii});
-        
-        % ROTATION FROM MIDAS IS [R]{c} = {l}
-        % ROTATOIN TO GO FROM LAB TO SAMPLE IS [RLab2Sam]{l} = {s}
-        % [RLab2Sam][R]{c} = [RLab2Sam]{l} = {s}
-        for i = 1:1:nGrains(iii)
-            RMat    = reshape(A(i, 2:10), 3, 3)';
-            COM     = A(i, 11:13);
-            
-            % COORDINATE TRANSFORMATION
-            RMat    = RLab2Sam*R_ESRF2APS*RMat;
-            COM     = RLab2Sam*R_ESRF2APS*COM';
-            
-            if ~isnan(opts.OffsetDirection)
-                if strcmpi(opts.OffsetDirection, 'X')
-                    COM(1)  = COM(1) + opts.OffsetValue * (iii - 1);
-                elseif strcmpi(opts.OffsetDirection, 'Y')
-                    COM(2)  = COM(2) + opts.OffsetValue * (iii - 1);
-                elseif strcmpi(opts.OffsetDirection, 'Z')
-                    COM(3)  = COM(3) + opts.OffsetValue * (iii - 1);
+        switch isfile(pfname{iii})
+            case true
+                A    = load(pfname{iii});
+
+                % ROTATION FROM MIDAS IS [R]{c} = {l}
+                % ROTATOIN TO GO FROM LAB TO SAMPLE IS [RLab2Sam]{l} = {s}
+                % [RLab2Sam][R]{c} = [RLab2Sam]{l} = {s}
+                for i = 1:1:nGrains(iii)
+                    RMat    = reshape(A(i, 2:10), 3, 3)';
+                    COM     = A(i, 11:13);
+
+                    % COORDINATE TRANSFORMATION
+                    RMat    = RLab2Sam*R_ESRF2APS*RMat;
+                    COM     = RLab2Sam*R_ESRF2APS*COM';
+
+                    if ~isnan(opts.OffsetDirection)
+                        if strcmpi(opts.OffsetDirection, 'X')
+                            COM(1)  = COM(1) + opts.OffsetValue * (iii - 1);
+                        elseif strcmpi(opts.OffsetDirection, 'Y')
+                            COM(2)  = COM(2) + opts.OffsetValue * (iii - 1);
+                        elseif strcmpi(opts.OffsetDirection, 'Z')
+                            COM(3)  = COM(3) + opts.OffsetValue * (iii - 1);
+                        end
+                    end
+
+                    if strcmpi(opts.CrdSystem, 'APS')
+                        log(ct).CrdSys	= 'APS';
+                    elseif strcmpi(opts.CrdSystem, 'ESRF')
+                        log(ct).CrdSys	= 'ESRF';
+                    end
+                    Quat    = ToFundamentalRegionQ(QuatOfRMat(RMat), qsym);
+                    Rod     = RodOfQuat(Quat);
+
+                    log(ct).GrainID = A(i,1) + 1e7*iii; %% 1e7*iii gives each layer 10M grains
+                    log(ct).R       = RMat;
+                    log(ct).rod     = Rod;
+                    log(ct).quat    = Quat;
+                    log(ct).COM     = COM(:);
+
+                    log(ct).lattprms     = A(i, 14:19)';
+                    log(ct).DiffPos      = A(i, 20);
+                    log(ct).DiffOme      = A(i, 21);
+                    log(ct).DiffAngle    = A(i, 22);
+                    log(ct).GrainRadius  = A(i, 23);
+                    log(ct).Completeness = A(i, 24);
+
+                    StrainFab   = reshape(A(i, 25:33), 3, 3);
+                    Strain      = reshape(A(i, 34:42), 3, 3);
+
+                    % CONVERT MICRO-STRAIN TO STRAIN
+                    log(ct).StrainFab   = RLab2Sam*R_ESRF2APS*StrainFab*R_ESRF2APS'*RLab2Sam'./1000000;
+                    log(ct).Strain      = RLab2Sam*R_ESRF2APS*Strain*R_ESRF2APS'*RLab2Sam'./1000000;
+
+                    log(ct).StrainFabUnits  = 'strain';
+                    log(ct).StrainUnits     = 'strain';
+
+                    StrainFab_vec       = VectorOfStressStrainMatrixInVM(log(i).StrainFab);
+                    Strain_vec          = VectorOfStressStrainMatrixInVM(log(i).Strain);
+
+                    log(ct).StrainFab_vec   = StrainFab_vec;
+                    log(ct).Strain_vec      = Strain_vec;
+
+                    if isnan(opts.C_xstal)
+                        log(ct).StressFab    = nan(6,1);
+                        log(ct).Stress       = nan(6,1);
+
+                        log(ct).StressFab_h     = nan;
+                        log(ct).StressFab_d     = nan(6,1);
+                        log(ct).StressFab_vm    = nan;
+
+                        log(ct).Stress_h    = nan;
+                        log(ct).Stress_d    = nan(6,1);
+                        log(ct).Stress_vm   = nan;
+
+                    elseif (size(opts.C_xstal,1) == 6) && (size(opts.C_xstal,2) == 6)
+                        %%% STRAIN IS IN SAMPLE FRAME
+                        R   = RLab2Sam*R_ESRF2APS; % [R]{c}={s}
+                        T   = VectorizedCOBMatrix(R);
+                        C   = T*opts.C_xstal*T';  % XSTAL STIFFNESS IN SAMPLE FRAME
+
+                        %%% FAB
+                        StressFab_vec       = C*StrainFab_vec;
+                        log(ct).StressFab   	= StressFab_vec;
+                        log(ct).StressFab_mtx   = MatrixOfStressStrainVectorInVM(StressFab_vec);
+                        log(ct).StressFab_h     = VolumetricStressStrain(StressFab_vec);
+                        log(ct).StressFab_d     = DeviatoricStressStrain(StressFab_vec);
+                        log(ct).StressFab_vm    = VMStressStrain(StressFab_vec);
+
+                        %%% PK
+                        Stress_vec          = C*Strain_vec;
+                        log(ct).Stress    	= Stress_vec;
+                        log(ct).Stress_mtx  = MatrixOfStressStrainVectorInVM(Stress_vec);
+                        log(ct).Stress_h    = VolumetricStressStrain(Stress_vec);
+                        log(ct).Stress_d    = DeviatoricStressStrain(Stress_vec);
+                        log(ct).Stress_vm   = VMStressStrain(Stress_vec);
+                    end
+                    log(ct).StrainRMS   = A(i, 43);
+                    log(ct).C_xstal     = opts.C_xstal;
+
+                    %%% THIS IS FOR NEWER VERSION OF THE GRAINS OUTPUT
+                    if nCols > 43
+                        log(ct).PhaseNumber  = A(i, 44);
+                    end
+                    ct  = ct + 1;
                 end
-            end
-            
-            if strcmpi(opts.CrdSystem, 'APS')
-                log(ct).CrdSys	= 'APS';
-            elseif strcmpi(opts.CrdSystem, 'ESRF')
-                log(ct).CrdSys	= 'ESRF';
-            end
-            Quat    = ToFundamentalRegionQ(QuatOfRMat(RMat), qsym);
-            Rod     = RodOfQuat(Quat);
-            
-            log(ct).GrainID = A(i,1) + 1e7*iii; %% 1e7*iii gives each layer 10M grains
-            log(ct).R       = RMat;
-            log(ct).rod     = Rod;
-            log(ct).quat    = Quat;
-            log(ct).COM     = COM(:);
-            
-            log(ct).lattprms     = A(i, 14:19)';
-            log(ct).DiffPos      = A(i, 20);
-            log(ct).DiffOme      = A(i, 21);
-            log(ct).DiffAngle    = A(i, 22);
-            log(ct).GrainRadius  = A(i, 23);
-            log(ct).Completeness = A(i, 24);
-            
-            StrainFab   = reshape(A(i, 25:33), 3, 3);
-            Strain      = reshape(A(i, 34:42), 3, 3);
-            
-            % CONVERT MICRO-STRAIN TO STRAIN
-            log(ct).StrainFab   = RLab2Sam*R_ESRF2APS*StrainFab*R_ESRF2APS'*RLab2Sam'./1000000;
-            log(ct).Strain      = RLab2Sam*R_ESRF2APS*Strain*R_ESRF2APS'*RLab2Sam'./1000000;
-            
-            log(ct).StrainFabUnits  = 'strain';
-            log(ct).StrainUnits     = 'strain';
-            
-            StrainFab_vec       = VectorOfStressStrainMatrixInVM(log(i).StrainFab);
-            Strain_vec          = VectorOfStressStrainMatrixInVM(log(i).Strain);
-            
-            log(ct).StrainFab_vec   = StrainFab_vec;
-            log(ct).Strain_vec      = Strain_vec;
-                
-            if isnan(opts.C_xstal)
-                log(ct).StressFab    = nan(6,1);
-                log(ct).Stress       = nan(6,1);
-                
-                log(ct).StressFab_h     = nan;
-                log(ct).StressFab_d     = nan(6,1);
-                log(ct).StressFab_vm    = nan;
-                
-                log(ct).Stress_h    = nan;
-                log(ct).Stress_d    = nan(6,1);
-                log(ct).Stress_vm   = nan;
-                
-            elseif (size(opts.C_xstal,1) == 6) && (size(opts.C_xstal,2) == 6)
-                %%% STRAIN IS IN SAMPLE FRAME
-                R   = RLab2Sam*R_ESRF2APS; % [R]{c}={s}
-                T   = VectorizedCOBMatrix(R);
-                C   = T*opts.C_xstal*T';  % XSTAL STIFFNESS IN SAMPLE FRAME
-                
-                %%% FAB
-                StressFab_vec       = C*StrainFab_vec;
-                log(ct).StressFab   	= StressFab_vec;
-                log(ct).StressFab_mtx   = MatrixOfStressStrainVectorInVM(StressFab_vec);
-                log(ct).StressFab_h     = VolumetricStressStrain(StressFab_vec);
-                log(ct).StressFab_d     = DeviatoricStressStrain(StressFab_vec);
-                log(ct).StressFab_vm    = VMStressStrain(StressFab_vec);
-                
-                %%% PK
-                Stress_vec          = C*Strain_vec;
-                log(ct).Stress    	= Stress_vec;
-                log(ct).Stress_mtx  = MatrixOfStressStrainVectorInVM(Stress_vec);
-                log(ct).Stress_h    = VolumetricStressStrain(Stress_vec);
-                log(ct).Stress_d    = DeviatoricStressStrain(Stress_vec);
-                log(ct).Stress_vm   = VMStressStrain(Stress_vec);
-            end
-            log(ct).StrainRMS   = A(i, 43);
-            log(ct).C_xstal     = opts.C_xstal;
-            
-            %%% THIS IS FOR NEWER VERSION OF THE GRAINS OUTPUT
-            if nCols > 43
-                log(ct).PhaseNumber  = A(i, 44);
-            end
-            ct  = ct + 1;
+            case false
+                sprintf('%s does not exist', pfname{iii})
         end
     end
-%     COM = [Grains(:).COM]';
+    
+    
+    
+    %     COM = [Grains(:).COM]';
 %     vm  = [Grains(:).StressFab_vm]';
 %     pfname  = 'test.csv';
 %     fid = fopen(pfname, 'w');
@@ -317,3 +330,5 @@ elseif strcmpi(opts.Technique, 'nf')
     end
     fclose(fid);
 end
+
+
