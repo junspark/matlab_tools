@@ -34,24 +34,24 @@ if nargin < 3
    disp('usage: [CONF,VAR] = CONFINT(X,S,J)');
 elseif nargin <4
    gamma = .95;
-end;
+end
 f = f(:);
 [m,n] = size(j);
 if m<n
    error('CONFINT is valid for over determined estimation problem only');
-end;
+end
 if length(f) ~= m
    error('dimension R and J are not consistent')
-end;
+end
 if length(x) ~= n
    error('dimension X and J are not consistent')
-end;
+end
 
 % approximation when a column is zero vector
 temp = find(max(abs(j))==0);
 if ~isempty(temp)
    j(temp,:) = j(temp,:) + sqrt(eps);
-end;
+end
 
 %calculate covariance
 HESS = j' * j;
