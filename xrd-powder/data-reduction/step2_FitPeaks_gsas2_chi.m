@@ -2,9 +2,41 @@ clear all
 close all
 clc
 
+% addpath(genpath('/home/beams/PARKJS/matlab/matlab_tools'));
 addpath(genpath('C:\Users\parkjs\Documents\GitHub\matlab_tools'));
 
+%%% INPUT PARAMETERS
+XRDIMAGE.ExpID              = 'mpe_apr21';
+XRDIMAGE.MetaDataFile       = 'D:\s\mpe_apr21\metadata\mpe_apr21\saxs_waxs_fmt_fastpar.par';
+XRDIMAGE.Image.pname        = 'D:\orthros\mpe_apr21_bc\park_sae_phi0_2\ge3';
+XRDIMAGE.Image.fbase        = 'park_sae_phi0_2';
+XRDIMAGE.Image.pname_polimg = 'D:\w\mpe_apr21_analysis\park_sae_phi0_2\chi';
+XRDIMAGE.Image.pname_pkfit  = 'D:\w\mpe_apr21_analysis\park_sae_phi0_2\chi';
+XRDIMAGE.Image.fnumber      = 1749:1853;
+XRDIMAGE.Image.numframe     = 1;
+XRDIMAGE.Image.numdigs      = 6;
+XRDIMAGE.Image.corrected    = 1;   % 0 - UNCORRECTED, 1 = SUM, 2 = COR32
+XRDIMAGE.Image.dettype      = 3;   % 3 = GE3, 5 = GE5, 1234 = HYDRA1234, 6 = DEX IN C
+
+XRDIMAGE.Image.pname_GSAS2_chi      = 'D:\w\mpe_apr21_analysis\park_sae_phi0_2\chi';
+XRDIMAGE.Image.pfname_GSAS2_pkslst  = 'D:\w\mpe_apr21_analysis\park_sae_phi0_2\mpe_apr21_park_sae_ge3_80keV_2278mm_phi0.pkslst';
+XRDIMAGE.Image.pfname_GSAS2_imctrl  = 'D:\w\mpe_apr21_analysis\park_sae_phi0_2\mpe_apr21_park_sae_ge3_80keV_2278mm_phi0.imctrl';
+
+%%% MATERIAL PARAMETERS BASED ON GSAS2
+Materials   = GSAS2_MakeMaterialFromPkslst( ...
+    XRDIMAGE.Image.pfname_GSAS2_pkslst, ...
+    XRDIMAGE.Image.pfname_GSAS2_imctrl, ...
+    'd_spacing_range', [0.02 0.02 0.01 0.01 0.01 0.01]);
+
+%%% PEAK FITTING PARAMETER FROM GSAS2
+pklist              = GSAS2_Read_pkslst(XRDIMAGE.Image.pfname_GSAS2_pkslst);
+
+%%% LOAD GSAS2 CAKING PARAMETER
+imctrl          = GSAS2_Read_imctrl(XRDIMAGE.Image.pfname_GSAS2_imctrl);
+
 %%% DATA REDUCTION FLAGS
+Analysis_Options.PkFuncOptions.pfunc_type	= 'pseudoVoigt';
+Analysis_Options.PkFuncOptions.pbkg_order	= 2;
 Analysis_Options.PkFitOptimizationOptions   = optimset(...
     'MaxIter', 5e5, ...
     'MaxFunEvals',3e5);
@@ -18,39 +50,16 @@ Analysis_Options.save_instrpars = 0;
 Analysis_Options.find_detpars	= 0;
 Analysis_Options.generateESG    = 0;
 
-%%% INPUT PARAMETERS
-XRDIMAGE.ExpID              = 'mli_dec19';
-XRDIMAGE.MetaDataFile       = 'C:\Users\parkjs\Documents\MATLAB\work\mli_nov19_analysis\mli_nov19_Tomo.par';
-XRDIMAGE.Image.pname_chi    = 'C:\Users\parkjs\Documents\MATLAB\work\mli_nov19_analysis\data\dexela\corrected';
-XRDIMAGE.Image.pname        = 'C:\Users\parkjs\Documents\MATLAB\work\mli_nov19_analysis\data\dexela\corrected';
-XRDIMAGE.Image.fbase        = 'am316_ss_id105_1';
-XRDIMAGE.Image.fnumber      = 324:326;
-XRDIMAGE.Image.numframe     = 1;
-XRDIMAGE.Image.numdigs      = 6;
-XRDIMAGE.Image.corrected    = 1;   % 0 - UNCORRECTED, 1 = SUM, 2 = COR32
-XRDIMAGE.Image.dettype      = 6;   % 3 = GE3, 5 = GE5, 1234 = HYDRA1234, 6 = DEX IN C
-
-%%% FITTING PARAMETER
-XRDIMAGE.pkListFile         = 'C:\Users\parkjs\Documents\MATLAB\work\mli_nov19_analysis\waxs\am316_ss_id105_1.pkslst';
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% ANALYSIS STARTS HERE
-metadata    = ReadSpecParFile(XRDIMAGE.MetaDataFile, 'Version', 'mli_nov19_c');
+metadata    = ReadSpecParFile(XRDIMAGE.MetaDataFile, 'Version', 'saxs_waxs_fmt_fastpar_v3');
 
-%%% READ PEAK LIST FROM GSAS2
-fid     = fopen(XRDIMAGE.pkListFile, 'r');
-pklist  = [];
-while ~feof(fid)
-    linedata    = fgetl(fid);
-    switch linedata(1)
-        case '['
-            pklist  = [pklist; eval(linedata)];
-    end
-end
-fclose(fid);
 numpks  = size(pklist ,1);
 switch XRDIMAGE.Image.dettype
     case 6
         disp(sprintf('%d = DEXELA', XRDIMAGE.Image.dettype));
+        %%%%%%%%%%%%%%%NEED TO UPDATE THIS SECTION TO USE
+        %%%%%%%%%%%%%%%FitPeaksPerPolImage function
         for iii = 1:1:length(XRDIMAGE.Image.fnumber)
             froot   = sprintf('%s_%06d', XRDIMAGE.Image.fbase, XRDIMAGE.Image.fnumber(iii));
             
@@ -233,7 +242,8 @@ switch XRDIMAGE.Image.dettype
         end
     case 1234
         disp(sprintf('%d = HYDRA1234', XRDIMAGE.Image.dettype));
-        
+        %%%%%%%%%%%%%%%NEED TO UPDATE THIS SECTION TO USE
+        %%%%%%%%%%%%%%%FitPeaksPerPolImage function
         for iii = 1:1:length(XRDIMAGE.Image.fnumber)
             froot   = sprintf('%s_%06d', XRDIMAGE.Image.fbase, XRDIMAGE.Image.fnumber(iii));
             
@@ -424,6 +434,85 @@ switch XRDIMAGE.Image.dettype
                     end
                 otherwise
                     warning('%s metadata needs investigation')
+            end
+        end
+    case 3
+        for iii = 1:1:length(XRDIMAGE.Image.fnumber)
+            froot   = sprintf('%s_%06d', XRDIMAGE.Image.fbase, XRDIMAGE.Image.fnumber(iii));
+            
+            idx_fbase       = ismember(metadata.det3_fname, XRDIMAGE.Image.fbase);
+            idx_fnumber     = ismember(metadata.det3_fnum, XRDIMAGE.Image.fnumber(iii));
+            idx_metadata    = find(idx_fbase & idx_fnumber);
+            
+            switch ~isempty(idx_metadata) && (length(idx_metadata) == 1)
+                case true
+                    fext    = 'ge3';
+                    switch XRDIMAGE.Image.corrected
+                        case true
+                            fname_pattern   = sprintf('%s.%s.sum', froot, fext);
+                            
+                            pfname_temp_iii = GSAS2_MakePolImgFromChi( ...
+                                XRDIMAGE.Image.pfname_GSAS2_imctrl, ...
+                                XRDIMAGE.Image.pname_GSAS2_chi, ...
+                                fname_pattern);
+                            
+                            status = FitPeaksPerPolImage(fname_pattern, ...
+                                XRDIMAGE.Image.pname_polimg, ...
+                                XRDIMAGE.Image.pname_pkfit, ...
+                                Materials, ...
+                                Analysis_Options, ...
+                                'ShowPlot', false);
+                            
+%                             %%% INIT FOR PARFOR
+%                             pkfit_amp   = zeros(imctrl.outAzimuths, numpks);
+%                             pkfit_mix	= zeros(imctrl.outAzimuths, numpks);
+%                             pkfit_fwhm	= zeros(imctrl.outAzimuths, numpks);
+%                             pkfit_rho	= zeros(imctrl.outAzimuths, numpks);
+%                             pkfit_bkg	= cell(imctrl.outAzimuths, numpks);
+%                             pkfit_rsn	= zeros(imctrl.outAzimuths, numpks);
+%                             pkfit_ef	= zeros(imctrl.outAzimuths, numpks);
+%                             pkfit_rwp	= zeros(imctrl.outAzimuths, numpks);
+%                             pkfit_xr    = cell(imctrl.outAzimuths, numpks);
+%                             pkfit_yr    = cell(imctrl.outAzimuths, numpks);
+%                             pkfit_eta   = imctrl.derived_azm_grid';
+%                             pkfit_samX  = metadata.samX(idx_metadata);
+%                             pkfit_samY  = metadata.samY(idx_metadata);
+%                             pkfit_samZ  = metadata.samZ(idx_metadata);
+%                             pkfit_rX    = metadata.aX(idx_metadata);
+%                             pkfit_rY    = metadata.aY(idx_metadata);
+%                             pkfit_rZ    = metadata.aZ(idx_metadata);
+%                             pkfit_samX2 = metadata.samX2(idx_metadata);
+%                             pkfit_samY2 = metadata.samY2(idx_metadata);
+%                             pkfit_samZ2 = metadata.samZ2(idx_metadata);
+%                             pkfit_samP  = metadata.samOther(idx_metadata);
+%                             pkfit_enc1  = metadata.encoder1(idx_metadata);
+%                             pkfit_enc2  = metadata.encoder2(idx_metadata);
+%                             pkfit_enc3  = metadata.encoder3(idx_metadata);
+%                             pkfit_enc4  = metadata.encoder4(idx_metadata);
+%                             pkfit_enc5  = metadata.encoder5(idx_metadata);
+%                             pkfit_enc6  = metadata.encoder6(idx_metadata);
+%                             pkfit_enc7  = metadata.encoder7(idx_metadata);
+%                             pkfit_enc8  = metadata.encoder8(idx_metadata);
+%                             pkfit_enc9  = metadata.encoder9(idx_metadata);
+%                             pkfit_enc10 = metadata.encoder10(idx_metadata);
+%                             pkfit_ev1   = metadata.ev1(idx_metadata);
+%                             pkfit_ev2   = metadata.ev2(idx_metadata);
+%                             pkfit_ev3   = metadata.ev3(idx_metadata);
+%                             pkfit_ev4   = metadata.ev4(idx_metadata);
+%                             pkfit_ev5   = metadata.ev5(idx_metadata);
+%                             pkfit_ev6   = metadata.ev6(idx_metadata);
+%                             pkfit_ev7   = metadata.ev7(idx_metadata);
+%                             pkfit_ev8   = metadata.ev8(idx_metadata);
+%                             pkfit_ev9   = metadata.ev9(idx_metadata);
+%                             pkfit_ev10  = metadata.ev10(idx_metadata);
+%                             
+%                             parfor jjj = 1:1:imctrl.outAzimuths
+%                                 
+%                             end
+                        case false
+                    end
+                        
+                case false
             end
         end
     otherwise
