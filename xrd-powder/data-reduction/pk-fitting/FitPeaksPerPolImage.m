@@ -1,4 +1,5 @@
-function status = FitPeaksPerPolImage(pfname, Material, Analysis_Options, varargin)
+function status = FitPeaksPerPolImage(fname_pattern, pname_polimg, pname_pkfit, ...
+    Material, Analysis_Options, varargin)
 
 % default options
 optcell = {...
@@ -10,6 +11,7 @@ optcell = {...
 % update option
 opts    = OptArgs(optcell, varargin);
 
+%%%% LOOK AT THIS LATER
 if length(opts.MetaDataFieldName) ~= length(opts.MetaDataFieldValues)
     error('metadata field name length and field value length are different')
     status = -1;
@@ -21,13 +23,22 @@ end
 
 %%%%% 
 disp('###########################')
-fprintf('Fitting peaks in %s\n', pfname)
+fprintf('Fitting peaks in %s\n', pname_polimg)
 disp('###########################')
 
-pfname_polimg   = sprintf('%s.polimg.mat', pfname);
-pfname_pkfit    = sprintf('%s.pkfit.mat', pfname);
-pfname_pkfit_tbl    = sprintf('%s.pkfit.csv', pfname);
+%%% POLIMG FILE TO LOOK AT
+fname_polimg    = sprintf('%s.polimg.mat', fname_pattern);
+pfname_polimg   = fullfile(pname_polimg, fname_polimg);
 
+%%% PKFIT FILE NAME TO SAVE
+fname_pkfit     = sprintf('%s.pkfit.mat', fname_pattern);
+pfname_pkfit    = fullfile(pname_pkfit, fname_pkfit);
+
+%%% PKFIT TABLE FILE NAME TO SAVE
+fname_pkfit_tbl     = sprintf('%s.pkfit.csv', fname_pattern);
+pfname_pkfit_tbl    = fullfile(pname_pkfit, fname_pkfit_tbl);
+
+%%% LOAD POLIMG
 polimg  = load(pfname_polimg);
 
 CakePrms    = polimg.cakeprms;
@@ -93,20 +104,9 @@ for kkk = 1:1:CakePrms.bins(1)
             idx_max = [];
             peakdet_thresh  = 0.5;
             while (length(idx_max) ~= numpks) && (peakdet_thresh > 0)
-                [idx_max, idx_min]  = peakdet(yr, peakdet_thresh, xr);
-                peakdet_thresh      = peakdet_thresh - 0.1;
+                [idx_max, ~]    = peakdet(yr, peakdet_thresh, xr);
+                peakdet_thresh  = peakdet_thresh - 0.1;
             end
-            
-            %                             pr0 = [];
-            %                             if length(idx_max) == numpks
-            %                                 for nnn = 1:1:numpks
-            %                                 % pr0 =
-            %                                 end
-            %                             else
-            %                                 for nnn = 1:1:numpks
-            %                                     % pr0 =
-            %                                 end
-            %                             end
             
             pkidx   = Material.pkidx{mmm};
             tth     = Material.tth;
@@ -116,30 +116,57 @@ for kkk = 1:1:CakePrms.bins(1)
             pr0     = [];
             pr0_LB  = [];
             pr0_UB  = [];
+            
             for nnn = 1:1:numpks
-                pr0 = [ ...
-                    pr0;
-                    idx_max(nnn,2)/10;
-                    0.05;
-                    0.5;
-                    tth(pkidx(nnn));
-                    ];
-                
-                pr0_LB  = [ ...
-                    pr0_LB; ...
-                    0; ...
-                    0; ...
-                    0; ...
-                    tth_LB(pkidx(nnn)); ...
-                    ];
-                
-                pr0_UB  = [ ...
-                    pr0_UB; ...
-                    inf; ...
-                    inf; ...
-                    1; ...
-                    tth_UB(pkidx(nnn)); ...
-                    ];
+                if numpks == 1
+                    pr0 = [ ...
+                        pr0;
+                        max(yr)/20;
+                        0.05;
+                        0.5;
+                        tth(pkidx(nnn));
+                        ];
+                    
+                    pr0_LB  = [ ...
+                        pr0_LB; ...
+                        0; ...
+                        0; ...
+                        0; ...
+                        tth_LB(pkidx(nnn)); ...
+                        ];
+                    
+                    pr0_UB  = [ ...
+                        pr0_UB; ...
+                        inf; ...
+                        inf; ...
+                        1; ...
+                        tth_UB(pkidx(nnn)); ...
+                        ];
+                else
+                    pr0 = [ ...
+                        pr0;
+                        idx_max(nnn,2)/2;
+                        0.05;
+                        0.5;
+                        tth(pkidx(nnn));
+                        ];
+                    
+                    pr0_LB  = [ ...
+                        pr0_LB; ...
+                        0; ...
+                        0; ...
+                        0; ...
+                        tth_LB(pkidx(nnn)); ...
+                        ];
+                    
+                    pr0_UB  = [ ...
+                        pr0_UB; ...
+                        inf; ...
+                        inf; ...
+                        1; ...
+                        tth_UB(pkidx(nnn)); ...
+                        ];
+                end
             end
             
             pr0 = [pr0; ...
@@ -166,15 +193,19 @@ for kkk = 1:1:CakePrms.bins(1)
         pkpars.pbkg_order   = Analysis_Options.PkFuncOptions.pbkg_order;
         pkpars.xdata        = xr;
         
-        [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc_switch, pr0, pkpars, yr, ...
-            pr0_LB, pr0_UB, Analysis_Options.PkFitOptimizationOptions);
-        y0	= pfunc_switch(pr0, pkpars);
-        yf	= pfunc_switch(pr, pkpars);
+%         [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc_switch, pr0, pkpars, yr, ...
+%             pr0_LB, pr0_UB, Analysis_Options.PkFitOptimizationOptions);
+%         y0	= pfunc_switch(pr0, pkpars);
+%         yf	= pfunc_switch(pr, pkpars);
         
-        % [pr, rsn, ~, ef]    = lsqcurvefit(@pfunc, pr0, xr, yr, ...
-        %     [], [], Analysis_Options.PkFitOptions);
-        % y0  = pfunc(pr0,xr);
-        % yf  = pfunc(pr,xr);
+        [pr, rsn, resd, ef, ~, ~, jacobian] = lsqcurvefit(@pfunc, pr0, xr, yr, ...
+            pr0_LB, pr0_UB, Analysis_Options.PkFitOptimizationOptions);
+        y0  = pfunc(pr0,xr);
+        yf  = pfunc(pr,xr);
+        
+        [conf, var]  = confint(pr, resd, jacobian); % variance of fitted params
+        var = full(var);
+        
         
         %%% UPDATE PREVIOUS AZIMUTH PR FOR NEXT AZIM FITING
         pr_previous_azimuth{mmm}    = pr;
@@ -199,6 +230,7 @@ for kkk = 1:1:CakePrms.bins(1)
                 ylabel('intensity (arb. units)')
                 title(['bound number : ', num2str(mmm)])
                 hold off
+                pause
         end
         
         %%% MAPPING NEEDS TO BE UPDATED WITH A SWITCH
@@ -227,15 +259,31 @@ for kkk = 1:1:CakePrms.bins(1)
             csv_table_kkk   = [csv_table_kkk pr_pk(idx_pk_LB:idx_pk_UB)' integrated_intensity(nnn)];
         end
         
-        pkfit.amp{kkk,mmm}  = pr_pk(1:4:end);
-        pkfit.fwhm{kkk,mmm} = pr_pk(2:4:end);
-        pkfit.mix{kkk,mmm}  = pr_pk(3:4:end);
-        pkfit.rho{kkk,mmm}  = pr_pk(4:4:end);
-        pkfit.bkg{kkk,mmm}  = pr_bkg;
-        pkfit.rsn(kkk,mmm)  = rsn;
-        pkfit.ef(kkk,mmm)   = ef;
-        pkfit.rwp(kkk,mmm)  = rwp;
-        pkfit.I{kkk,mmm}    = integrated_intensity;
+        pkfit.Afit{kkk,mmm}                 = pr_pk(1:4:end);
+        pkfit.Afit_eb{kkk,mmm}              = sqrt(var(1:4:end));
+        pkfit.Afit_95conf_range{kkk,mmm}    = conf(1:4:end,2) - conf(1:4:end,1);
+        
+        pkfit.gfit{kkk,mmm}                 = pr_pk(2:4:end);
+        pkfit.gfit_eb{kkk,mmm}              = sqrt(var(2:4:end));
+        pkfit.gfit_95conf_range{kkk,mmm}    = conf(2:4:end,2) - conf(2:4:end,1);
+        
+        pkfit.nfit{kkk,mmm}                 = pr_pk(3:4:end);
+        pkfit.nfit_eb{kkk,mmm}              = sqrt(var(3:4:end));
+        pkfit.nfit_95conf_range{kkk,mmm}    = conf(3:4:end,2) - conf(3:4:end,1);
+        
+        pkfit.cenfit{kkk,mmm}               = pr_pk(4:4:end);
+        pkfit.cenfit_eb{kkk,mmm}            = sqrt(var(4:4:end));
+        pkfit.cenfit_95conf_range{kkk,mmm}  = conf(4:4:end,2) - conf(4:4:end,1);
+        
+        pkfit.bkg{kkk,mmm}                  = pr_bkg;
+        pkfit.bkg_eb{kkk,mmm}               = sqrt(var(end-1:end));
+        pkfit.bkg_95conf_range{kkk,mmm}     = conf((length(pr_pk)+1:length(pr_pk)+2), 2) - ...
+            conf((length(pr_pk)+1:length(pr_pk)+2), 1);
+        
+        pkfit.rsn(kkk,mmm)      = rsn;
+        pkfit.ef(kkk,mmm)       = ef;
+        pkfit.rwp(kkk,mmm)      = rwp;
+        pkfit.I{kkk,mmm}        = integrated_intensity;
         
         csv_table_kkk   = [csv_table_kkk pr_bkg' rsn ef rwp];
         
@@ -301,11 +349,11 @@ CSV_TABLE   = array2table(csv_table, 'VariableNames', csv_table_hdr);
 if Analysis_Options.save_fits
     disp('###########################')
     fprintf('Saving peak fits in %s\n', pfname_pkfit)
-    save(pfname_pkfit, 'pfname', 'Material', 'pkfit', 'pkpars', 'CakePrms', 'Instr', 'polimg');
+    save(pfname_pkfit, 'fname_pattern', 'Material', 'pkfit', 'pkpars', 'CakePrms', 'Instr', 'polimg');
     
     writetable(CSV_TABLE, pfname_pkfit_tbl)
 else
     disp('###########################')
-    fprintf('Not saving peak fits for %s\n', pfname)
+    fprintf('Not saving peak fits for %s\n', fname_pattern)
 end
 status  = 1;
