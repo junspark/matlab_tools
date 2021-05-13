@@ -28,3 +28,8 @@ mli_nov19 (wf.dexela for hydra)
 - remove undulating background 
 - use auto integrate + chi output (gsas2)
 - peak fitting (matlab)
+
+mpe_apr21
+park_sae_phi0_2 / park_sae_phi180_2
+- various GSAS2 related readers
+- unified peak fitting routine
