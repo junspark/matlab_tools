@@ -41,18 +41,22 @@ pkslst  = GSAS2_Read_pkslst(pfname_pkslst);
 imctrl  = GSAS2_Read_imctrl(pfname_imctrl);
 
 %%% MATERIAL CALCULATION
-numbounds   = size(pkslst,1);
+numpks      = size(pkslst,1);
+numbounds   = length(d_spacing_range);
 tth         = pkslst(:,1);
 th          = tth./2;
 d           = (imctrl.wavelength/2)./sind(th);
 
-switch length(d_spacing_range)
-    case 1
-        d_spacing_UB    = (1 + d_spacing_range).*d;
-        d_spacing_LB    = (1 - d_spacing_range).*d;
-    case numbounds
-        d_spacing_UB    = (1 + d_spacing_range).*d;
-        d_spacing_LB    = (1 - d_spacing_range).*d;
+if numbounds == 1
+    d_spacing_UB    = (1 + d_spacing_range).*d;
+    d_spacing_LB    = (1 - d_spacing_range).*d;
+elseif numbounds == numpks
+    d_spacing_UB    = (1 + d_spacing_range).*d;
+    d_spacing_LB    = (1 - d_spacing_range).*d;
+else
+    disp('something odd with numpks')
+    Material    = [];
+    return
 end
 tth_UB  = 2.*asind(imctrl.wavelength/2)./d_spacing_LB;
 tth_LB  = 2.*asind(imctrl.wavelength/2)./d_spacing_UB;
@@ -65,13 +69,13 @@ Material.pkfunc     = 4;
 % Material.lattparms  = 3.60;
 % Material.structure  = 'fcc';
 Material.numbounds  = numbounds;
-Material.numpk      = numbounds;
+Material.numpk      = numpks;
 Material.tth        = tth;
 Material.tth_UB     = tth_UB;
 Material.tth_LB     = tth_LB;
 Material.d_spacing  = d;
 
-for iii = 1:1:numbounds
+for iii = 1:1:numpks
     Material.pkidx{iii,1}   = iii;
 end
 
