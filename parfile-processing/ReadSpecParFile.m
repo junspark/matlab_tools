@@ -314,8 +314,6 @@ switch lower(opts.Version)
         pardata.ev9     = textdata{179};
         pardata.ev10    = textdata{180};
     
-    
-    
     case 'saxs_waxs_fmt_fastpar_v2'
         %%% STARTING park_aug20 (maybe even before when slave motors for fs was enabled)
         
