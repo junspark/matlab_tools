@@ -92,7 +92,7 @@ for xxx = 1:1:cakeParms.bins(1)
             'loop_';
             '_pd_proc_2theta_corrected';
             '_pd_calc_intensity_total';};
-        for yyy = 1:1:size(A,1);
+        for yyy = 1:1:size(A,1)
             fprintf(fid, '%s', A{yyy});
             fprintf(fid, '\n');
         end

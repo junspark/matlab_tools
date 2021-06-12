@@ -61,7 +61,8 @@ instr.chi           = nan;
 instr.prrot         = nan;
 
 for iii = 1:1:cakeprms.bins(1)
-    fname_chi   = sprintf('%s_Azm=_%d.chi', froot_chi, fix(cakeprms.azim(iii)));
+    % fname_chi   = sprintf('%s_Azm=_%d.chi', froot_chi, fix(cakeprms.azim(iii)));
+    fname_chi   = sprintf('%s_A%d.chi', froot_chi, fix(cakeprms.azim(iii)));
     pfname_chi  = fullfile(pname_chi, fname_chi);
     
     data_chi    = GSAS2_Read_PWDR_CHI(pfname_chi);
