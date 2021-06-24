@@ -5,11 +5,11 @@ clc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% INPUTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% MaterialName    = 'Al';                         % FCC Al 
-% latticeParms    = 4.050;                        % IN Angstrom
-% hkls            = load('fcc.hkls');
-% multiplicity    = load('fcc.ms');
-% d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
+MaterialName    = 'Al';                         % FCC Al 
+latticeParms    = 4.050;                        % IN Angstrom
+hkls            = load('fcc.hkls');
+multiplicity    = load('fcc.ms');
+d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
 % MaterialName    = 'Cu';                         % FCC Al 
 % latticeParms    = 3.615;                        % IN Angstrom
@@ -17,11 +17,11 @@ clc
 % multiplicity    = load('fcc.ms');
 % d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
-MaterialName    = 'Ce';                         % FCC Ce
-latticeParms    = 5.4114 ;                        % IN Angstrom
-hkls            = load('fcc.hkls');
-multiplicity    = load('fcc.ms');
-d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
+% MaterialName    = 'Ce';                         % FCC Ce
+% latticeParms    = 5.4114 ;                        % IN Angstrom
+% hkls            = load('fcc.hkls');
+% multiplicity    = load('fcc.ms');
+% d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 
 % MaterialName    = 'Fe';                         % BCC Fe
 % latticeParms    = 2.87 ;                        % IN Angstrom
@@ -54,8 +54,8 @@ d_hkls          = PlaneSpacings(latticeParms, 'cubic', hkls');
 % d_hkls          = PlaneSpacings(latticeParms, 'hexagonal', hkls');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SampleThickness = 0.05;                        % IN cm
-TakeOffAngle    = 5.67318;                  % IN deg
+SampleThickness = 0.5;                        % IN cm
+TakeOffAngle    = 6;                  % IN deg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% END OF INPUTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
