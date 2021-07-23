@@ -318,7 +318,9 @@ switch lower(opts.Version)
         %%% STARTING park_aug20 (maybe even before when slave motors for fs was enabled)
         
         %%% READ IN DATA
-        textdata    = readtable(fname, 'FileType', 'text', 'Delimiter', ' ', 'ConsecutiveDelimitersRule', 'split');
+        % textdata    = readtable(fname, 'FileType', 'text', 'Delimiter', ' ', 'ConsecutiveDelimitersRule', 'split');
+        opts        = detectImportOptions(fname,'FileType','text');
+        textdata    = readtable(fname, opts);
         
         % pardata = textdata;
         % return
