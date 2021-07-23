@@ -314,6 +314,245 @@ switch lower(opts.Version)
         pardata.ev9     = textdata{179};
         pardata.ev10    = textdata{180};
     
+    case 'saxs_waxs_fmt_fastpar_brown_nov19'
+        %%% READ IN DATA
+        % textdata    = readtable(fname, 'FileType', 'text', 'Delimiter', ' ', 'ConsecutiveDelimitersRule', 'split');
+        opts        = detectImportOptions(fname,'FileType','text');
+        textdata    = readtable(fname, opts);
+        % pardata     = textdata;
+        
+        %%% PARSE DATA
+        pardata.day     = textdata.Var1;
+        pardata.month   = textdata.Var2;
+        pardata.date    = textdata.Var3;
+        pardata.time    = textdata.Var4;
+        pardata.year    = textdata.Var5;
+        
+        pardata.epoch_time  = textdata.Var6;
+        pardata.integ_time  = textdata.Var7;
+        pardata.Iring       = textdata.Var8;
+        pardata.und_gap     = textdata.Var9;
+        pardata.energy      = textdata.Var10;
+        pardata.energy_cal  = textdata.Var11;
+        pardata.foil_pos    = textdata.Var12;
+        pardata.atten_pos   = textdata.Var13;
+        
+        pardata.det_type        = textdata.Var14;
+        pardata.scan_mtr        = textdata.Var15;
+        pardata.scan_ini        = textdata.Var16;
+        pardata.scan_fin        = textdata.Var17;
+        
+        pardata.slave_mtr        = textdata.Var18;
+        pardata.slave_mtr_ini    = textdata.Var19;
+        pardata.slave_mtr_fin    = textdata.Var20;
+        
+        pardata.scan_nframes    = textdata.Var21;
+        pardata.imgprefix       = textdata.Var22;
+        pardata.imnum_ini       = textdata.Var23;
+        pardata.imnum_fin       = textdata.Var24;
+        
+        pardata.det1_fname              = textdata.Var25;
+        pardata.det1_fnum               = textdata.Var26;
+        pardata.det1_frames_per_file    = textdata.Var27;
+        pardata.det1_time_per_frame     = textdata.Var28;
+        
+        pardata.det2_fname              = textdata.Var29;
+        pardata.det2_fnum               = textdata.Var30;
+        pardata.det2_frames_per_file    = textdata.Var31;
+        pardata.det2_time_per_frame     = textdata.Var32;
+        
+        pardata.det3_fname              = textdata.Var33;
+        pardata.det3_fnum               = textdata.Var34;
+        pardata.det3_frames_per_file    = textdata.Var35;
+        pardata.det3_time_per_frame     = textdata.Var36;
+       
+        pardata.det4_fname              = textdata.Var37;
+        pardata.det4_fnum               = textdata.Var38;
+        pardata.det4_frames_per_file    = textdata.Var39;
+        pardata.det4_time_per_frame     = textdata.Var40;
+        
+        pardata.det5_fname              = textdata.Var41;
+        pardata.det5_fnum               = textdata.Var42;
+        pardata.det5_frames_per_file    = textdata.Var43;
+        pardata.det5_time_per_frame     = textdata.Var44;
+       
+        pardata.det6_fname              = textdata.Var45;
+        pardata.det6_fnum               = textdata.Var46;
+        pardata.det6_frames_per_file    = textdata.Var47;
+        pardata.det6_time_per_frame     = textdata.Var48;
+       
+        pardata.det7_fname              = textdata.Var49;
+        pardata.det7_fnum               = textdata.Var50;
+        pardata.det7_frames_per_file    = textdata.Var51;
+        pardata.det7_time_per_frame     = textdata.Var52;
+        
+        pardata.det8_fname              = textdata.Var53;
+        pardata.det8_fnum               = textdata.Var54;
+        pardata.det8_frames_per_file    = textdata.Var55;
+        pardata.det8_time_per_frame     = textdata.Var56;
+                    
+        pardata.det9_fname              = textdata.Var57;
+        pardata.det9_fnum               = textdata.Var58;
+        pardata.det9_frames_per_file    = textdata.Var59;
+        pardata.det9_time_per_frame     = textdata.Var60;
+        
+        pardata.det10_fname             = textdata.Var61;
+        pardata.det10_fnum              = textdata.Var62;
+        pardata.det10_frames_per_file   = textdata.Var63;
+        pardata.det10_time_per_frame    = textdata.Var64;
+        
+        pardata.scaler1_val     = textdata.Var65;
+        pardata.scaler1_units   = textdata.Var66;
+        pardata.scaler2_val     = textdata.Var67;
+        pardata.scaler2_units   = textdata.Var68;
+        pardata.scaler3_val     = textdata.Var69;
+        pardata.scaler3_units   = textdata.Var70;
+        pardata.scaler4_val     = textdata.Var71;
+        pardata.scaler4_units   = textdata.Var72;
+        pardata.scaler5_val     = textdata.Var73;
+        pardata.scaler5_units   = textdata.Var74;
+        pardata.scaler6_val     = textdata.Var75;
+        pardata.scaler6_units   = textdata.Var76;
+        pardata.scaler7_val     = textdata.Var77;
+        pardata.scaler7_units   = textdata.Var78;
+        pardata.scaler8_val     = textdata.Var79;
+        pardata.scaler8_units   = textdata.Var80;
+        pardata.scaler9_val     = textdata.Var81;
+        pardata.scaler9_units   = textdata.Var82;
+        pardata.scaler10_val    = textdata.Var83;
+        pardata.scaler10_units  = textdata.Var84;
+        pardata.scaler11_val    = textdata.Var85;
+        pardata.scaler11_units  = textdata.Var86;
+        pardata.scaler12_val    = textdata.Var87;
+        pardata.scaler12_units  = textdata.Var88;
+        
+        pardata.samX        = textdata.Var89;
+        pardata.samY        = textdata.Var90;
+        pardata.samZ        = textdata.Var91;
+        pardata.aX          = textdata.Var92;
+        pardata.aY          = textdata.Var93;
+        pardata.aZ          = textdata.Var94;
+        pardata.samX2       = textdata.Var95;
+        pardata.samY2       = textdata.Var96;
+        pardata.samZ2       = textdata.Var97;
+        pardata.samOther    = textdata.Var98;
+        
+        pardata.det1_pos1   = textdata.Var99;
+        pardata.det1_pos2   = textdata.Var100;
+        pardata.det1_pos3   = textdata.Var101;
+       
+        pardata.det2_pos1   = textdata.Var102;
+        pardata.det2_pos2   = textdata.Var103;
+        pardata.det2_pos3   = textdata.Var104;
+        
+        pardata.det3_pos1   = textdata.Var105;
+        pardata.det3_pos2   = textdata.Var106;
+        pardata.det3_pos3   = textdata.Var107;
+        
+        pardata.det4_pos1   = textdata.Var108;
+        pardata.det4_pos2   = textdata.Var109;
+        pardata.det4_pos3   = textdata.Var110;
+        
+        pardata.det5_pos1   = textdata.Var111;
+        pardata.det5_pos2   = textdata.Var112;
+        pardata.det5_pos3   = textdata.Var113;
+        
+        pardata.det6_pos1   = textdata.Var114;
+        pardata.det6_pos2   = textdata.Var115;
+        pardata.det6_pos3   = textdata.Var116;
+      
+        pardata.det7_pos1   = textdata.Var117;
+        pardata.det7_pos2   = textdata.Var118;
+        pardata.det7_pos3   = textdata.Var119;
+       
+        pardata.det8_pos1   = textdata.Var120;
+        pardata.det8_pos2   = textdata.Var121;
+        pardata.det8_pos3   = textdata.Var122;
+       
+        pardata.det9_pos1   = textdata.Var123;
+        pardata.det9_pos2   = textdata.Var124;
+        pardata.det9_pos3   = textdata.Var125;
+        
+        pardata.det10_pos1  = textdata.Var126;
+        pardata.det10_pos2  = textdata.Var127;
+        pardata.det10_pos3  = textdata.Var128;
+        
+        %%% LINE 8
+        pardata.hex_pos1    = textdata.Var129;
+        pardata.hex_pos2    = textdata.Var130;
+        pardata.hex_pos3    = textdata.Var131;
+        pardata.hex_pos4    = textdata.Var132;
+        pardata.hex_pos5    = textdata.Var133;
+        pardata.hex_pos6    = textdata.Var134;
+        pardata.hex_pos7    = textdata.Var135;
+        
+        %%% LINE 9
+        pardata.slit1_V_size    = textdata.Var136;
+        pardata.slit1_V_pos     = textdata.Var137;
+        pardata.slit1_H_size    = textdata.Var138;
+        pardata.slit1_H_pos     = textdata.Var139;
+       
+        pardata.slit2_V_size    = textdata.Var140;
+        pardata.slit2_V_pos     = textdata.Var141;
+        pardata.slit2_H_size    = textdata.Var142;
+        pardata.slit2_H_pos     = textdata.Var143;
+        
+        pardata.slit3_V_size    = textdata.Var144;
+        pardata.slit3_V_pos     = textdata.Var145;
+        pardata.slit3_H_size    = textdata.Var146;
+        pardata.slit3_H_pos     = textdata.Var147;
+        
+        pardata.slit4_V_size    = textdata.Var148;
+        pardata.slit4_V_pos     = textdata.Var149;
+        pardata.slit4_H_size    = textdata.Var150;
+        pardata.slit4_H_pos     = textdata.Var151;
+        
+        pardata.slit5_V_size    = textdata.Var152;
+        pardata.slit5_V_pos     = textdata.Var153;
+        pardata.slit5_H_size    = textdata.Var154;
+        pardata.slit5_H_pos     = textdata.Var155;
+        
+        pardata.slit6_V_size    = textdata.Var156;
+        pardata.slit6_V_pos     = textdata.Var157;
+        pardata.slit6_H_size    = textdata.Var158;
+        pardata.slit6_H_pos     = textdata.Var159;
+        
+        %%% LINE 10
+        pardata.lens1_pos1  = textdata.Var160;
+        pardata.lens1_pos2  = textdata.Var161;
+       
+        pardata.lens2_pos1  = textdata.Var162;
+        pardata.lens2_pos2  = textdata.Var163;
+       
+        pardata.lens3_pos1  = textdata.Var164;
+        pardata.lens3_pos2  = textdata.Var165;
+       
+        pardata.lens4_pos1  = textdata.Var166;
+        pardata.lens4_pos2  = textdata.Var167;
+       
+        %%% LINE 11
+        pardata.encoder1    = textdata.Var168;
+        pardata.encoder2    = textdata.Var169;
+        pardata.encoder3    = textdata.Var170;
+        % pardata.encoder4    = textdata.Var171;
+        pardata.encoder5    = textdata.Var171;
+        pardata.encoder6    = textdata.Var172;
+        pardata.encoder7    = textdata.Var173;
+        pardata.encoder8    = textdata.Var174;
+        pardata.encoder9    = textdata.Var175;
+        pardata.encoder10   = textdata.Var176;
+        
+        %%% LINE 12
+        pardata.ev1     = textdata.Var177;
+        pardata.ev2     = textdata.Var178;
+        pardata.ev3     = textdata.Var179;
+        pardata.ev4     = textdata.Var180;
+        pardata.ev5     = textdata.Var181;
+        pardata.ev6     = textdata.Var182;
+        pardata.ev7     = textdata.Var183;
+        pardata.ev8     = textdata.Var184;
+        pardata.ev9     = textdata.Var185;
+        pardata.ev10    = textdata.Var186;
     case 'saxs_waxs_fmt_fastpar_v2'
         %%% STARTING park_aug20 (maybe even before when slave motors for fs was enabled)
         
