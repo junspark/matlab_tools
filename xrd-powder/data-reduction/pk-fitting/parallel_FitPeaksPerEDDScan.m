@@ -22,6 +22,11 @@ function status = parallel_FitPeaksPerEDDScan(edd_iii, edf_cal, pkfit, varargin)
 %       d_pk        peak position initial guess
 %       d_LB        lower bound
 %       d_UB        upper bound
+%   
+%   optional inputs and default values
+%       'ShowPlot', false, ...
+%       'SavePkFitMat', false, ...
+%       'pfname_mat', 'temp_fit_file.mat', ...
 %
 %   OUTPUT:
 %
@@ -63,9 +68,9 @@ for jjj = 1:1:numsteps
         
         %%% SUM spectra over 10 detectors to use later
         if kkk == 1
-            ydata_sum_at_voxel  = ydata;
+            sum_of_all_ydata_at_voxel   = ydata;
         else
-            ydata_sum_at_voxel  = ydata_sum_at_voxel + ydata;
+            sum_of_all_ydata_at_voxel   = sum_of_all_ydata_at_voxel + ydata;
         end
         
         if opts.ShowPlot
@@ -75,7 +80,7 @@ for jjj = 1:1:numsteps
             hold on
         end
         
-        %%% VISIT EACH PEAK in EACH DETECTOR AND FIT
+        %%% VISIT EACH PEAK IN EACH DETECTOR AND FIT
         for mmm = 1:1:numpks
             disp(sprintf('************ fitting spectrum @ step# %d/%d | det# %d/%d | peak# %d/%d', ...
                 jjj, numsteps, kkk, numdets, mmm, numpks))
@@ -97,7 +102,7 @@ for jjj = 1:1:numsteps
             
             prUB    = [ ...
                 inf ...
-                inf ...
+                3 ...
                 1 ...
                 EUB ...
                 ];
@@ -110,8 +115,7 @@ for jjj = 1:1:numsteps
                 ];
             
             pr0 = [pr0 ...
-                0 ...
-                (yfit_data(1) + yfit_data(end))/2 ...
+                polyfit(xfit_data, yfit_data, 1) ...
                 ];
             
             prUB = [prUB ...
@@ -128,57 +132,99 @@ for jjj = 1:1:numsteps
             prUB    = prUB';
             prLB    = prLB';
             
-            [pr, rsn{kkk,mmm}(jjj), ~, ef{kkk,mmm}(jjj)]    = lsqcurvefit(@pfunc, pr0, xfit_data, yfit_data, ...
+            [pr, rsn_at_voxel{kkk}(jjj,mmm), ...
+                resd_at_voxel{kkk}{jjj,mmm}, ...
+                ef_at_voxel{kkk}(jjj,mmm), ~, ~, ...
+                jacobian_at_voxel{kkk}{jjj,mmm}]   = lsqcurvefit(@pfunc, pr0, xfit_data, yfit_data, ...
                 prLB, prUB);
             
             yfit0   = pfunc(pr0, xfit_data);
             yfit    = pfunc(pr, xfit_data);
             
+            xfit_data_at_voxel{kkk}{jjj,mmm}    = xfit_data;
+            yfit_data_at_voxel{kkk}{jjj,mmm}    = yfit_data;
+            yfit0_at_voxel{kkk}{jjj,mmm}        = yfit0;
+            yfit_at_voxel{kkk}{jjj,mmm}         = yfit0;
+            
+            [conf, variance]    = confint(pr, resd_at_voxel{kkk}{jjj,mmm}, jacobian_at_voxel{kkk}{jjj,mmm}); % variance of fitted params
+            variance            = full(variance);
+            
+            pkfit_int_at_voxel{kkk}(jjj,mmm)    = trapz(xfit_data, yfit);
+            bkgfit_int_at_voxel{kkk}(jjj,mmm)   = trapz(xfit_data, polyval(pr(5:end), xfit_data));
+            
+            Afit_at_voxel{kkk}(jjj,mmm)                 = pr(1);
+            Afit_at_voxel_errorbar{kkk}(jjj,mmm)        = sqrt(variance(1));
+            Afit_at_voxel_conf95_range{kkk}(jjj,mmm)    = conf(1,2) - conf(1,1);
+            
+            Gfit_at_voxel{kkk}(jjj,mmm)                 = pr(2);
+            Gfit_at_voxel_errorbar{kkk}(jjj,mmm)        = sqrt(variance(2));
+            Gfit_at_voxel_conf95_range{kkk}(jjj,mmm)    = conf(2,2) - conf(2,1);
+            
+            nfit_at_voxel{kkk}(jjj,mmm)                 = pr(3);
+            nfit_at_voxel_errorbar{kkk}(jjj,mmm)        = sqrt(variance(3));
+            nfit_at_voxel_conf95_range{kkk}(jjj,mmm)    = conf(3,2) - conf(3,1);
+            
+            Efit_at_voxel{kkk}(jjj,mmm)                 = pr(4);
+            Efit_at_voxel_errorbar{kkk}(jjj,mmm)        = sqrt(variance(4));
+            Efit_at_voxel_conf95_range{kkk}(jjj,mmm)    = conf(4,2) - conf(4,1);
+            
+            bkgfit_at_voxel{kkk}{jjj,mmm}               = pr(5:end);
+            bkgfit_at_voxel_errorbar{kkk}{jjj,mmm}      = sqrt(variance(5:end));
+            bkgfit_at_voxel_conf95_range{kkk}{jjj,mmm}  = conf(5:end,2) - conf(5:end,1);
+            
+            rwp_at_voxel{kkk}(jjj,mmm)  = ErrorRwp(yfit_data, yfit);
+            re_at_voxel{kkk}(jjj,mmm)   = ErrorRe(yfit_data, yfit);
+            rp_at_voxel{kkk}(jjj,mmm)   = ErrorRp(yfit_data, yfit);
+            
+            str2show    = {sprintf('intensity= %f +- %f', pr(1), sqrt(variance(1))), ...
+                sprintf('fwhm= %f +- %f',pr(2), sqrt(variance(2))), ...
+                sprintf('fract. lorentzian= %f +- %f',pr(3), sqrt(variance(3))), ...
+                sprintf('center= %f +- %f',pr(4), sqrt(variance(4))), ...
+                };
+            
+            disp(cell2table(str2show'))
             if opts.ShowPlot
                 figure(1)
-                plot(Epk, 20, 'k^')
-                plot(ELB, 20, 'r^')
-                plot(EUB, 20, 'rv')
+                plot(Efit_at_voxel{kkk}(jjj,mmm), 20, 'k^')
+                % plot(ELB, 20, 'rs')
+                % plot(EUB, 20, 'rs')
                 plot(xfit_data, yfit_data, 'r.')
                 plot(xfit_data, yfit0, 'g-')
                 plot(xfit_data, yfit, 'k-')
+                plot(xfit_data, polyval(pr(5:end), xfit_data), 'k--')
                 xlabel('E [kev]')
                 ylabel('Intensity [cts]')
                 grid on
+                
+                text(0.05,0.85,str2show, 'Units', 'normalized')
             end
-            
-            PkInt{kkk, mmm}(jjj)    = trapz(xfit_data, yfit);
-            BkgInt{kkk, mmm}(jjj)   = diff(polyval(polyint(pr(5:end)'), [xfit_data(1), xfit_data(end)]));
-            
-            Aout{kkk, mmm}(jjj) = pr(1);
-            Gout{kkk, mmm}(jjj) = pr(2);
-            nout{kkk, mmm}(jjj) = pr(3);
-            Eout{kkk, mmm}(jjj) = pr(4);
-            bkgout{kkk, mmm}(jjj,:) = pr(5:end);
         end
-        % return
-        % pause(0.05)
-        % pause
+        
+        idx     = (xgrid > min(ELB)) & (xgrid < max(EUB));
+        ydata_sum_at_voxel{kkk}(jjj,1)  = sum(ydata(idx));
     end
     
+    %%% FIT PEAKS ON THE SUMMED SPECTRUM
+    %%% DESIGNATE THIS AS [numdets + 1]
     if opts.ShowPlot
         figure(2)
         clf
-        plot(xgrid, ydata_sum_at_voxel)
+        plot(xgrid, sum_of_all_ydata_at_voxel)
         hold on
     end
     
-    for kkk = 1:1:numpks
+    kkk = numdets + 1;
+    for mmm = 1:1:numpks
         disp(sprintf('************ fitting summed spectrum @ step# %d/%d | peak# %d/%d', ...
-            jjj, numsteps, kkk, numpks))
-        Epk     = Angstrom2keV(2*d_pk(kkk)*sind(mean(tth)/2));
-        ELB     = Angstrom2keV(2*d_UB(kkk)*sind(mean(tth)/2));
-        EUB     = Angstrom2keV(2*d_LB(kkk)*sind(mean(tth)/2));
+            jjj, numsteps, mmm, numpks))
+        Epk     = Angstrom2keV(2*d_pk(mmm)*sind(mean(tth)/2));
+        ELB     = Angstrom2keV(2*d_UB(mmm)*sind(mean(tth)/2));
+        EUB     = Angstrom2keV(2*d_LB(mmm)*sind(mean(tth)/2));
         
         idx     = (xgrid > ELB) & (xgrid < EUB);
         
         xfit_data   = xgrid(idx)';
-        yfit_data   = double(ydata_sum_at_voxel(idx))';
+        yfit_data   = double(sum_of_all_ydata_at_voxel(idx))';
         
         pr0 = [ ...
             max(yfit_data)/5 ...
@@ -186,10 +232,10 @@ for jjj = 1:1:numsteps
             0.5 ...
             Epk ...
             ];
-        
+               
         prUB    = [ ...
             inf ...
-            inf ...
+            3 ...
             1 ...
             EUB ...
             ];
@@ -200,12 +246,11 @@ for jjj = 1:1:numsteps
             0 ...
             ELB ...
             ];
-        
+
         pr0 = [pr0 ...
-            0 ...
-            (yfit_data(1) + yfit_data(end))/2 ...
+            polyfit(xfit_data, yfit_data, 1) ...
             ];
-        
+
         prUB = [prUB ...
             inf ...
             inf ...
@@ -220,35 +265,75 @@ for jjj = 1:1:numsteps
         prUB    = prUB';
         prLB    = prLB';
         
-        [pr, rsn_sum_at_voxel(jjj,1), ~, ef_sum_at_voxel(jjj,1)]    = lsqcurvefit(@pfunc, pr0, xfit_data, yfit_data, ...
+        [pr, rsn_at_voxel{kkk}(jjj,mmm), ...
+            resd_at_voxel{kkk}{jjj,mmm}, ...
+            ef_at_voxel{kkk}(jjj,mmm), ~, ~, ...
+            jacobian_at_voxel{kkk}{jjj,mmm}]   = lsqcurvefit(@pfunc, pr0, xfit_data, yfit_data, ...
             prLB, prUB);
         
         yfit0   = pfunc(pr0, xfit_data);
         yfit    = pfunc(pr, xfit_data);
         
+        xfit_data_at_voxel{kkk}{jjj,mmm}    = xfit_data;
+        yfit_data_at_voxel{kkk}{jjj,mmm}    = yfit_data;
+        yfit0_at_voxel{kkk}{jjj,mmm}        = yfit0;
+        yfit_at_voxel{kkk}{jjj,mmm}         = yfit0;
+        
+        [conf, variance]    = confint(pr, resd_at_voxel{kkk}{jjj,mmm}, jacobian_at_voxel{kkk}{jjj,mmm}); % variance of fitted params
+        variance            = full(variance);
+        
+        pkfit_int_at_voxel{kkk}(jjj,mmm)    = trapz(xfit_data, yfit);
+        bkgfit_int_at_voxel{kkk}(jjj,mmm)   = trapz(xfit_data, polyval(pr(5:end), xfit_data));
+        
+        Afit_at_voxel{kkk}(jjj,mmm)                 = pr(1);
+        Afit_at_voxel_errorbar{kkk}(jjj,mmm)        = sqrt(variance(1));
+        Afit_at_voxel_conf95_range{kkk}(jjj,mmm)    = conf(1,2) - conf(1,1);
+        
+        Gfit_at_voxel{kkk}(jjj,mmm)                 = pr(2);
+        Gfit_at_voxel_errorbar{kkk}(jjj,mmm)        = sqrt(variance(2));
+        Gfit_at_voxel_conf95_range{kkk}(jjj,mmm)    = conf(2,2) - conf(2,1);
+        
+        nfit_at_voxel{kkk}(jjj,mmm)                 = pr(3);
+        nfit_at_voxel_errorbar{kkk}(jjj,mmm)        = sqrt(variance(3));
+        nfit_at_voxel_conf95_range{kkk}(jjj,mmm)    = conf(3,2) - conf(3,1);
+
+        Efit_at_voxel{kkk}(jjj,mmm)                 = pr(4);
+        Efit_at_voxel_errorbar{kkk}(jjj,mmm)        = sqrt(variance(4));
+        Efit_at_voxel_conf95_range{kkk}(jjj,mmm)    = conf(4,2) - conf(4,1);
+
+        bkgfit_at_voxel{kkk}{jjj,mmm}               = pr(5:end);
+        bkgfit_at_voxel_errorbar{kkk}{jjj,mmm}      = sqrt(variance(5:end));
+        bkgfit_at_voxel_conf95_range{kkk}{jjj,mmm}  = conf(5:end,2) - conf(5:end,1);
+        
+        rwp_at_voxel{kkk}(jjj,mmm)  = ErrorRwp(yfit_data, yfit);
+        re_at_voxel{kkk}(jjj,mmm)   = ErrorRe(yfit_data, yfit);
+        rp_at_voxel{kkk}(jjj,mmm)   = ErrorRp(yfit_data, yfit);
+        
+        str2show    = {sprintf('intensity= %f +- %f', pr(1), sqrt(variance(1))), ...
+            sprintf('fwhm= %f +- %f',pr(2), sqrt(variance(2))), ...
+            sprintf('fract. lorentzian= %f +- %f',pr(3), sqrt(variance(3))), ...
+            sprintf('center= %f +- %f',pr(4), sqrt(variance(4))), ...
+            };
+        disp(cell2table(str2show'))
         if opts.ShowPlot
             figure(2)
-            plot(Epk, 20, 'k^')
-            plot(ELB, 20, 'r^')
-            plot(EUB, 20, 'rv')
+            plot(Efit_at_voxel{kkk}(jjj,mmm), 20, 'k^')
+            % plot(ELB, 20, 'rs')
+            % plot(EUB, 20, 'rs')
             plot(xfit_data, yfit_data, 'r.')
             plot(xfit_data, yfit0, 'g-')
             plot(xfit_data, yfit, 'k-')
+            plot(xfit_data, polyval(pr(5:end), xfit_data), 'k--')
             xlabel('E [kev]')
             ylabel('Intensity [cts]')
             grid on
+            
+            text(0.05,0.85,str2show, 'Units', 'normalized')
         end
-        
-        PkInt_sum_at_voxel(jjj)     = trapz(xfit_data, yfit);
-        BkgInt_sum_at_voxel(jjj)    = diff(polyval(polyint(pr(5:end)'), [xfit_data(1), xfit_data(end)]));
-        
-        Aout_sum_at_voxel(jjj)  = pr(1);
-        Gout_sum_at_voxel(jjj)  = pr(2);
-        nout_sum_at_voxel(jjj)  = pr(3);
-        Eout_sum_at_voxel(jjj)  = pr(4);
-        bkgout_sum_at_voxel(jjj,:)  = pr(5:end);
     end
-    sum_of_ydata_sum_at_voxel(jjj,1)    = sum(ydata_sum_at_voxel);
+    
+    idx     = (xgrid > min(ELB)) & (xgrid < max(EUB));
+    ydata_sum_at_voxel{kkk}(jjj,1)  = sum(sum_of_all_ydata_at_voxel(idx));
 end
 
 %%% SAVE PK FIT RESULTS IF REQUESTED
@@ -258,9 +343,12 @@ elseif opts.SavePkFitMat
     disp(sprintf('**** saving fit results to %s', opts.pfname_mat))
     save(opts.pfname_mat, ...
         'samXE', 'samYE', 'samZE', ...
-        'Aout', 'Gout', 'nout', 'Eout', 'bkgout', 'rsn', 'ef', 'PkInt', 'BkgInt', ...
-        'Aout_sum_at_voxel', 'Gout_sum_at_voxel', 'nout_sum_at_voxel', 'Eout_sum_at_voxel', 'bkgout_sum_at_voxel', ...
-        'rsn_sum_at_voxel', 'ef_sum_at_voxel', 'PkInt_sum_at_voxel', 'bkgout_sum_at_voxel', ...
-        'sum_of_ydata_sum_at_voxel')
+        'pkfit', 'numpks', 'numdets', 'numsteps', ...
+        'xfit_data_at_voxel', 'yfit_data_at_voxel', 'yfit0_at_voxel', 'yfit_at_voxel', 'ydata_sum_at_voxel', ...
+        'Afit_at_voxel', 'Gfit_at_voxel', 'nfit_at_voxel', 'Efit_at_voxel', 'bkgfit_at_voxel', ...
+        'Afit_at_voxel_errorbar', 'Gfit_at_voxel_errorbar', 'nfit_at_voxel_errorbar', 'Efit_at_voxel_errorbar', 'bkgfit_at_voxel_errorbar', ...
+        'Afit_at_voxel_conf95_range', 'Gfit_at_voxel_conf95_range', 'nfit_at_voxel_conf95_range', 'Efit_at_voxel_conf95_range', 'bkgfit_at_voxel_conf95_range', ...
+        'rwp_at_voxel', 're_at_voxel', 'rp_at_voxel', 'rsn_at_voxel', 'resd_at_voxel', 'ef_at_voxel', 'jacobian_at_voxel', ...
+        'pkfit_int_at_voxel', 'bkgfit_int_at_voxel')
 end
 status = 1;

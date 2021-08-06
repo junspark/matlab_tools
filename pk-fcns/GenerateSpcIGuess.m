@@ -17,6 +17,7 @@ function [p0, p_LB, p_UB] = GenerateSpcIGuess(x, y, theta_hkl, PkType, bckOrder)
 %       theta of the peaks present in x
 %
 %       theta_hkl
+%
 %   PkType
 %       cell array specifying number of peak parameters and peak function
 %       type
