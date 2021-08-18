@@ -1,6 +1,10 @@
 clear all
 close all
 clc
+
+% addpath(genpath('/home/beams/PARKJS/matlab/matlab_tools'));
+addpath(genpath('C:\Users\parkjs\Documents\GitHub\matlab_tools'));
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % USING '11-22-33-23-13-12' ORDER
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
