@@ -133,8 +133,9 @@ function microstructure = parseGrainData_OneLayer(pname, qsym, varargin)
 %       crystallographic plane
 %       hkls_csv_th = theta
 %       hkls_csv_tth = 2tehta
-%       hkls_csv_RingRadius - ring radius
-%
+%       hkls_csv_RingRadius = ring radius
+%       num_spots = number of spots in the ReflectionTable
+%       
 %   The columns of the Grains.csv file are:
 %       Sp_ID O[0][0] O[0][1] O[0][2] O[1][0] O[1][1] O[1][2] O[2][0] O[2][1] O[2][2] 
 %       X Y Z a b c alpha beta gamma Err1 Err2 Err3 MeanRadius Confidence 
@@ -474,6 +475,7 @@ if strcmpi(opts.Technique, 'ff-midas')
 			ReflectionTable.hkls_csv_tth        = ht_tth;
 			ReflectionTable.hkls_csv_RingRadius = ht_RingRadius;
 			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			ReflectionTable.num_spots           = length(ReflectionTable.Spots_csv_SpotID);
 			
 			grains(ct).ReflectionTable = ReflectionTable;
 		end
