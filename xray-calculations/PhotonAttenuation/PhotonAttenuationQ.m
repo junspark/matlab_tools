@@ -1,8 +1,8 @@
-function [AttCoef, CompEdge] = PhotonAttenuationQ(Element, Energy, Options)
+function [AttCoef, AbsEdge] = PhotonAttenuationQ(Element, Energy, Options)
 %PhotonAttenuationQ NIST attenuation cooeficiant tables
 % for photon interaction with elements.
 %
-% [AttCoef, CompEdge] = PhotonAttenuationQ(Material, Energy, Options)
+% [AttCoef, AbsEdge] = PhotonAttenuationQ(Material, Energy, Options)
 % Function providing the attenuation and energy absorption of x-ray and
 % gamma-ray photons in various elements, based on NIST report 5632, by
 % J. Hubbell and S.M. Seltzer. This is a quick version of the function with
@@ -23,7 +23,7 @@ function [AttCoef, CompEdge] = PhotonAttenuationQ(Element, Energy, Options)
 %   AttCoef - Either Mass Attenuation Coefficients Mass Energy-Absorption 
 %             Coefficients in cm^2/g depending on 'Option'. Columns 
 %             correspond to material and rows correspond to energy.
-%   CompEdge - a list of Compton edges in all of 'Element's. One edge per
+%   AbsEdge - a list of absorbtion edges in all of 'Element's. One edge per
 %     row; columns are:
 %     1) Edge number for this elements
 %     2) Atomic number Z of elements
@@ -33,6 +33,7 @@ function [AttCoef, CompEdge] = PhotonAttenuationQ(Element, Energy, Options)
 %
 % History:
 %  Written by Jarek Tuszynski (SAIC), 2006
+%  Updated by Jarek Tuszynski (Leidos), 2014, jaroslaw.w.tuszynski@leidos.com
 %  Inspired by John Schweppe Mathematica code available at
 %    http://library.wolfram.com/infocenter/MathSource/4267/
 %
@@ -62,14 +63,14 @@ function [AttCoef, CompEdge] = PhotonAttenuationQ(Element, Energy, Options)
 %   options are allowed. See PhotonAttenuation function for more options.
 %
 %   The Attenuation tables are stored in two formats: standard grid values
-%   defined for all the elements and values at Compton edges are stored
-%   separately. That way they take less space and Compton edge data is
+%   defined for all the elements and values at absorbtion edges are stored
+%   separately. That way they take less space and absorbtion edge data is
 %   easier to extract. The values in the table are for room temperature 
 %   and pressure. 
 %   
 %   Interpolation is done using MATLAB's interp1 function to log-log data of 
 %   coefficients as function of energy. Linear interpolation is used near
-%   Compton edges and cubic otherwise.
+%   absorbtion edges and cubic otherwise.
 %
 % Examples:
 % %% Plot Photon Mass Attenuation Coefficients of elements as function of 
@@ -79,14 +80,14 @@ function [AttCoef, CompEdge] = PhotonAttenuationQ(Element, Energy, Options)
 % E = exp(-6.9:0.01:2.99);  % define energy grid
 % [mac, CEdge] = PhotonAttenuationQ(Z, E);
 % imagesc(log10(mac)); colorbar;
-% title('Photon Mass Attenuation Coefficients and Compton edges');
+% title('Photon Mass Attenuation Coefficients and absorbtion edges');
 % xlabel('Atomic Number of Elements');
 % ylabel('Energy in MeV');
 % set(gca,'YTick',1:123:1000);
 % set(gca,'YTickLabel',exp(-6.9:1.23:2.99))
 % hold on
 % ed = accumarray([CEdge(:,1),CEdge(:,2)],CEdge(:,3));
-% plot((log(ed')+6.9)/0.01 ,'LineWidth',4); % plot compton edges
+% plot((log(ed')+6.9)/0.01 ,'LineWidth',4); % plot absorbtion edges
 % legend({'K','L1','L2','L3','M1','M2','M3','M4','M5','N1','N2','N3','N4','N5'}, 'Location', 'west');
 % hold off;
 %
@@ -130,13 +131,16 @@ persistent mac meac edges
 % Hard-wire the table of x-ray mass attenuation coefficients (MAC) and mass
 % energy absorption coefficients (MEAC). Units:    
 % energy is in MeV, and both MAC and MEAC are in cm^2/g. 
+% The first 2 tables contain values using uniform energy sampling. NIST tables 
+% contain both values for uniform energy sampling and for the non-uniform 
+% absorption edges. The non-uniform values will be provided separatly
 %-------------------------------------------------------------------------- 
 energy = [...
 1.000E-3, 1.500E-3, 2.000E-3, 3.000E-3, 4.000E-3, 5.000E-3, 6.000E-3, 8.000E-3, 1.000E-2, 1.500E-2, 2.000E-2, 3.000E-2, 4.000E-2, 5.000E-2, 6.000E-2, 8.000E-2, 1.000E-1, 1.500E-1, 2.000E-1, 3.000E-1, 4.000E-1, 5.000E-1, 6.000E-1, 8.000E-1, 1.000   , 1.250   , 1.500   , 2.000   , 3.000   , 4.000   , 5.000   , 6.000   , 8.000   , 1.000E+1, 1.500E+1, 2.000E+1];
 if (nargin<2), Energy=energy; end
 
 %--------------------------------------------------------------------------
-%% Hard-wire the table of x-ray mass attenuation coefficients incm^2/g    
+%% Hard-wire the table of x-ray mass attenuation coefficients in cm^2/g    
 %-------------------------------------------------------------------------- 
 if (Options==1 && isempty(mac))
 mac = [...
@@ -352,7 +356,7 @@ NaN,      NaN,      NaN,      NaN,      NaN,      NaN,      NaN,      NaN,      
 end
 
 %--------------------------------------------------------------------------
-%% Hard-wire the table with description of each compton edge    
+%% Hard-wire the table with description of each absorbtion edge    
 %   Z,  Energy,    mac low,  mac high, meac low, meac high
 %-------------------------------------------------------------------------- 
 if (isempty(edges))
@@ -935,7 +939,7 @@ nData    = max(size(mac, 1),size(meac, 1));
 nElement = length(Element);
 nEnergy  = length(Energy);
 AttCoef  = zeros(nEnergy,  nElement);
-CompEdge = [];
+AbsEdge = [];
 if (nEnergy==0 || any(Energy<0.0009) || any(Energy>21))
   warning('PhotonAttenuation:wrongEnergy',...
     'PhotonAttenuation function: energy is outside of the recomended range from 0.001 MeV to 20 MeV');
@@ -953,10 +957,10 @@ for i = 1:nElement
   x = energy';
   if(Options==1), y = mac (element, :)';
   else            y = meac(element, :)';  end
-  if (element>10)      % if compton edges are present for this element
+  if (element>10)      % if absorbtion edges are present for this element
     ed = edges(edges(:, 1)==element, :); % check if 'element' has edges
     nEdge = size(ed, 1);
-    e  = ed(:, 2)';    % energy of compton edges   
+    e  = ed(:, 2)';    % energy of absorbtion edges   
     d  = 4*eps(e);     % create offset to create 2 different energies for upper and lower end of the edge
     xx = [e-d; e+d];   % energies
     if(Options==1), yy = ed(:, 3:4)';     % mac values
@@ -964,19 +968,19 @@ for i = 1:nElement
     w  = [zeros(size(x)); ones(2*nEdge, 1)]; % this is array that will help keep track of edges
     x  = log([x; xx(:)]);
     y  = log([y; yy(:)]);
-    [x, ix] = sort(x);  % merge compton edge data with other data
+    [x, ix] = sort(x);  % merge absorbtion edge data with other data
     y  = y(ix, :);
-    w  = w(ix, :); % array with 0 for 'grid' points and 1's for compton edge points
+    w  = w(ix, :); % array with 0 for 'grid' points and 1's for absorbtion edge points
     w  = (convn(w, [1; 1; 1],  'same')>0); % neighbors of edges will be marked with 1's too
     b  = interp1(x, [y, w], Energy,  'linear',  'extrap'); % merge inputs for speed
-    a  = interp1(x,  y,     Energy,  'cubic');
+    a  = interp1(x,  y,     Energy,  'pchip');
     v  = b(:, 2);
     b  = b(:, 1);
     a  = a.*(1-v) + b.*v; % smoothly merge curves using linear near edges and cubic otherwise
     %figure; plot(x,  y(:, 1), 'mx'); hold on; plot(Energy,  a(:, 1));
-    CompEdge = [CompEdge; [(1:nEdge)',  flipud(ed)]]; %#ok<AGROW>
-  else % if there are no compton edges than life is easy
-    a = interp1(log(x),  log(y),  Energy,  'cubic');
+    AbsEdge = [AbsEdge; [(1:nEdge)',  flipud(ed)]]; %#ok<AGROW>
+  else % if there are no absorbtion edges than life is easy
+    a = interp1(log(x),  log(y),  Energy,  'pchip');
   end
   AttCoef(:,i) = exp(a);
 end

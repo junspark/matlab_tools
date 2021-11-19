@@ -1,7 +1,8 @@
-%% Tutorial for PhotonAttenuation2 Package
+%% Tutorial for PhotonAttenuation Package
 % *By Jarek Tuszynski*
+% (jaroslaw.w.tuszynski@leidos.com)
 %
-% Package PhotonAttenuation2 provides set of functions for modeling of 
+% Package PhotonAttenuation provides set of functions for modeling of 
 % photons (x-ray, gamma-ray, etc.), passing through different materials. The
 % tools are based on attenuation and energy absorption coefficients of
 % photons in various materials. The tables of absorption coefficients were 
@@ -16,7 +17,7 @@
 % * *PhotonAttenuationQ* - the helper function providing bare-bones access to
 % NIST tables hardwired into the code. Simpler version of PhotonAttenuation 
 % function with much fewer input and output options. Allow access to
-% Compton Edge tables.
+% absorbtion edge tables.
 %
 % * *ParseChemicalFormula* - converts many different styles of names used for 
 % elements, compounds and mixtures to uniform list of elements and their 
@@ -42,6 +43,9 @@
 %     - Mixtures of any of above with fractions by weight - like
 %       'H(0.057444)C(0.774589)O(0.167968)' for Bakelite or  
 %       'B(10)H(11)C(58)O(21)' for Borated Polyethylene (BPE-10)
+%     Note: For 'Options' other than 'mac' or 'meac', 'Material' has to be
+%     recognized by 'PhysProps' function since densities are needed for
+%     calculation.
 % 2) Energy - Energy of the photons. Can be single energy or vector of 
 %       energies. Several formats are allowed: 
 %     - Energy in MeV, should be in [0.001, 20] MeV range. 
@@ -68,8 +72,7 @@
 %     7 - 'lac' - Linear Attenuation Coefficients in 1/cm same as 1/(Cross
 %          Section) or mac*density.
 %     8 - 'half value layer' or 'hvl' - function returns half-value layer (in cm) of 
-%           photon in the given material . Available only for chemicals 
-%           recognized by 'CompoundProps' function (since density is needed).
+%           photon in the given material.
 %     9 - 'tenth value layer' or 'tvl' - analogous to 'hvl' . 
 % 4) Thickness - Thickness of material in cm. Either scalar or vector of 
 %      the same length as number of materials. Negative numbers indicate
@@ -108,6 +111,7 @@
 % * Aug  2006 - new version of the code was published as "PhotonAttenuation2"
 % * Sep  2011 - minor corrections and changes to the tutorial script
 % * July 2013 - minor corrections and changes to the tutorial script
+% * Aug  2014 - minor correction to error handling
 %
 %% Licence
 % The package is distributed under BSD License
@@ -116,6 +120,7 @@ clear variables
 format compact; % viewing preference
 clear variables;
 type('license.txt')
+colormap(jet);
 
 %% Plot Photon Attenuation Coefficients for Uranium
 % Input and output parameters are very simple so PhotonAttenuationQ
@@ -146,7 +151,7 @@ ylabel('Attenuation in cm^2/g');
 xlabel('Photon Energy in MeV');
 title('Photon Attenuation Coefficients for different materials');
 
-%% Plot Photon Mass Attenuation Coefficients and Compton Edges
+%% Plot Photon Mass Attenuation Coefficients and absorbtion edges
 % Plot as a function of energy and atomic number of elements
 % See http://physics.nist.gov/PhysRefData/XrayMassCoef/chap2.html for
 % details
@@ -155,16 +160,16 @@ Z = 1:100;  % elements with Z in 1-100 range
 E = logspace(log10(0.001), log10(20), 500);  % define energy grid
 [mac, CEdge] = PhotonAttenuationQ(Z, E);
 imagesc(log10(mac)); colorbar;
-title('Log of Photon Mass Attenuation Coefficients (in cm^2/g) and Compton Edges');
+title('Log of Photon Mass Attenuation Coefficients (in cm^2/g) and absorbtion edges');
 xlabel('Atomic Number of Elements');
 ylabel('Energy in MeV');
 zlabel('Attenuation in cm^2/g');
 set(gca,'YTick',linspace(1, length(E), 10));
 set(gca,'YTickLabel',1e-3*round(1e3*logspace(log10(0.001), log10(20), 10)))
 hold on
-ed = accumarray([CEdge(:,1),CEdge(:,2)],CEdge(:,3)); % get per element energies of 14 compton edges 
+ed = accumarray([CEdge(:,1),CEdge(:,2)],CEdge(:,3)); % get per element energies of 14 absorbtion edges 
 ed = 500*(log(ed')-log(0.001))/(log(20)-log(0.001)); % convert energy to row numbers of the image
-plot(ed ,'LineWidth',3);                             % plot compton edges
+plot(ed ,'LineWidth',3);                             % plot absorbtion edges
 L = {'K','L1','L2','L3','M1','M2','M3','M4','M5','N1','N2','N3','N4','N5'};
 legend(L, 'Location', 'southwest'); % add legend
 hold off;
@@ -251,7 +256,7 @@ EL = exp(log(E0):0.005:log(5));
 EH = [EH; ones(1,length(EH))];   % define flat spectrum
 EL = [EL; ones(1,length(EL))];
 T  = logspace(0,log10(400),50);  % mass thickness in g/cm^2
-Z  = 1:100;                      % elements with Z in 1-100 range
+Z  = 1:99;                       % elements with Z in 1-99 range
 TL1 = zeros(length(T),length(Z));
 TH1 = TL1; TL2 = TL1; TH2 = TL1;
 for i = 1:length(T)
@@ -266,6 +271,7 @@ ratio2 = TH2./TL2;
 [~, i]=min(ratio1(:)); ratio2( 1 )=ratio1(i); % make sure ranges ... 
 [~, i]=max(ratio1(:)); ratio2(end)=ratio1(i); % .. are the same
 figure('Position',[1 1 800 600])
+colormap(jet);
 
 subplot(1,2,2); imagesc(ratio1'); colorbar;
 title('Mono-energetic 5 & 10 MeV sources.');
@@ -297,12 +303,12 @@ Concrete.ElementRatio = R';   % weight ratio of elements
 Concrete.MeanFreePath = MFP;  % Mean Free Path of gammas from Cs-137 source
 disp(Concrete)                % display the data
 
-%% Get Compton Edge information lor Lead
-[~, CompEdge] = PhotonAttenuationQ(82);
+%% Get absorbtion Edge information for Lead
+[~, AbsEdge] = PhotonAttenuationQ(82);
 L = {'K','L1','L2','L3','M1','M2','M3','M4','M5','N1','N2','N3','N4','N5'};
-for i=1:size(CompEdge,1)
+for i=1:size(AbsEdge,1)
   fprintf('Edge %s: location: %6.3f keV, Mass Attenuation Coefficients: [%5.1f %5.1f] cm^2/g\n',...
-    L{CompEdge(i,1)}, CompEdge(i,3)*1000, CompEdge(i,4),CompEdge(i,5));
+    L{AbsEdge(i,1)}, AbsEdge(i,3)*1000, AbsEdge(i,4),AbsEdge(i,5));
 end
 
 %% Access Element Properties through PhysProps
@@ -337,4 +343,4 @@ for i=1:(size(P,1)-1)
   [Z, R]  = ParseChemicalFormula(P{i,3});
   za(i) = dot(R,ZA(Z));
 end
-fprintf('Maximum discrepancy between calculated and stored ZA = %f\n', max(abs(za-ZA)));
+fprintf('Maximum discrepancy between calculated and stored <Z/A> = %f\n', max(abs(za-ZA)));

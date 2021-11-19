@@ -24,6 +24,7 @@ function [Z, R] = ParseChemicalFormula(Name)
 %   PhysProps, PhotonAttenuation, PhotonAttenuationQ
 %
 % Written by Jarek Tuszynski (SAIC), 2006
+% Updated by Jarek Tuszynski (Leidos), 2014, jaroslaw.w.tuszynski@leidos.com
 %
 % Examples:
 % [Z R] = ParseChemicalFormula('Pb')

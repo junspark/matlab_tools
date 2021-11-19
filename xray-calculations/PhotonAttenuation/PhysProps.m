@@ -14,7 +14,7 @@ function P = PhysProps(Name)
 %  Output:
 %  - P - 2D cell array: each row corresponds to one 'name', columns are as
 %    follows:
-%    * column 1 - Z/A - mean ratio of atomic number to mass
+%    * column 1 - <Z/A> - mean ratio of atomic number to mass
 %    * column 2 - density in g/cm^3
 %    * column 3 - material formula guaranteed to be recognized by
 %    'PhotonAttenuation' and 'ParseChemicalFormula' functions
@@ -33,7 +33,8 @@ function P = PhysProps(Name)
 % See Also:
 %   ParseChemicalFormula, PhotonAttenuation, PhotonAttenuationQ
 % 
-% Written by Jarek Tuszynski (SAIC), 2006
+%   Written by Jarek Tuszynski (SAIC), 2006
+%   Updated by Jarek Tuszynski (Leidos), 2014, jaroslaw.w.tuszynski@leidos.com
 %
 % Examples:
 %   PhysProps({'H', 'Water', 'H2O', 82, 'lead', 'skin'})  
@@ -354,8 +355,9 @@ Props = {...
 0.55493, 0.93      , 'BPE' ,'Borated Polyethylene, 5%', 'B(5)H(11.6)C(61.2)O(22.2)' ;...
 0.55012, 1.03      , 'BPE-10','Borated Polyethylene, 10%', 'B(10)H(11)C(58)O(21)' ;...	
 0.46556, 7.86      , 'Steel', 'Steel, ASTM A 366', 'C(8.5E-4)P(1.5E-4)S(1.75E-4)Mn(0.003)Fe(0.996)';...
+NaN , 8.53      , 'Brass', 'Cartridge Brass alloy 260', 'Cu(0.70)Zn(0.30)';...
 NaN,     NaN,        '', '', '';...
-};
+};%0.4571
 end
 
 %% Special cases: if Name is empty than just show aviable names
@@ -387,16 +389,18 @@ P     = cell(nName,size(Props, 2));
 %% Main Loop
 for i = 1:nName
   name = Name{i};
+  nRow = nData;                                 % last empty row by default
   if (ischar(name)) 
-    k = find(strcmpi( name, Props(:, 3:4)), 1);% which benchmark?
+    k = find(strcmpi( name, Props(:, 3:4)), 1); % look up by name or alternative name
     if (isempty(k))
-      k = find(strcmp( name, Props(:, 5)), 1);% which benchmark?
+      k = find(strcmp( name, Props(:, 5)), 1);  % look up by formula
     end;
-    name = nData;
-    if (~isempty(k)), name=k; end;
-    if (name>nData), name = name-nData; end
+    if (~isempty(k)), nRow=k; end;              % name matched
+    if (nRow>nData), nRow = nRow-nData; end     % this was look up by alternative name
+  elseif isnumeric(name)
+    nRow = name;
   end
-  P(i,:) = Props(name,:);
+  P(i,:) = Props(nRow,:);
   if (~isempty(P{i, 5})), P(i, 3) = P(i, 5); end
 end
 P(:, 5) =[];
