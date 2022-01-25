@@ -142,8 +142,8 @@ for j = 1:1:length(TakeOffAngle)
     F2_normalized(:,j)                  = F2_multiplicity_LP(:,j)./max(F2_multiplicity_LP(:,j));
     TransEnergy(:,j)                    = Energy';
     
-    PhotonTransAtNormalIncDS(:,j)       = PercentTransmissionDS(:,j).*Flux;
-    PhotonTransAtNormalIncUS(:,j)       = PercentTransmissionUS(:,j).*Flux;
+    PhotonTransAtNormalIncDS(:,j)       = PercentTransmissionDS(:,j).*F2_normalized(:,j).*Flux;
+    PhotonTransAtNormalIncUS(:,j)       = PercentAbsorptionGe(:,j).*PercentTransmissionUS(:,j).*F2_normalized(:,j).*Flux;
     
 %     PhotonTransAtNormalIncDS(:,j)       = PercentAbsorptionGe(:,j).*PercentTransmissionDS(:,j).*F2_normalized(:,j).*Flux;
 %     PhotonTransAtNormalIncUS(:,j)       = PercentAbsorptionGe(:,j).*PercentTransmissionUS(:,j).*F2_normalized(:,j).*Flux;
