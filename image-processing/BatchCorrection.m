@@ -95,10 +95,10 @@ opts    = OptArgs(optcell, varargin);
 
 %%% SETUP APPROPRIATE EXTENSION
 if opts.IsEDF
-    ext_bkg     = ['edf.ge', num2str(genum)];
+    ext_bkg     = sprintf('edf.ge%d', genum);
     ext_image   = ext_bkg; 
 else
-    ext_bkg     = ['ge', num2str(genum)];
+    ext_bkg     = sprintf('ge%d', genum);
     ext_image   = ext_bkg;
 end
 
