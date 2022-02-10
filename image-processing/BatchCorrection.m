@@ -94,7 +94,7 @@ optcell = {...
 opts    = OptArgs(optcell, varargin);
 
 %%% SETUP APPROPRIATE EXTENSION
-if IsEDF
+if opts.IsEDF
     ext_bkg     = ['.edf.ge', num2str(genum)];
     ext_image   = ext_bkg; 
 else
