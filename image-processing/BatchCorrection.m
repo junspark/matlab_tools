@@ -59,6 +59,9 @@ function BatchCorrection(path_bkg, bkg_num, root_bkg, ...
 %                       included in the file name prefix (default is new). This
 %                       is to ensure backwards compatibility.
 %
+%   IsEDF               Since 2022-1 we are using EDF file writer instead of raw. 
+%                       EDF has *.edf.geX extension (default true).
+%
 %   OUTPUT:             
 %                   
 %   (possibly) many files
@@ -84,14 +87,20 @@ optcell = {...
     'FramesToIgnore', 'none', ...
     'SumOnly', 1, ...
     'NewFileNameFormat', true, ...
+    'IsEDF', true, ...
     };
 
 % UPDATE OPTION
 opts    = OptArgs(optcell, varargin);
 
 %%% SETUP APPROPRIATE EXTENSION
-ext_bkg     = ['ge', num2str(genum)];
-ext_image   = ext_bkg;
+if IsEDF
+    ext_bkg     = ['.edf.ge', num2str(genum)];
+    ext_image   = ext_bkg; 
+else
+    ext_bkg     = ['ge', num2str(genum)];
+    ext_image   = ext_bkg;
+end
 
 %%% SETUP FILE NAME PATTERN
 if opts.NewFileNameFormat
