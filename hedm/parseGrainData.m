@@ -109,8 +109,7 @@ disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 if (opts.LabToSample == 0)
     disp(sprintf('The LAB FRAME and SAMPLE FRAME are IDENTICAL WHEN OMEGA = %2.1f deg', opts.LabToSample))
     RLab2Sam    = eye(3,3);
-    
-elseif (opts.LabToSample ~= 0) & (strcmpi(opts.CrdSystem, 'APS'))
+elseif (opts.LabToSample ~= 0) && (strcmpi(opts.CrdSystem, 'APS'))
     disp(sprintf('The LAB FRAME and SAMPLE FRAME are IDENTICAL WHEN OMEGA = %2.1f deg', opts.LabToSample))
     c   = cosd(opts.LabToSample);
     s   = sind(opts.LabToSample);
@@ -176,18 +175,16 @@ if strcmpi(opts.Technique, 'ff-midas')
             case true
                 A    = load(pfname{iii});
                 
-                % [O] OPERATES ON A VECTOR IN LAB FRAME TO GET THE CRYSTAL FRAME EQUIVALENT
-                % [O]{l} = {c}
+                % [O] OPERATES ON A VECTOR IN CRYSTAL FRAME TO GET THE LAB FRAME EQUIVALENT
+                % [O]{c} = {l}
                 % OPERATION TO TAKE A VECTOR FROM THE LAB FRAME TO SAMPLE FRAME IS 
                 % [RLab2Sam]{l} = {s}
-                % HENCE TO TAKE A VECTOR IN THE CRYSTAL FRAME TO THE LAB FRAME EQUIVALENT IS
-                % [O]'{c} = {l}
-                % TO TAKE THIS TO THE SAMPLE FRAME
-                % [RLab2Sam][O]'{c} = [RLab2Sam]{l} = {s}
+                % HENCE TO TAKE {c} TO THE SAMPLE FRAME
+                % [RLab2Sam][O]{c} = [RLab2Sam]{l} = {s}
                 % IF WORKING IN THE APS LAB FRAME CONVENTION
-                % [RLab2Sam][R_ESRF2APS][O]'{c} = [RLab2Sam][R_ESRF2APS]{l} = {s}
+                % [RLab2Sam][R_ESRF2APS][O]{c} = [RLab2Sam][R_ESRF2APS]{l} = {s}
                 for i = 1:1:nGrains(iii)
-                    OMat    = reshape(A(i, 2:10), 3, 3);    % reshape already transposes O
+                    OMat    = reshape(A(i, 2:10), 3, 3)';    % TRANSPOSE TO GET THE SHAPE RIGHT
                     COM     = A(i, 11:13);
 
                     % COORDINATE TRANSFORMATION
