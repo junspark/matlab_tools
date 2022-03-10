@@ -108,17 +108,23 @@ end
 disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 if (opts.LabToSample == 0)
     disp(sprintf('The LAB FRAME and SAMPLE FRAME are IDENTICAL WHEN OMEGA = %2.1f deg', opts.LabToSample))
-elseif (opts.LabToSample ~= 0) 
+    RLab2Sam    = eye(3,3);
+    
+elseif (opts.LabToSample ~= 0) & (strcmpi(opts.CrdSystem, 'APS'))
     disp(sprintf('The LAB FRAME and SAMPLE FRAME are IDENTICAL WHEN OMEGA = %2.1f deg', opts.LabToSample))
+    c   = cosd(opts.LabToSample);
+    s   = sind(opts.LabToSample);
+    
+    % NOTE THAT THIS ONLY APPLIED WHEN THE SAMPLE IS ROTATED ABOUT Y (APS).
+    RLab2Sam    = [
+        c 0 -s; ...
+        0 1 0; ...
+        s 0 c; ...
+        ];
+else
+    disp('LabToSample needs to be implemented when CrdSystem is not APS')
 end
 disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-c   = cosd(opts.LabToSample);
-s   = sind(opts.LabToSample);
-RLab2Sam    = [
-    c 0 -s; ...
-    0 1 0; ...
-    s 0 c; ...
-    ];
 
 disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 if isnan(opts.OffsetDirection) || (length(pfname) == 1)
@@ -169,16 +175,23 @@ if strcmpi(opts.Technique, 'ff-midas')
         switch isfile(pfname{iii})
             case true
                 A    = load(pfname{iii});
-
-                % ROTATION FROM MIDAS IS [R]{c} = {l}
-                % ROTATOIN TO GO FROM LAB TO SAMPLE IS [RLab2Sam]{l} = {s}
-                % [RLab2Sam][R]{c} = [RLab2Sam]{l} = {s}
+                
+                % [O] OPERATES ON A VECTOR IN LAB FRAME TO GET THE CRYSTAL FRAME EQUIVALENT
+                % [O]{l} = {c}
+                % OPERATION TO TAKE A VECTOR FROM THE LAB FRAME TO SAMPLE FRAME IS 
+                % [RLab2Sam]{l} = {s}
+                % HENCE TO TAKE A VECTOR IN THE CRYSTAL FRAME TO THE LAB FRAME EQUIVALENT IS
+                % [O]'{c} = {l}
+                % TO TAKE THIS TO THE SAMPLE FRAME
+                % [RLab2Sam][O]'{c} = [RLab2Sam]{l} = {s}
+                % IF WORKING IN THE APS LAB FRAME CONVENTION
+                % [RLab2Sam][R_ESRF2APS][O]'{c} = [RLab2Sam][R_ESRF2APS]{l} = {s}
                 for i = 1:1:nGrains(iii)
-                    RMat    = reshape(A(i, 2:10), 3, 3)';
+                    OMat    = reshape(A(i, 2:10), 3, 3);    % reshape already transposes O
                     COM     = A(i, 11:13);
 
                     % COORDINATE TRANSFORMATION
-                    RMat    = RLab2Sam*R_ESRF2APS*RMat;
+                    RMat    = RLab2Sam*R_ESRF2APS*OMat;
                     COM     = RLab2Sam*R_ESRF2APS*COM';
 
                     if ~isnan(opts.OffsetDirection)
@@ -241,13 +254,18 @@ if strcmpi(opts.Technique, 'ff-midas')
                         log(ct).Stress_vm   = nan;
 
                     elseif (size(opts.C_xstal,1) == 6) && (size(opts.C_xstal,2) == 6)
-                        %%% STRAIN IS IN SAMPLE FRAME
-                        R   = RLab2Sam*R_ESRF2APS; % [R]{c}={s}
-                        T   = VectorizedCOBMatrix(R);
+                        %%% STRAIN IS IN SAMPLE FRAME ALREADY FROM ABOVE
+                        %%% WHEN LOADING THE STRAIN RESULTS
+                        %%% NEED AN OPERATOR GOING FROM CRYSTAL TO SAMPLE;
+                        %%% THIS IS RMat FROM ABOVE
+                        T   = VectorizedCOBMatrix(RMat);
                         C   = T*opts.C_xstal*T';  % XSTAL STIFFNESS IN SAMPLE FRAME
-
+                        
+                        %%% COMPUTE STRESSES
+                        %%% STRESSES ARE IN SAMPLE FRAME
+                        
                         %%% FAB
-                        StressFab_vec       = C*StrainFab_vec;
+                        StressFab_vec           = C*StrainFab_vec;
                         log(ct).StressFab   	= StressFab_vec;
                         log(ct).StressFab_mtx   = MatrixOfStressStrainVectorInVM(StressFab_vec);
                         log(ct).StressFab_h     = VolumetricStressStrain(StressFab_vec);
