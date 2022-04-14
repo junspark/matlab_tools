@@ -269,88 +269,93 @@ else
     image_num   = lo_image_num:1:hi_image_num;
     
     if image_num == -1
-        %disp(sprintf('correction did not run'))
-        %disp(sprintf('need to specify image numbers'))
-        %return
         error('correction did not run\need to specify image numbers\n'); % edited by CH 7/31/17
     end
+    
     parfor i = 1:length(image_num)
         fname   = sprintf(fname_fmt, root_image, image_num(i), ext_image);
         pfname  = fullfile(path_bkg, fname);
-        fprintf('%s\n',pfname)
-        flist       = dir(pfname);
         
-        %%% DETERMINE NUMBER OF FRAMES IN THIS STACK
-        num_frames   = CalcNumFrames(flist(1).bytes, buffer_size, frame_size);
-        %%% CHECK IF THE FRAMES TO SKIP MAKES SENSE
-        if max(FramesToIgnore) > num_frames
-            %%% SKIP IF MAX FRAME NUMBER TO IGNORE IS LARGER THAN THE TOTAL
-            %%% NUMBER OF FRAMES IN THEH STACK
-            disp('OH NO! The number of frames in the image stack inconsistent with frames requested for correction ...')
-            fprintf('skipping %s ...\n', fname);
-        else
-            %%% CONTINUE IF MAX FRAME NUMBER TO IGNORE IS SMALLER THAN THE TOTAL
-            %%% NUMBER OF FRAMES IN THEH STACK
-            FramesToCorrect     = 1:1:num_frames;
-            if ~strcmpi(opts.FramesToIgnore, 'none')
-                for j = 1:1:length(FramesToIgnore)
-                    idx = FramesToCorrect == FramesToIgnore(j);
-                    FramesToCorrect     = FramesToCorrect(~idx);
-                end
-            end
+        if isfile(pfname)
+            fprintf('working on %s\n',pfname)
+            flist       = dir(pfname);
             
-            sum_data    = zeros(2048,2048);
-            for j = FramesToCorrect
-                fprintf('%d frame of %s - background subtraction in progress ...\n', j, fname);
-                frame_data  = NreadGE(pfname, j);
-                if opts.OutAllFrames
-                    frame_data  = frame_data - im_bkg;
-                    frame_data  = CorrectBadPixels(frame_data, BadPixelData);
-                    
-                    % fname_out   = [flist.name, '.frame.', num2str(j), '.cor'];
-                    fname_out   = [flist.name, '_frame_', num2str(j), '.cor32'];
-                    pfname_out  = fullfile(path_output, fname_out);
-                    WriteSUM(pfname_out, frame_data);
+            %%% DETERMINE NUMBER OF FRAMES IN THIS STACK
+            num_frames   = CalcNumFrames(flist(1).bytes, buffer_size, frame_size);
+            
+            %%% CHECK IF THE FRAMES TO SKIP MAKES SENSE
+            if max(FramesToIgnore) > num_frames
+                %%% SKIP IF MAX FRAME NUMBER TO IGNORE IS LARGER THAN THE TOTAL
+                %%% NUMBER OF FRAMES IN THEH STACK
+                disp('OH NO! The number of frames in the image stack inconsistent with frames requested for correction ...')
+                fprintf('skipping %s ...\n', fname);
+            else
+                %%% CONTINUE IF MAX FRAME NUMBER TO IGNORE IS SMALLER THAN THE TOTAL
+                %%% NUMBER OF FRAMES IN THEH STACK
+                FramesToCorrect     = 1:1:num_frames;
+                if ~strcmpi(opts.FramesToIgnore, 'none')
+                    for j = 1:1:length(FramesToIgnore)
+                        idx = FramesToCorrect == FramesToIgnore(j);
+                        FramesToCorrect     = FramesToCorrect(~idx);
+                    end
                 end
-                sum_data    = sum_data + frame_data;
+                
+                sum_data    = zeros(2048,2048);
+                for j = FramesToCorrect
+                    fprintf('%d frame of %s - background subtraction in progress ...\n', j, fname);
+                    frame_data  = NreadGE(pfname, j);
+                    if opts.OutAllFrames
+                        frame_data  = frame_data - im_bkg;
+                        frame_data  = CorrectBadPixels(frame_data, BadPixelData);
+                        
+                        % fname_out   = [flist.name, '.frame.', num2str(j), '.cor'];
+                        fname_out   = [flist.name, '_frame_', num2str(j), '.cor32'];
+                        pfname_out  = fullfile(path_output, fname_out);
+                        WriteSUM(pfname_out, frame_data);
+                    end
+                    sum_data    = sum_data + frame_data;
+                    
+                    if opts.DisplayFrames
+                        PlotImage(frame_data, max(frame_data(:)), min(frame_data(:)))
+                    end
+                end
+                if opts.DisplayFrames
+                    close all
+                end
+                
+                %%% WRITE OUT SUM FILE
+                if ~opts.OutAllFrames
+                    sum_data    = sum_data - im_bkg*length(FramesToCorrect);
+                    sum_data    = CorrectBadPixels(sum_data, BadPixelData);
+                end
+                fname_out   = [flist.name, '.sum'];
+                pfname_out  = fullfile(path_output, fname_out);
+                WriteSUM(pfname_out, sum_data);
                 
                 if opts.DisplayFrames
-                    PlotImage(frame_data, max(frame_data(:)), min(frame_data(:)))
+                    PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
+                    title('Sum over all corrected frames')
+                end
+                
+                %%% WRITE OUT AVE FILE
+                ave_data    = sum_data./length(FramesToCorrect);
+                fname_out   = [flist.name, '.ave'];
+                pfname_out  = fullfile(path_output, fname_out);
+                if ~opts.SumOnly
+                    WriteSUM(pfname_out, ave_data);
+                end
+                
+                if opts.DisplayFrames
+                    PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
+                    title('Average over all corrected frames')
                 end
             end
-            if opts.DisplayFrames
-                close all
-            end
-            
-            %%% WRITE OUT SUM FILE
-            if ~opts.OutAllFrames
-                sum_data    = sum_data - im_bkg*length(FramesToCorrect);
-                sum_data    = CorrectBadPixels(sum_data, BadPixelData);
-            end
-            fname_out   = [flist.name, '.sum'];
-            pfname_out  = fullfile(path_output, fname_out);
-            WriteSUM(pfname_out, sum_data);
-            
-            if opts.DisplayFrames
-                PlotImage(sum_data, max(sum_data(:)), min(sum_data(:)))
-                title('Sum over all corrected frames')
-            end
-            
-            %%% WRITE OUT AVE FILE
-            ave_data    = sum_data./length(FramesToCorrect);
-            fname_out   = [flist.name, '.ave'];
-            pfname_out  = fullfile(path_output, fname_out);
-            if ~opts.SumOnly
-                WriteSUM(pfname_out, ave_data);
-            end
-            
-            if opts.DisplayFrames
-                PlotImage(ave_data, max(ave_data(:)), min(ave_data(:)))
-                title('Average over all corrected frames')
-            end
+        else
+            fprintf('%s does not exist. skipping.\n',pfname)
         end
     end
 end
+
 
 if license('test', 'distrib_computing_toolbox') && isunix
     disp(sprintf('parallel computing toolbox available'));
