@@ -36,7 +36,7 @@ optcell = {...
     'ang_res', 0.25, ...
     'pos_res', 100, ...
     'save_mapping_table', false, ...
-    'mapping_table_fname', 'mapping_table.mat', ...
+    'mapping_table_fname', 'mapping_table_file', ...
     };
 
 % update option
@@ -54,7 +54,7 @@ grains0_quat  = [grains0(:).quat];
 grains1_COM   = [grains1(:).COM];   % COMii    = [grains1(:).COM];
 grains1_quat  = [grains1(:).quat];  % quatii   = [grains1(:).quat];
 
-parpool(20)
+parpool(20);
 parfor iii = 1:1:numgrains0
     disp(sprintf('table entries for grain number %d', iii));
     
@@ -71,8 +71,6 @@ dist_table_master   = dist_table;
 miso_table_master   = miso_table;
 
 %%% MAPPING TABLE FORMAT
-% idx_S0, idx_S1, grain_id_S0, grain_id_S1, dist, miso, reason
-% mapping_table   = zeros(numgrains0, 7);
 % idx_S0, idx_S1, grain_id_S0, grain_id_S1, dist, miso, reason, x0, y0,
 % z0, x1, y1, z1, q01, q02, q03, q04, q11, q12, q13, q14, vol0, vol1
 mapping_table   = zeros(numgrains0, 23);
@@ -185,21 +183,33 @@ end
 toc
 
 if opts.save_mapping_table
-    pfname_map  = opts.mapping_table_fname;
+    pfname_map_mat  = sprintf('%s.mat', opts.mapping_table_fname);
     pos_res = opts.pos_res;
     ang_res = opts.ang_res;
     
-    disp(sprintf('saving mapping table to %s', pfname_map))
+    disp(sprintf('saving mapping table to %s', pfname_map_mat))
     
     dist_table  = dist_table_master;
     miso_table  = miso_table_master;
     
-    save(pfname_map, 'mapping_table', 'dist_table', 'miso_table', 'ang_res', 'pos_res');
+    save(pfname_map_mat, 'mapping_table', 'dist_table', 'miso_table', 'ang_res', 'pos_res');
+
+    %%% WRITE OUT CSV FILE AS WELL
+    pfname_map_csv  = sprintf('%s.csv', opts.mapping_table_fname);
     
-    % idx_S0, idx_S1, grain_id_S0, grain_id_S1, dist, miso, reason
-    % mapping_table   = zeros(numgrains0, 7);
     % idx_S0, idx_S1, grain_id_S0, grain_id_S1, dist, miso, reason, x0, y0,
     % z0, x1, y1, z1, q01, q02, q03, q04, q11, q12, q13, q14, vol0, vol1
+    csvheader   = {...
+        'idx_S0', 'idx_S1', 'grain_id_S0', 'grain_id_S1', ...
+        'dist', 'miso', 'reason', ...
+        'x0', 'y0', 'z0', 'x1', 'y1', 'z1', ...
+        'q01', 'q02', 'q03', 'q04', 'q11', 'q12', 'q13', 'q14', ...
+        'vol0', 'vol1'};
+    csvheader   = strjoin(csvheader, ',');
+     
+    fid_map_csv = fopen(pfname_map_csv, 'w');
+    fprintf(fid_map_csv, '%s\n', csvheader);
+    fclose(fid_map_csv);
     
-    %%% WRITE OUT CSV FILE AS WELL
+    dlmwrite(pfname_map_csv, mapping_table, '-append');
 end
