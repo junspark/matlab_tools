@@ -140,7 +140,10 @@ if strcmpi(opts.Technique, 'ff-midas')
     for iii = 1:1:length(pfname)
         switch isfile(pfname{iii})
             case true
-                A    = load(pfname{iii});
+                readtable_opts  = detectImportOptions(pfname{iii});
+                readtable_opts.ConsecutiveDelimitersRule    = 'join';
+                
+                A               = readtable(pfname{iii}, readtable_opts);
                 nGrains(iii)    = size(A, 1);
             case false
                 nGrains(iii)    = 0;
@@ -173,7 +176,8 @@ if strcmpi(opts.Technique, 'ff-midas')
         disp(sprintf('number of grains in this layer : %d', nGrains(iii)));
         switch isfile(pfname{iii})
             case true
-                A    = load(pfname{iii});
+                % A    = load(pfname{iii});
+                A    = readtable(pfname{iii}, readtable_opts);
                 
                 % [O] OPERATES ON A VECTOR IN CRYSTAL FRAME TO GET THE LAB FRAME EQUIVALENT
                 % [O]{c} = {l}
@@ -184,9 +188,16 @@ if strcmpi(opts.Technique, 'ff-midas')
                 % IF WORKING IN THE APS LAB FRAME CONVENTION
                 % [RLab2Sam][R_ESRF2APS][O]{c} = [RLab2Sam][R_ESRF2APS]{l} = {s}
                 for i = 1:1:nGrains(iii)
-                    OMat    = reshape(A(i, 2:10), 3, 3)';    % TRANSPOSE TO GET THE SHAPE RIGHT
-                    COM     = A(i, 11:13);
-
+                    OMat    = reshape([ ...
+                        A.O11(i) A.O12(i) A.O13(i) ...
+                        A.O21(i) A.O22(i) A.O23(i) ...
+                        A.O31(i) A.O32(i) A.O33(i) ...
+                        ], ...
+                        3, 3)';    % TRANSPOSE TO GET THE SHAPE RIGHT
+                    
+                    % COM     = A(i, 11:13);    
+                    COM     = [A.X(i), A.Y(i), A.Z(i)];
+                    
                     % COORDINATE TRANSFORMATION
                     RMat    = RLab2Sam*R_ESRF2APS*OMat;
                     COM     = RLab2Sam*R_ESRF2APS*COM';
@@ -209,21 +220,30 @@ if strcmpi(opts.Technique, 'ff-midas')
                     Quat    = ToFundamentalRegionQ(QuatOfRMat(RMat), qsym);
                     Rod     = RodOfQuat(Quat);
 
-                    log(ct).GrainID = A(i,1) + 1e7*iii; %% 1e7*iii gives each layer 10M grains
+                    log(ct).GrainID = A.x_GrainID(i,1) + 1e7*iii; %% 1e7*iii gives each layer 10M grains
                     log(ct).R       = RMat;
                     log(ct).rod     = Rod;
                     log(ct).quat    = Quat;
                     log(ct).COM     = COM(:);
+                    log(ct).BungeAngles = BungeOfRMat(RMat, 'degrees');
 
-                    log(ct).lattprms     = A(i, 14:19)';
-                    log(ct).DiffPos      = A(i, 20);
-                    log(ct).DiffOme      = A(i, 21);
-                    log(ct).DiffAngle    = A(i, 22);
-                    log(ct).GrainRadius  = A(i, 23);
-                    log(ct).Completeness = A(i, 24);
+                    log(ct).lattprms     = [A.a(i) A.b(i) A.c(i) A.alpha(i) A.beta(i) A.gamma(i)]';
+                    log(ct).DiffPos      = A.DiffPos(i);
+                    log(ct).DiffOme      = A.DiffOme(i);
+                    log(ct).DiffAngle    = A.DiffAngle(i);
+                    log(ct).GrainRadius  = A.GrainRadius(i);
+                    log(ct).Completeness = A.Confidence(i);
 
-                    StrainFab   = reshape(A(i, 25:33), 3, 3);
-                    Strain      = reshape(A(i, 34:42), 3, 3);
+                    StrainFab   = reshape([ ...
+                        A.eFab11(i) A.eFab12(i) A.eFab13(i) ...
+                        A.eFab21(i) A.eFab22(i) A.eFab23(i) ...
+                        A.eFab31(i) A.eFab32(i) A.eFab33(i) ...
+                        ], 3, 3);
+                    Strain      = reshape([ ...
+                        A.eKen11(i) A.eKen12(i) A.eKen13(i) ...
+                        A.eKen21(i) A.eKen22(i) A.eKen23(i) ...
+                        A.eKen31(i) A.eKen32(i) A.eKen33(i) ...
+                        ], 3, 3);
 
                     % CONVERT MICRO-STRAIN TO STRAIN
                     log(ct).StrainFab   = RLab2Sam*R_ESRF2APS*StrainFab*R_ESRF2APS'*RLab2Sam'./1000000;
@@ -277,12 +297,12 @@ if strcmpi(opts.Technique, 'ff-midas')
                         log(ct).Stress_d    = DeviatoricStressStrain(Stress_vec);
                         log(ct).Stress_vm   = VMStressStrain(Stress_vec);
                     end
-                    log(ct).StrainRMS   = A(i, 43);
+                    log(ct).StrainRMS   = A.RMSErrorStrain(i);
                     log(ct).C_xstal     = opts.C_xstal;
 
                     %%% THIS IS FOR NEWER VERSION OF THE GRAINS OUTPUT
                     if nCols > 43
-                        log(ct).PhaseNumber  = A(i, 44);
+                        log(ct).PhaseNumber  = A.PhaseNr(i);
                     end
                     ct  = ct + 1;
                 end
