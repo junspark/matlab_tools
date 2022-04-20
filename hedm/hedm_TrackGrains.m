@@ -183,18 +183,20 @@ end
 toc
 
 if opts.save_mapping_table
+    %%% WRITE OUT MAT FILE
     pfname_map_mat  = sprintf('%s.mat', opts.mapping_table_fname);
-    pos_res = opts.pos_res;
-    ang_res = opts.ang_res;
     
     disp(sprintf('saving mapping table to %s', pfname_map_mat))
+    
+    pos_res = opts.pos_res;
+    ang_res = opts.ang_res;
     
     dist_table  = dist_table_master;
     miso_table  = miso_table_master;
     
     save(pfname_map_mat, 'mapping_table', 'dist_table', 'miso_table', 'ang_res', 'pos_res');
 
-    %%% WRITE OUT CSV FILE AS WELL
+    %%% WRITE OUT CSV FILE
     pfname_map_csv  = sprintf('%s.csv', opts.mapping_table_fname);
     
     % idx_S0, idx_S1, grain_id_S0, grain_id_S1, dist, miso, reason, x0, y0,
@@ -211,5 +213,5 @@ if opts.save_mapping_table
     fprintf(fid_map_csv, '%s\n', csvheader);
     fclose(fid_map_csv);
     
-    dlmwrite(pfname_map_csv, mapping_table, '-append');
+    dlmwrite(pfname_map_csv, mapping_table, '-append', 'precision', 16);
 end
