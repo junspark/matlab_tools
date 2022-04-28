@@ -140,8 +140,18 @@ if strcmpi(opts.Technique, 'ff-midas')
     for iii = 1:1:length(pfname)
         switch isfile(pfname{iii})
             case true
-                readtable_opts  = detectImportOptions(pfname{iii});
-                readtable_opts.ConsecutiveDelimitersRule    = 'join';
+                if exist('readtable_opts.mat', 'file') == 2
+                    readtable_opts  = load('readtable_opts.mat');
+                    readtable_opts  = readtable_opts.readtable_opts;
+                else
+                    readtable_opts  = detectImportOptions(pfname{iii});
+                    
+                    % readtable_opts.FileType                     = 'delimitedtext';
+                    % readtable_opts.ConsecutiveDelimitersRule    = 'join';
+                    % readtable_opts.Delimiter                    = {'\t', ' '};
+                    % readtable_opts.DataLines                    = [10 Inf];
+                    % readtable_opts.VariableNamesLine            = 9;
+                end
                 
                 A               = readtable(pfname{iii}, readtable_opts);
                 nGrains(iii)    = size(A, 1);
@@ -179,6 +189,7 @@ if strcmpi(opts.Technique, 'ff-midas')
                 % A    = load(pfname{iii});
                 A    = readtable(pfname{iii}, readtable_opts);
                 
+                % keyboard
                 % [O] OPERATES ON A VECTOR IN CRYSTAL FRAME TO GET THE LAB FRAME EQUIVALENT
                 % [O]{c} = {l}
                 % OPERATION TO TAKE A VECTOR FROM THE LAB FRAME TO SAMPLE FRAME IS 
