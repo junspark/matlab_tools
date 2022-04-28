@@ -356,7 +356,7 @@ else
     end
 end
 
-
+%%% END GCP
 if license('test', 'distrib_computing_toolbox') && isunix
     disp(sprintf('parallel computing toolbox available'));
     delete(gcp);
