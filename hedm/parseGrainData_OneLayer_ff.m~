@@ -1,7 +1,6 @@
-function microstructure = parseGrainData_OneLayer(pname, qsym, varargin)
-% parseGrainData_OneLayer
-%   Parse the hedm grain file for one layer. currently works for FF-HEDM
-%   data reducted using MIDAS only for now.
+function microstructure = parseGrainData_OneLayer_ff(pname, qsym, varargin)
+% parseGrainData_OneLayer_ff
+%   Parse the FF-HEDM grain file for one layer. 
 %
 %   microstructure = parseGrainData_OneLayer(pname, qsym) reads the grain
 %   log file and returns the microstructure information
@@ -30,7 +29,7 @@ function microstructure = parseGrainData_OneLayer(pname, qsym, varargin)
 %                           constituent grains. default is false.
 %   'ComputeSelfDistTable'  computes COM distance table between the
 %                           constituent grains. default is false.
-%   ' Verbose'              outputs more information on parser progress if
+%   'Verbose'               outputs more information on parser progress if
 %                           true. default is false.
 %
 %   OUTPUT:
@@ -252,6 +251,8 @@ disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 
 switch lower(opts.Technique)
     case 'ff-midas'
+        
+        
         pfname_hkls     = fullfile(pname, 'hkls.csv');
         pfname_grains   = fullfile(pname, 'Grains.csv');
         pfname_spots    = fullfile(pname, 'SpotMatrix.csv');
@@ -297,18 +298,26 @@ switch lower(opts.Technique)
             'V',[],'Esam',[],'Ecry',[],'F',[], ...
             'ReflectionTable', [],  'CrdSys', []);
         
-        % ROTATION FROM MIDAS IS [R]{c} = {l}
+        % ROTATION FROM MIDAS IS [RMat]{c} = {l}
         % ROTATION TO GO FROM LAB TO SAMPLE IS [RLab2Sam]{l} = {s}
-        % [RLab2Sam]{l} = {s}
-        % [RLab2Sam][R]{c} = {s}
+        % [RLab2Sam][RESRF2APS]{l} = {s}
+        % [RLab2Sam][RESRF2APS][RMat]{c} = {s}
         for i = 1:1:nGrains
-            % Grains_csv(i, 2:10)
-            % reshape(Grains_csv(i, 2:10), 3, 3)
-            RMat    = reshape(Grains_csv(i, 2:10), 3, 3);  %%% CHECK WHETHER WE NEED A TRANSPOSE.
+            
+            %%% RAW RMAT OUTPUT FROM MIDAS
+            % [RMat]{c} = {l}
+            RMat    = reshape(Grains_csv(i, 2:10), 3, 3)';
             COM     = Grains_csv(i, 11:13);
             
-            % COORDINATE TRANSFORMATION
+            %%% TO TEST OUT RMAT RESHAPE & TRANSPOSE
+            % Grains_csv(i, 2:10)
+            % reshape(Grains_csv(i, 2:10), 3, 3)
+            % pause
+            
+            % TRANSFORM RMAT SUCH THAT IT TAKES A VECTOR IN XSTAL FRAME TO THE SAMPLE FRAME. 
             RMat    = RLab2Sam*R_ESRF2APS*RMat;
+            
+            % TRANSFORM COM INTO THE SAMPLE FRAME
             COM     = RLab2Sam*R_ESRF2APS*COM';
             
             if strcmpi(opts.CrdSystem, 'APS')
@@ -332,13 +341,16 @@ switch lower(opts.Technique)
             grains(ct).GrainRadius  = Grains_csv(i, 23);
             grains(ct).Completeness = Grains_csv(i, 24);
             
-            Grains_csv(i, 25:33)
-            reshape(Grains_csv(i, 25:33), 3, 3)
-            pause
+            % Grains_csv(i, 25:33)
+            % reshape(Grains_csv(i, 25:33), 3, 3)
+            % pause
             StrainFab   = reshape(Grains_csv(i, 25:33), 3, 3);
             Strain      = reshape(Grains_csv(i, 34:42), 3, 3);
             
-            % CONVERT MICRO-STRAIN TO STRAIN
+            % STRAIN IS ALREADY IN THE ESRF LAB FRAME.
+            % CONVERT TO APS FRAME IF NECESSARY.
+            % CONVERT TO SAMPLE FRAME.
+            % CONVERT MICRO-STRAIN TO STRAIN.
             grains(ct).StrainFab   = RLab2Sam*R_ESRF2APS*StrainFab*R_ESRF2APS'*RLab2Sam'./1000000;
             grains(ct).Strain      = RLab2Sam*R_ESRF2APS*Strain*R_ESRF2APS'*RLab2Sam'./1000000;
             
@@ -364,13 +376,15 @@ switch lower(opts.Technique)
                 grains(ct).Stress_vm   = nan;
                 
             elseif (size(opts.C_xstal,1) == 6) && (size(opts.C_xstal,2) == 6)
-                %%% STRAIN IS IN SAMPLE FRAME
-                R   = RLab2Sam*R_ESRF2APS; % [R]{c}={s}
-                T   = VectorizedCOBMatrix(R);
-                C   = T*opts.C_xstal*T';  % XSTAL STIFFNESS IN SAMPLE FRAME
+                %%% STRAIN IS ALREADY IN THE SAMPLE FRAME
+                % [RMat] TAKES A VECTOR IN XSTAL FRAME TO THE SAMPLE FRAME
+                % [RMat]{c}={s}
+                % R   = RLab2Sam*R_ESRF2APS;
+                T           = VectorizedCOBMatrix(RMat);
+                C_sample    = T*opts.C_xstal*T';  % XSTAL STIFFNESS IN SAMPLE FRAME
                 
                 %%% FAB
-                StressFab_vec               = C*StrainFab_vec;
+                StressFab_vec               = C_sample*StrainFab_vec;
                 grains(ct).StressFab   	    = StressFab_vec;
                 grains(ct).StressFab_mtx    = MatrixOfStressStrainVectorInVM(StressFab_vec);
                 grains(ct).StressFab_h      = VolumetricStressStrain(StressFab_vec);
@@ -378,7 +392,7 @@ switch lower(opts.Technique)
                 grains(ct).StressFab_vm     = VMStressStrain(StressFab_vec);
                 
                 %%% PK
-                Stress_vec              = C*Strain_vec;
+                Stress_vec              = C_sample*Strain_vec;
                 grains(ct).Stress       = Stress_vec;
                 grains(ct).Stress_mtx   = MatrixOfStressStrainVectorInVM(Stress_vec);
                 grains(ct).Stress_h     = VolumetricStressStrain(Stress_vec);
@@ -484,6 +498,7 @@ switch lower(opts.Technique)
                 ReflectionTable.RingNr_csv_I_pwdr       = rt_I_pwdr;
                 ReflectionTable.RingNr_csv_sig_r        = rt_sig_r;
                 ReflectionTable.RingNr_csv_sig_eta      = rt_sig_eta;
+                
                 %%% DERIVED VALUES
                 ReflectionTable.RingNr_csv_derived_ome_Aero     = -rt_ome;
                 ReflectionTable.RingNr_csv_derived_ome_min_Aero = -rt_ome_max;
