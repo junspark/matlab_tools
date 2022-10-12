@@ -222,6 +222,7 @@ switch lower(opts.Technique)
     case 'ff-midas'
         num_pname_all   = length(pname_all);
         
+        ct  = 1;
         for iii = 1:1:num_pname_all
             microstructure_iii  = parseGrainData_OneLayer_ff(pname_all{iii,1}, qsym, ...
                 'NumFrames', opts.NumFrames, ...
@@ -234,12 +235,33 @@ switch lower(opts.Technique)
                 'Verbose', opts.Verbose);
             
             for jjj = 1:1:microstructure_iii.nGrains
-                microstructure_iii.grains(jjj).GrainID_AllLayer     = 1e6*(iii-1) + microstructure_iii.grains(jjj).GrainID;
-                microstructure_iii.grains(jjj).COM_AllLayer         = microstructure_iii.grains(jjj).COM;
-                microstructure_iii.grains(jjj).COM_AllLayer(2)      = microstructure_iii.grains(jjj).COM_AllLayer(2) + opts.OffsetValue(iii);
+                microstructure_iii.grains(jjj).GrainID_AllLayers    = 1e6*iii + microstructure_iii.grains(jjj).GrainID;
+                microstructure_iii.grains(jjj).COM_AllLayers        = microstructure_iii.grains(jjj).COM;
+                switch lower(opts.CrdSystem)
+                    case 'aps'
+                        microstructure_iii.grains(jjj).COM_AllLayers(2)      = microstructure_iii.grains(jjj).COM_AllLayers(2) + opts.OffsetValue(iii);
+                    case 'esrf'
+                        microstructure_iii.grains(jjj).COM_AllLayers(3)      = microstructure_iii.grains(jjj).COM_AllLayers(3) + opts.OffsetValue(iii);
+                end
+                
+                microstructure.grains(ct)   = microstructure_iii.grains(jjj);
+                ct  = ct + 1;
             end
-            microstructure(iii) = microstructure_iii;
+            
+            microstructure.nGrains(iii) = microstructure_iii.nGrains;
+            if opts.ComputeSelfMisoTable
+                microstructure.miso_table{iii,1}    = microstructure_iii.miso_table;
+            end
+            
+            if opts.ComputeSelfDistTable
+                microstructure.dist_table{iii,1}    = microstructure_iii.dist_table;
+            end
         end
+        microstructure.nGrains_AllLayers    = sum(microstructure.nGrains);
+        microstructure.Technique    = 'ff-midas';
+        microstructure.CrdSystem    = opts.CrdSystem;
+        microstructure.LabToSample  = opts.LabToSample;
+        microstructure.C_xstal      = opts.C_xstal;
     case 'nf-midas'
         disp(sprintf('parsing nf-hedm data from %s', pfname));
         disp('NEED IMPLEMENTATION CHECK AND CONTENTS COMMENTED OUT.')
