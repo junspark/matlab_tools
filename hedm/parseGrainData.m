@@ -1,5 +1,5 @@
 function log = parseGrainData(pfname, qsym, varargin)
-% NEED TO CHECK THE COORDINATE TRANSFORMATION!!!!
+%%% THIS IS DEPRECATED SINCE 2022-10; USE parseGrainData_MultiLayer.m
 % parseGrainData Parse the hedm grain file
 %   In the case of ff-HEDM, input file is from MIDAS grains.csv file.
 %
