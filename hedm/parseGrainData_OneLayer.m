@@ -186,7 +186,7 @@ function microstructure = parseGrainData_OneLayer(pname, qsym, varargin)
 %       meanIA = Average internal angle between prediced and measured
 %       gvec = G vector table
 %       hkl = 3 hkl values
-
+return
 % default options
 optcell = {...
     'Technique', 'ff-midas', ...
