@@ -165,17 +165,17 @@ else
     end
 end
 
-%%% START GCP
-if license('test', 'distrib_computing_toolbox') && isunix
-    disp(sprintf('parallel computing toolbox available'));
-	delete(gcp);
-    
-    pc  = parcluster('local');
-    pc.JobStorageLocation = '/home/beams12/S1IDUSER/.matlab/local_cluster_jobs/R2016b/batchcorr_jobs';
-    parpool(pc);
-else
-    disp(sprintf('parallel computing toolbox unavailable'));
-end
+% %%% START GCP
+% if license('test', 'distrib_computing_toolbox') && isunix
+%     disp(sprintf('parallel computing toolbox available'));
+% 	delete(gcp);
+%     
+%     pc  = parcluster('local');
+%     pc.JobStorageLocation = '/home/beams12/S1IDUSER/.matlab/local_cluster_jobs/R2016b/batchcorr_jobs';
+%     parpool(pc);
+% else
+%     disp(sprintf('parallel computing toolbox unavailable'));
+% end
 
 if opts.CorrectAllImages
     %%% CORRECT ALL IMAGES
