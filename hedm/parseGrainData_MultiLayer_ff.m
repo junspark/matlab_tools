@@ -1,8 +1,7 @@
-function microstructure = parseGrainData_MultiLayer(pname_all, qsym, varargin)
-% USE parseGrainData_MultiLayer_ff STARTING 2022-10
-% parseGrainData_MultiLayer
+function microstructure = parseGrainData_MultiLayer_ff(pname_all, qsym, varargin)
+% parseGrainData_MultiLayer_ff
 %   Parse the hedm grain file for multiple layers from ge-linescan.
-%   Currently, works for FF-HEDM data reduced using MIDAS only for now.
+%   Currently, works for FF-HEDM data reduced using MIDAS only.
 %
 %   microstructure = parseGrainData_MultiLayer(pname_all, qsym) reads the grain
 %   log file and returns the microstructure information
@@ -188,7 +187,7 @@ function microstructure = parseGrainData_MultiLayer(pname_all, qsym, varargin)
 %       meanIA = Average internal angle between prediced and measured
 %       gvec = G vector table
 %       hkl = 3 hkl values
-return
+
 % default options
 optcell = {...
     'Technique', 'ff-midas', ...
@@ -263,51 +262,6 @@ switch lower(opts.Technique)
         microstructure.CrdSystem    = opts.CrdSystem;
         microstructure.LabToSample  = opts.LabToSample;
         microstructure.C_xstal      = opts.C_xstal;
-    case 'nf-midas'
-        disp(sprintf('parsing nf-hedm data from %s', pfname));
-        disp('NEED IMPLEMENTATION CHECK AND CONTENTS COMMENTED OUT.')
-%         
-%         fid = fopen(pfname);
-%         tline = fgetl(fid);
-%         counter = 1;
-%         
-%         while ischar(tline)
-%             Grains_csv	= sscanf( tline , '%f', 10)';
-%             
-%             COM	= Grains_csv(2:4);
-%             %%% THIS IS Bunge Angles GOING FROM LAB TO CRYSTAL
-%             BungeAngles = Grains_csv(5:7)';
-%             %%% CONVERTS BUNGE ANGLES TO ROT MATRIX THEN TRANSPOSE TO CHANGE
-%             %%% ITS MEANING TO "CRYSATL TO LAB"
-%             RMat    = RMatOfBunge(BungeAngles, 'degrees')';
-%             
-%             RMat    = R_ESRF2APS*RMat;
-%             COM     = R_ESRF2APS*COM';
-%             Quat    = ToFundamentalRegionQ(QuatOfRMat(RMat), qsym);
-%             
-%             if strcmpi(opts.CrdSystem, 'APS')
-%                 grains(counter).CrdSys	= 'APS';
-%             elseif strcmpi(opts.CrdSystem, 'ESRF')
-%                 grains(counter).CrdSys	= 'ESRF';
-%             end
-%             
-%             grains(counter).BungeAngles    = BungeAngles;
-%             grains(counter).RMat           = RMat;
-%             grains(counter).Quat           = Quat;
-%             grains(counter).COM            = COM(:);
-%             
-%             grains(counter).Volume       = Grains_csv(8);
-%             grains(counter).Confidence   = Grains_csv(9);
-%             
-%             grains(counter).NumNeighbors	= Grains_csv(10);
-%             
-%             B   = sscanf(tline,'%f',10+2*Grains_csv(10));
-%             grains(counter).IDofNeighbors      = B(11:11+Grains_csv(10)-1);
-%             grains(counter).MisWithNeighbors   = B(11+Grains_csv(10):end);
-%             tline = fgetl(fid);
-%             counter = counter+1;
-%         end
-%         fclose(fid);
     otherwise
         error('Technique unknown.')
 end
