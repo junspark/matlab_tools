@@ -148,8 +148,8 @@ switch lower(opts.Version)
         pardata.det7_time_per_frame     = textdata{49};
         
         pardata.det8_fname              = textdata{50};
-        pardata.det8_fnum               = textdata{51};
-        pardata.det8_frames_per_file    = textdata{52};
+		pardata.det8_frames_per_file    = textdata{51};
+        pardata.det8_fnum               = textdata{52};
         pardata.det8_time_per_frame     = textdata{53};
         
         pardata.det9_fname              = textdata{54};
