@@ -4,7 +4,7 @@
 %-------------------- User Input
 %
 fr_refine   =    5;  % refinement level on FR
-sp_refine   =   3;  % refinement level on sphere
+sp_refine   =   5;  % refinement level on sphere
 per_fiber   = 1000;  % points per fiber
 nHarm       = 23;   % number of harmonics
 %

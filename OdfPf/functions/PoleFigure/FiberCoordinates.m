@@ -45,6 +45,7 @@ if (any(failed))       % Retry.  This can work because a different
                        % algorithm is used for large point sets.
   [tmpele(failed), tmpcrd(failed, :)] = ...
       tsearchn(crd', con', fibpts(failed, :));
+  sum(failed)
   if (any(~isfinite(tmpele)))
     error('Failed to find fiber coordinates.')
   end
