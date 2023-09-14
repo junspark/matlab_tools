@@ -1,4 +1,3 @@
-% function y = pfunc_switch(p, xr, params)
 function y = pfunc_switch(p, params)
 % pfunc_switch - switch objective function for peak fitting
 %
