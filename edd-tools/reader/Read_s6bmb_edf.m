@@ -27,9 +27,11 @@ data_tbl    = reshape(data_tbl.Variables, 6, 10);
 %%% DET ORDER detnum  = [1 2 3 4 5 6 7 8 9 0];
 for i = 1:1:10
     for j = 1:1:4
-        data(i).polynomial(j)   = str2double(data_tbl{j,i});
+        % data(i).polynomial(j)   = str2double(data_tbl{j,i});
+        data(i).polynomial(j)   = data_tbl(j,i);
     end
-    data(i).tth = str2double(data_tbl{5,i});
+    % data(i).tth = str2double(data_tbl{5,i});
+    data(i).tth = data_tbl(5,i);
 end
 
 % switch isunix
