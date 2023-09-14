@@ -2,8 +2,8 @@ clear all
 close all
 clc
 
-addpath(genpath('/home/beams/PARKJS/matlab/matlab_tools'));
-% addpath(genpath('C:\Users\parkjs\Documents\GitHub\matlab_tools'));
+% addpath(genpath('/home/beams/PARKJS/matlab/matlab_tools'));
+addpath(genpath('C:\Users\parkjs\Documents\GitHub\matlab_tools'));
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NOTE THAT STRAIN IS ALREADY IN THE CRYSTAL FRAME
