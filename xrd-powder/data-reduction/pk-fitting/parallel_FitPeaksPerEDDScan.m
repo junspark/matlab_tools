@@ -95,14 +95,14 @@ for jjj = 1:1:numsteps
             
             pr0 = [ ...
                 max(yfit_data)/5 ...
-                0.2 ...
+                1.0...
                 0.5 ...
                 Epk ...
                 ];
             
             prUB    = [ ...
                 inf ...
-                3 ...
+                5 ...
                 1 ...
                 EUB ...
                 ];
@@ -115,7 +115,7 @@ for jjj = 1:1:numsteps
                 ];
             
             pr0 = [pr0 ...
-                polyfit(xfit_data, yfit_data, 1) ...
+                polyfit([xfit_data(1) xfit_data(end)], [yfit_data(1) yfit_data(end)], 1) ...
                 ];
             
             prUB = [prUB ...
@@ -144,7 +144,7 @@ for jjj = 1:1:numsteps
             xfit_data_at_voxel{kkk}{jjj,mmm}    = xfit_data;
             yfit_data_at_voxel{kkk}{jjj,mmm}    = yfit_data;
             yfit0_at_voxel{kkk}{jjj,mmm}        = yfit0;
-            yfit_at_voxel{kkk}{jjj,mmm}         = yfit0;
+            yfit_at_voxel{kkk}{jjj,mmm}         = yfit;
             
             [conf, variance]    = confint(pr, resd_at_voxel{kkk}{jjj,mmm}, jacobian_at_voxel{kkk}{jjj,mmm}); % variance of fitted params
             variance            = full(variance);
@@ -189,6 +189,7 @@ for jjj = 1:1:numsteps
                 % plot(ELB, 20, 'rs')
                 % plot(EUB, 20, 'rs')
                 plot(xfit_data, yfit_data, 'r.')
+                plot(xfit_data, polyval(pr0(5:end), xfit_data), 'g-.')
                 plot(xfit_data, yfit0, 'g-')
                 plot(xfit_data, yfit, 'k-')
                 plot(xfit_data, polyval(pr(5:end), xfit_data), 'k--')
@@ -248,7 +249,7 @@ for jjj = 1:1:numsteps
             ];
 
         pr0 = [pr0 ...
-            polyfit(xfit_data, yfit_data, 1) ...
+            polyfit([xfit_data(1) xfit_data(end)] , [yfit_data(1) yfit_data(end)], 1) ...
             ];
 
         prUB = [prUB ...
@@ -277,7 +278,7 @@ for jjj = 1:1:numsteps
         xfit_data_at_voxel{kkk}{jjj,mmm}    = xfit_data;
         yfit_data_at_voxel{kkk}{jjj,mmm}    = yfit_data;
         yfit0_at_voxel{kkk}{jjj,mmm}        = yfit0;
-        yfit_at_voxel{kkk}{jjj,mmm}         = yfit0;
+        yfit_at_voxel{kkk}{jjj,mmm}         = yfit;
         
         [conf, variance]    = confint(pr, resd_at_voxel{kkk}{jjj,mmm}, jacobian_at_voxel{kkk}{jjj,mmm}); % variance of fitted params
         variance            = full(variance);
@@ -321,6 +322,7 @@ for jjj = 1:1:numsteps
             % plot(ELB, 20, 'rs')
             % plot(EUB, 20, 'rs')
             plot(xfit_data, yfit_data, 'r.')
+            plot(xfit_data, polyval(pr0(5:end), xfit_data), 'g-.')
             plot(xfit_data, yfit0, 'g-')
             plot(xfit_data, yfit, 'k-')
             plot(xfit_data, polyval(pr(5:end), xfit_data), 'k--')
