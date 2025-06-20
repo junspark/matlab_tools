@@ -67,9 +67,9 @@ elseif strcmp(opts.bit_depth, 'single')
 
     tiff_class  = Tiff(pfname, 'w');                                   %create object of Tiff class
     setTag(tiff_class, Tiff.TagID.ImageLength, ...
-        size(imdata_out_per_sec,1));          %define image dimentions
+        size(data,1));          %define image dimentions
     setTag(tiff_class, Tiff.TagID.ImageWidth, ...
-        size(imdata_out_per_sec,2));
+        size(data,2));
 
     setTag(tiff_class, 'Photometric', Tiff.Photometric.MinIsBlack);    %define the color type of image
 
