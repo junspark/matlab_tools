@@ -51,6 +51,10 @@ function BatchCorrection_varex(path_bkg, bkg_num, root_bkg, ...
 %
 %   SumOnly             Only output sum files. If 0, ave file will be saved
 %                       as well (default: 1).
+% 
+%   dark_location       Dark data location in the hdf5 file 
+%
+%   data_location       Data location in the hdf5 file 
 %
 %   OUTPUT:             
 %                   
@@ -72,6 +76,8 @@ optcell = {...
     'NumDigits', 6, ...
     'FramesToIgnore', 'none', ...
     'SumOnly', 1, ...
+    'dark_location', '/exchange/data_dark', ...
+    'data_location', '/exchange/data', ...
     };
 
 % UPDATE OPTION
@@ -104,11 +110,11 @@ for iii = 1:1:length(bkg_num)
     end
     
     if iii == 1
-        im_bkg      = zeros(h5info(pfname, '/exchange/bright/').ChunkSize(1), h5info(pfname, '/exchange/bright/').ChunkSize(2));
+        im_bkg      = zeros(h5info(pfname, opts.dark_location).ChunkSize(1), h5info(pfname, opts.dark_location).ChunkSize(2));
     end
-    num_frames  = h5info(pfname, '/exchange/bright/').Dataspace.Size(3);
+    num_frames  = h5info(pfname, opts.dark_location).Dataspace.Size(3);
     
-    im_bkg_iii  = h5read(pfname, '/exchange/bright/');
+    im_bkg_iii  = h5read(pfname, opts.dark_location);
     im_bkg_iii  = sum(im_bkg_iii,3);
     im_bkg      = im_bkg + im_bkg_iii;
     ct          = ct + num_frames;
@@ -164,7 +170,7 @@ else
     ct  = 1;
     for iii = 1:1:length(image_num)
         fname   = sprintf(fname_fmt, root_image, image_num(iii), ext_image);
-        pfname  = fullfile(path_image, fname);
+        pfname  = fullfile(path_image, fname)
         
         if isfile(pfname)
             flist(ct,1) = dir(pfname);
@@ -181,7 +187,7 @@ parfor iii = 1:1:length(flist)
     fname   = flist(iii).name;
     pfname  = fullfile(path_image, fname);
     
-    sum_data    = h5read(pfname, '/exchange/bright/');
+    sum_data    = h5read(pfname, opts.data_location);
     sum_data    = mean(sum_data,3);
     sum_data    = sum_data - im_bkg;
     
