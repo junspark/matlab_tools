@@ -186,7 +186,6 @@ if strcmpi(opts.Technique, 'ff-midas')
         disp(sprintf('number of grains in this layer : %d', nGrains(iii)));
         switch isfile(pfname{iii})
             case true
-                % A    = load(pfname{iii});
                 A    = readtable(pfname{iii}, readtable_opts);
                 
                 % keyboard
@@ -237,7 +236,8 @@ if strcmpi(opts.Technique, 'ff-midas')
                     log(ct).quat    = Quat;
                     log(ct).COM     = COM(:);
                     log(ct).BungeAngles = BungeOfRMat(RMat, 'degrees');
-
+                    log(ct).EulerAngles = rad2deg([A.Eul0(i) A.Eul1(i) A.Eul2(i)])';
+                    
                     log(ct).lattprms     = [A.a(i) A.b(i) A.c(i) A.alpha(i) A.beta(i) A.gamma(i)]';
                     log(ct).DiffPos      = A.DiffPos(i);
                     log(ct).DiffOme      = A.DiffOme(i);
