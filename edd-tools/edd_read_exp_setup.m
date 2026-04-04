@@ -1,5 +1,32 @@
 function [run_id, exp_id, pfname_edf] = edd_read_exp_setup(exp_setup_file)
-% Parse experiment setup values from a simple key:value markdown file.
+% edd_read_exp_setup - reads EDD experiment setup values from markdown.
+%
+%   USAGE:
+%
+%   [run_id, exp_id, pfname_edf] = edd_read_exp_setup(exp_setup_file)
+%
+%   INPUT:
+%
+%   exp_setup_file
+%       Full path to exp_setup.md (or similar text file) containing
+%       key:value entries.
+%
+%   OUTPUT:
+%
+%   run_id
+%       Run identifier string parsed from key 'run_id'.
+%
+%   exp_id
+%       Experiment identifier string parsed from key 'exp_id'.
+%
+%   pfname_edf
+%       EDF file path string parsed from key 'pfname_edf'.
+%
+%   REQUIRED FILE FORMAT:
+%
+%   run_id: <value>
+%   exp_id: <value>
+%   pfname_edf: <value>
 
 if ~isfile(exp_setup_file)
     error('Missing setup file: %s', exp_setup_file);
