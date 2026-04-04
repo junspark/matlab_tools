@@ -35,9 +35,10 @@ end
 exp_setup_text = fileread(exp_setup_file);
 
 % Read required key:value entries from exp_setup.md.
-run_id_token = regexp(exp_setup_text, '(?m)^\s*run_id\s*:\s*(.+)\s*$', 'tokens', 'once');
-exp_id_token = regexp(exp_setup_text, '(?m)^\s*exp_id\s*:\s*(.+)\s*$', 'tokens', 'once');
-pfname_token = regexp(exp_setup_text, '(?m)^\s*pfname_edf\s*:\s*(.+)\s*$', 'tokens', 'once');
+% Use [^\n]+ instead of .+ to exclude newlines from capture group.
+run_id_token = regexp(exp_setup_text, '(?m)^\s*run_id\s*:\s*([^\n]+)\s*$', 'tokens', 'once');
+exp_id_token = regexp(exp_setup_text, '(?m)^\s*exp_id\s*:\s*([^\n]+)\s*$', 'tokens', 'once');
+pfname_token = regexp(exp_setup_text, '(?m)^\s*pfname_edf\s*:\s*([^\n]+)\s*$', 'tokens', 'once');
 
 if isempty(run_id_token) || isempty(exp_id_token) || isempty(pfname_token)
     error('Invalid exp_setup.md format. Required keys: run_id, exp_id, pfname_edf');
