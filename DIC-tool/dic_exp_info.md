@@ -5,8 +5,8 @@
 # Path to directory containing DIC images
 pname: /net/s1dserv/export/s1-idb/park_jul2013/DIC4Jun/DIC
 
-# File root name (prefix before the frame number)
-froot: DIC_
+# File root name (prefix before the frame number; prefix only.)
+froot: DIC
 
 # File extension
 fext: tif

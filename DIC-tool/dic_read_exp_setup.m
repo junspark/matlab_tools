@@ -1,11 +1,11 @@
 function [pname, froot, fext, ndigits, fini, ffin, finc, ...
-    delta_h, delta_v, Hctr, Vctr, ws_h, ws_v] = dic_read_exp_setup(exp_info_file)
+    delta_h, delta_v, Hctr, Vctr, ws_h, ws_v, pix2mm, gauge_length] = dic_read_exp_setup(exp_info_file)
 % dic_read_exp_setup - reads DIC experiment setup values from markdown.
 %
 %   USAGE:
 %
 %   [pname, froot, fext, ndigits, fini, ffin, finc, ...
-%       delta_h, delta_v, Hctr, Vctr, ws_h, ws_v] = dic_read_exp_setup(exp_info_file)
+%       delta_h, delta_v, Hctr, Vctr, ws_h, ws_v, pix2mm, gauge_length] = dic_read_exp_setup(exp_info_file)
 %
 %   INPUT:
 %
@@ -28,6 +28,8 @@ function [pname, froot, fext, ndigits, fini, ffin, finc, ...
 %   Vctr        Vertical center of ROI (pixels).
 %   ws_h        Half-width of ROI in horizontal direction (control points).
 %   ws_v        Half-width of ROI in vertical direction (control points).
+%   pix2mm        Scale factor (mm per pixel).
+%   gauge_length  Gauge length (mm).
 %
 %   REQUIRED FILE FORMAT:
 %
@@ -44,6 +46,8 @@ function [pname, froot, fext, ndigits, fini, ffin, finc, ...
 %   Vctr: <value>
 %   ws_h: <value>
 %   ws_v: <value>
+%   pix2mm: <value>
+%   gauge_length: <value>    (mm)
 
 if ~isfile(exp_info_file)
     error('Missing setup file: %s', exp_info_file);
@@ -77,6 +81,8 @@ delta_v = num_val('delta_v');
 Hctr    = num_val('Hctr');
 Vctr    = num_val('Vctr');
 ws_h    = num_val('ws_h');
-ws_v    = num_val('ws_v');
+ws_v         = num_val('ws_v');
+pix2mm       = num_val('pix2mm');
+gauge_length = num_val('gauge_length');
 
 end
